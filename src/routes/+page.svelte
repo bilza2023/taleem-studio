@@ -1,12 +1,12 @@
 <script>
 	import HomeLinks from "$lib/components/HomeLinks.svelte";
-	import SubNav from "$lib/components/SubNav.svelte";
+	
 	import Footer from "$lib/components/Footer.svelte";
 	import apiFetch from "$lib/utils/fetch";
 
 	let home = $state(null);
 	let error = $state("");
-	let active = "home";
+	
 
 async function loadLibrary() {
 
@@ -56,7 +56,7 @@ async function loadLibrary() {
 
 </script>
 
-<SubNav active={active} />
+
 
 {#if error}
 

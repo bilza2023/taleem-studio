@@ -1,18 +1,20 @@
 <script>
     import { page } from "$app/state";
     import Navbar from "$lib/components/Navbar.svelte";
+    import SubNav from "$lib/components/SubNav.svelte";
     import AdminNavbar from "$lib/components/AdminNavbar.svelte";
     import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
     import { blueTheme } from "$lib/taleem-themes/index.js";
 
+    let active = "home";
     let { children } = $props();
 </script>
 
 <TaleemTheme theme={blueTheme}>
-    {#if page.url.pathname.startsWith("/teacher")}
-        <AdminNavbar />
-    {:else if !page.url.pathname.startsWith("/player") && !page.url.pathname.startsWith("/present")}
+    {#if !page.url.pathname.startsWith("/player")}
+
         <Navbar />
+        <SubNav active={active} />
     {/if}
 
     <main>

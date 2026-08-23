@@ -1,81 +1,60 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.help/src/routes/courses/+page.svelte
 	import { onMount } from "svelte";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import apiFetch from "$lib/utils/fetch";
 	import SubNav from "$lib/components/SubNav.svelte";
-	let active = $state("courses");
 
+	let active = $state("courses");
 	let home = $state(null);
 	let error = $state("");
 
+	async function loadCourses(id = "courses") {
+		active = id;
 
-async function loadCourses(query = {}, id = "courses") {
+		try {
+			error = "";
 
-	active = id;
+			const res = await fetch("/courses");
+			const items = await res.json();
 
-	try {
+			if (!res.ok) throw new Error(items.error || "Failed to load courses");
 
-		error = "";
-
-		const items = await apiFetch(
-			"GET",
-			"/public/course"
-		);
-
-		home = {
-			items: items.map(item => ({
-				...item,
-				image: `${item.thumbnail}`
-			}))
-		};
-		// home = {items: items};
-
-	}
-	catch (err) {
-
-		error = err.message;
-
+			home = {
+				items: items.map(item => ({
+					...item,
+					image: item.thumbnail
+				}))
+			};
+		} catch (err) {
+			error = err.message;
+		}
 	}
 
-}
 	onMount(() => {
-
-		loadCourses({}, "courses");
-
+		loadCourses();
 	});
 </script>
 
 <SubNav active={active} />
 
 {#if error}
-
 	<p>{error}</p>
-
 {:else if !home}
-
 	<p>Loading...</p>
-
 {:else}
-
 	<div class="container">
-
 		<CourseLinks homeLinks={home.items} />
-
 	</div>
 
-	<br/>
-	<br/>
-<Footer />
+	<br />
+	<br />
+	<Footer />
 {/if}
 
 <style>
-
 	.container {
 		padding: 10px;
 		margin: 10px;
 		min-height: 100vh;
 	}
-
 </style>

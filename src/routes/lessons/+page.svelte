@@ -1,16 +1,14 @@
+
 <script>
 	import HomeLinks from "$lib/components/HomeLinks.svelte";
 	import CourseHero from "$lib/components/CourseHero.svelte";
-	import LessonsNav from "$lib/components/LessonsNav.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import apiFetch from "$lib/utils/fetch";
 	import { page } from "$app/state";
 	import GroupingNav from "$lib/components/GroupingNav.svelte";
 
 	let home = $state(null);
 	let course = $state(null);
 	let error = $state("");
-	let active = $state("all");
 	let selectedGrouping = $state("");
 
 	let visibleItems = $derived(
@@ -26,61 +24,39 @@
 	}
 
 	async function loadLibrary(courseSlug) {
-
-		active = courseSlug;
-
 		try {
-
 			error = "";
 
-			const courses = await apiFetch(
-				"GET",
-				"/public/course"
+			const res = await fetch(
+				`/lessons?course=${encodeURIComponent(courseSlug)}`
 			);
 
-			course = courses.find(
-				c => c.slug === courseSlug
-			);
+			const data = await res.json();
 
-			if (!course) {
-				throw new Error(
-					`Course "${courseSlug}" not found.`
-				);
+			if (!res.ok) {
+				throw new Error(data.error || "Failed to load course");
 			}
 
-			const items = await apiFetch(
-				"GET",
-				`/public/course/${courseSlug}/list`
-			);
+			course = data.course;
 
 			home = {
-				items: items.map(item => ({
+				items: data.items.map(item => ({
 					...item,
 					image: `/content/images/${item.thumbnail}`
 				}))
 			};
-
-	console.log("course",course);
-		}
-		catch (err) {
-
+		} catch (err) {
 			error = err.message;
-
 		}
-
 	}
 
 	$effect(() => {
-
-		const courseSlug =
-			page.url.searchParams.get("course");
+		const courseSlug = page.url.searchParams.get("course");
 
 		if (courseSlug) {
 			loadLibrary(courseSlug);
 		}
-
 	});
-
 </script>
 {#if error}
 
