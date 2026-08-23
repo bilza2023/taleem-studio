@@ -1,27 +1,22 @@
 <script>
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
-	import { get } from "svelte/store";
-	import apiFetch from "$lib/utils/fetch";
-	import {config} from "$lib/config.js";
-	import {getAudioFileName} from "./js/getAudioFileName.js";
-	import {resolveAssetPaths} from "./js/resolveAssetPaths.js";
-	import {getTimer} from "./js/getTimer.js";
+import { get } from "svelte/store";
+	import { getAudioFileName } from "./js/getAudioFileName.js";
+	import { resolveAssetPaths } from "./js/resolveAssetPaths.js";
+	import { getTimer } from "./js/getTimer.js";
 	import TaleemUI from "$lib/taleemUI/TaleemUI.svelte";
 	import { getPlayerSize } from "./js/getPlayerSize.js";
-	import { Howl }from "howler";
-import Communication from "$lib/components/Communication.svelte";
-import Discussion from "$lib/components/Discussion.svelte";
-// import presentation from "$lib/taleem-specs/samples/golden-deck-8aug26.json";
-// $: console.log("presentation",presentation);
-//////////////////////////////////////////////////	
-    let presentation = null;
-    let timer = null;
-    let currentTime = 0;
+	import { Howl } from "howler";
+	import Communication from "$lib/components/Communication.svelte";
+	import Discussion from "$lib/components/Discussion.svelte";
+
+	let presentation = null;
+	let timer = null;
+	let currentTime = 0;
 	let PLAYER_WIDTH = 0;
 	let PLAYER_HEIGHT = 0;
 
-///////////////////////TICKER FUNCTION///////////////////////////////////
 	let deckEndTime = 0;
 	let ticker = null;
 
@@ -45,11 +40,9 @@ import Discussion from "$lib/components/Discussion.svelte";
 	}
 
 	function startTicker() {
-
 		if (ticker) return;
 
 		ticker = setInterval(() => {
-
 			if (!timer) return;
 
 			currentTime = timer.now();
@@ -58,73 +51,80 @@ import Discussion from "$lib/components/Discussion.svelte";
 				timer.pause();
 				currentTime = deckEndTime;
 			}
-
 		}, 50);
+	}
 
-	}    
-//////////////////////////////////////////////////////////    
-setInterval(() => {if (!presentation) return;}, 2000);
-//////////////////////////////////////////////////////////    
-async function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-    } else {
-        await document.exitFullscreen();
-    }
-}
+	async function toggleFullscreen() {
+		if (!document.fullscreenElement) {
+			await document.documentElement.requestFullscreen();
+		} else {
+			await document.exitFullscreen();
+		}
+	}
 
-function resizePlayer() {
-    const toolbarHeight = 54;
-    const maxWidth = window.innerWidth;
-    const maxHeight = window.innerHeight - toolbarHeight;
+	function resizePlayer() {
+		const toolbarHeight = 54;
+		const maxWidth = window.innerWidth;
+		const maxHeight = window.innerHeight - toolbarHeight;
+		const widthFromHeight = maxHeight * 16 / 9;
 
-    const widthFromHeight = maxHeight * 16 / 9;
+		PLAYER_WIDTH = Math.min(maxWidth, widthFromHeight);
+		PLAYER_HEIGHT = PLAYER_WIDTH * 9 / 16;
+	}
 
-    PLAYER_WIDTH = Math.min(maxWidth, widthFromHeight);
-    PLAYER_HEIGHT = PLAYER_WIDTH * 9 / 16;
-}
-const lessonSlug = get(page).url.searchParams.get("lesson");
-onMount(async () => {
-	//  debugger;
-	const params = get(page).url.searchParams;
-	// const lessonSlug =params.get("lesson");
-	// --------------------------------------------------
-	// load presentation from library
-	// --------------------------------------------------
-	// const item = await apiFetch("GET",`/library/${lessonSlug}`);
-	const item = await apiFetch("GET",`/public/library/${lessonSlug}`
-);
-	presentation = JSON.parse(item.body);
-	console.log("presentation",presentation);
-	// --------------------------------------------------
-	// resolve image paths
-	// --------------------------------------------------
-	resolveAssetPaths(presentation,`${config.apiUrl}/content/images/`);
-	// --------------------------------------------------
-	// timer
-	// --------------------------------------------------
-	const audioFileName	= getAudioFileName(presentation);
-	timer = await getTimer(audioFileName,Howl);
-	// --------------------------------------------------
-	// auto stop
-	// --------------------------------------------------
-	deckEndTime = presentation?.deck?.[presentation.deck.length - 1]?.end || 0;
-    startTicker();
-	// --------------------------------------------------
-	// Window size
-	// --------------------------------------------------
-	const playerSize = getPlayerSize();
-	console.log(getPlayerSize());
-	PLAYER_WIDTH = playerSize.width;
-	PLAYER_HEIGHT = playerSize.height;
+	const lessonSlug = get(page).url.searchParams.get("lesson");
 
-	 window.addEventListener("resize", resizePlayer);
-	return () => window.removeEventListener("resize", resizePlayer);
-});
+	onMount(async () => {
+		try {
+			const res = await fetch(
+				`/player?lesson=${encodeURIComponent(lessonSlug)}`
+			);
+
+			const item = await res.json();
+
+			if (!res.ok) {
+				throw new Error(item.error || "Failed to load player");
+			}
+
+			presentation = JSON.parse(item.body);
+
+			console.log("presentation", presentation);
+
+			resolveAssetPaths(
+				presentation,
+				"/content/images/"
+			);
+
+			const audioFileName = getAudioFileName(presentation);
+debugger;
+			timer = await getTimer(audioFileName, Howl);
+
+			deckEndTime =
+				presentation?.deck?.[presentation.deck.length - 1]?.end || 0;
+
+			startTicker();
+
+			const playerSize = getPlayerSize();
+
+			PLAYER_WIDTH = playerSize.width;
+			PLAYER_HEIGHT = playerSize.height;
+
+			window.addEventListener("resize", resizePlayer);
+
+		} catch (error) {
+			console.error(error);
+		}
+
+		return () => {
+			window.removeEventListener("resize", resizePlayer);
+
+			if (ticker) {
+				clearInterval(ticker);
+				ticker = null;
+			}
+		};
+	});
 </script>
-
-
-
 {#if presentation}
 
 <div

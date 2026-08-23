@@ -3,7 +3,8 @@ import {config} from "$lib/config.js";
 import { createAudioTimer } from "./createAudioTimer.js";
 import { createSilentTimer } from "./createSilentTimer.js";
 
-const AUDIO_BASE = `${config.apiUrl}/content/audio/`;
+// const AUDIO_BASE = `${config.apiUrl}/content/audio/`;
+const AUDIO_BASE = `/content/audio/`;
 
 export async function getTimer(
 	audioFileName,

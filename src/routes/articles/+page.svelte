@@ -1,26 +1,23 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.help/src/routes/articles/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/state";
-import {config} from "$lib/config";
 	import Communication from "$lib/components/Communication.svelte";
 	import Discussion from "$lib/components/Discussion.svelte";
-	import apiFetch from "$lib/utils/fetch";
 
 	let librarySlug = $state("");
 	let libraryItem = $state(null);
 	let error = $state("");
 	let loading = $state(true);
 
+	let articleBody = $derived.by(() => {
+		if (!libraryItem?.body) return "";
 
-let articleBody = $derived.by(() => {
-	if (!libraryItem?.body) return "";
+		return libraryItem.body.replaceAll(
+			'src="',
+			`src="/content/images/`
+		);
+	});
 
-	return libraryItem.body.replaceAll(
-		'src="',
-		`src="${config.apiUrl}/content/images/`
-	);
-});
 	onMount(async () => {
 		librarySlug = page.url.searchParams.get("article");
 
@@ -31,18 +28,24 @@ let articleBody = $derived.by(() => {
 		}
 
 		try {
-			// libraryItem = await apiFetch("GET", `/library/${librarySlug}`);
-			libraryItem = await apiFetch("GET", `/public/library/${librarySlug}`);
-			console.log("libraryItem", libraryItem);
+			const res = await fetch(
+				`/articles?article=${encodeURIComponent(librarySlug)}`
+			);
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.error || "Failed to load article");
+			}
+
+			libraryItem = data;
 		} catch (err) {
 			error = err.message;
 		} finally {
 			loading = false;
 		}
 	});
-
 </script>
-
 {#if loading}
 
 <main class="container">
@@ -62,7 +65,7 @@ let articleBody = $derived.by(() => {
 {@html articleBody}
 	<!-- <Communication librarySlug={libraryItem.slug} type="user-comment" />
 	<Discussion librarySlug={libraryItem.slug} /> -->
-{#if libraryItem.allowCommunication}
+<!-- {#if libraryItem.allowCommunication}
 
 	<Communication
 		librarySlug={libraryItem.slug}
@@ -75,7 +78,7 @@ let articleBody = $derived.by(() => {
 		🔒 Questions and comments are disabled for this lesson.
 	</article>
 
-{/if}
+{/if} -->
 
 <Discussion
 	librarySlug={libraryItem.slug}
