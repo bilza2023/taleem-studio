@@ -1,28 +1,33 @@
-
 <script>
-  let form = {
-    slug: '',
-    title: '',
-    tags: '[]'
-  };
-
+  let file;
+  let title = '';
+  let tags = '';
   let message = '';
 
   async function submit() {
-    message = 'Saving...';
+    if (!file) {
+      message = 'Please select an image.';
+      return;
+    }
+
+    message = 'Uploading...';
 
     try {
+      const data = new FormData();
+      data.append('file', file);
+      data.append('title', title);
+      data.append('tags', tags);
+
       const res = await fetch('/create/image', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: data
       });
 
-      const data = await res.json();
+      const result = await res.json();
 
-      if (!res.ok) throw new Error(data.error || 'Failed');
+      if (!res.ok) throw new Error(result.error || 'Upload failed');
 
-      message = `Created: ${data.slug}`;
+      message = `Created: ${result.slug}`;
     } catch (error) {
       console.error(error);
       message = `Error: ${error.message}`;
@@ -35,21 +40,26 @@
 
   <form on:submit|preventDefault={submit}>
     <label>
-      Slug
-      <input bind:value={form.slug} required>
+      Image
+      <input
+        type="file"
+        accept="image/*"
+        on:change={(e) => file = e.currentTarget.files[0]}
+        required
+      >
     </label>
 
     <label>
       Title
-      <input bind:value={form.title} required>
+      <input bind:value={title}>
     </label>
 
     <label>
       Tags
-      <input bind:value={form.tags} placeholder='["algebra","math","chapter-1"]'>
+      <input bind:value={tags} placeholder="math, number-line, chapter-1">
     </label>
 
-    <button type="submit">Create Image</button>
+    <button type="submit">Upload Image</button>
   </form>
 
   {#if message}
