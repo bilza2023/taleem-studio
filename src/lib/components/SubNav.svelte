@@ -1,18 +1,19 @@
 <script>
+	import { config } from "$lib/config.js";
+
 	let { active = "" } = $props();
 
+	const appUrl = config.apiUrl;
+
 	const categories = [
-		{ id: "add-article", title: "＋ Article", href: "/create/article" },
-		{ id: "add-player", title: "＋ Player", href: "/create/player" },
-		{ id: "add-svg", title: "＋ SVG", href: "/create/svg" },
-		{ id: "add-image", title: "＋ Image", href: "/create/image" },
-		{ id: "add-audio", title: "＋ Audio", href: "/create/audio" },
-
-		{ id: "courses", title: "Courses", href: "/courses" },
-
-		{ id: "assets", title: "Assets", href: "/assets" },
-
-		{ id: "manifest", title: "AI Manifest", href: "/manifest" }
+		{ id: "add-article", title: "＋ Article", href: `${appUrl}/create/article` },
+		{ id: "add-player", title: "＋ Player", href: `${appUrl}/create/player` },
+		{ id: "add-svg", title: "＋ SVG", href: `${appUrl}/create/svg` },
+		{ id: "add-image", title: "＋ Image", href: `${appUrl}/create/image` },
+		{ id: "add-audio", title: "＋ Audio", href: `${appUrl}/create/audio` },
+		{ id: "courses", title: "Courses", href: `${appUrl}/courses` },
+		{ id: "assets", title: "Assets", href: `${appUrl}/assets` },
+		{ id: "manifest", title: "AI Manifest", href: `${appUrl}/manifest` }
 	];
 </script>
 
