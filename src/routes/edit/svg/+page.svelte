@@ -1,49 +1,47 @@
 <script>
-  import { onMount } from 'svelte';
+	import { onMount } from "svelte";
+	import { admin } from "$lib/api/admin.js";
 
-  let form = { slug: '', title: '', tags: '', body: '' };
-  let message = 'Loading...';
+	let form = { slug: "", title: "", tags: "", body: "" };
+	let message = "Loading...";
 
-  onMount(async () => {
-    const slug = new URLSearchParams(location.search).get('slug');
-    if (!slug) {
-      message = 'Missing SVG slug';
-      return;
-    }
+	onMount(async () => {
+		const slug = new URLSearchParams(location.search).get("slug");
 
-    try {
-      const res = await fetch(`/edit/svg?slug=${encodeURIComponent(slug)}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load');
-      form = { ...form, ...data };
-      message = '';
-    } catch (error) {
-      console.error(error);
-      message = `Error: ${error.message}`;
-    }
-  });
+		if (!slug) {
+			message = "Missing SVG slug";
+			return;
+		}
 
-  async function submit() {
-    message = 'Saving...';
+		try {
+			const data = await admin.get(
+				`/edit/svg?slug=${encodeURIComponent(slug)}`
+			);
 
-    try {
-      const res = await fetch(`/edit/svg?slug=${encodeURIComponent(form.slug)}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+			form = { ...form, ...data };
+			message = "";
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`;
+		}
+	});
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed');
+	async function submit() {
+		message = "Saving...";
 
-      message = `Updated: ${data.slug}`;
-    } catch (error) {
-      console.error(error);
-      message = `Error: ${error.message}`;
-    }
-  }
+		try {
+			const data = await admin.put(
+				`/edit/svg?slug=${encodeURIComponent(form.slug)}`,
+				form
+			);
+
+			message = `Updated: ${data.slug}`;
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`;
+		}
+	}
 </script>
-
 <div class="page">
   <h1>Edit SVG</h1>
 

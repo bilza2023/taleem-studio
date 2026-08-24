@@ -1,35 +1,28 @@
 <script>
-  let form = {
-    slug: '',
-    title: '',
-    body: '',
-    tags: '[]'
-  };
+	import { admin } from "$lib/api/admin.js";
 
-  let message = '';
+	let form = {
+		slug: "",
+		title: "",
+		body: "",
+		tags: "[]"
+	};
 
-  async function submit() {
-    message = 'Saving...';
+	let message = "";
 
-    try {
-      const res = await fetch('/create/svg', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+	async function submit() {
+		message = "Saving...";
 
-      const data = await res.json();
+		try {
+			const data = await admin.post("/create/svg", form);
 
-      if (!res.ok) throw new Error(data.error || 'Failed');
-
-      message = `Created: ${data.slug}`;
-    } catch (error) {
-      console.error(error);
-      message = `Error: ${error.message}`;
-    }
-  }
+			message = `Created: ${data.slug}`;
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`;
+		}
+	}
 </script>
-
 <div class="page">
   <h1>Create SVG</h1>
 

@@ -1,60 +1,69 @@
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/create/image/+server.js
-import { json } from '@sveltejs/kit';
-import { mkdir, writeFile, access, unlink } from 'node:fs/promises';
-import path from 'node:path';
-import { createImage } from '../../../../db/image.js';
+import { json } from "@sveltejs/kit";
+import { mkdir, writeFile, access, unlink } from "node:fs/promises";
+import path from "node:path";
+import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
+import { createImage } from "$lib/server/image.js";
 
-const IMAGE_DIR = '/root/taleem-studio/content/images';
+const IMAGE_DIR = "/root/taleem-studio/content/images";
 
 export async function POST({ request }) {
-  let filePath;
+	let filePath;
 
-  try {
-    const form = await request.formData();
-    const file = form.get('file');
+	try {
+		await requireAdmin(request);
 
-    if (!(file instanceof File)) {
-      return json({ error: 'Image file is required' }, { status: 400 });
-    }
+		const form = await request.formData();
+		const file = form.get("file");
 
-    if (!file.type.startsWith('image/')) {
-      return json({ error: 'File must be an image' }, { status: 400 });
-    }
+		if (!(file instanceof File)) {
+			return json({ error: "Image file is required" }, { status: 400 });
+		}
 
-    const filename = path.basename(file.name);
+		if (!file.type.startsWith("image/")) {
+			return json({ error: "File must be an image" }, { status: 400 });
+		}
 
-    if (!filename) {
-      return json({ error: 'Invalid filename' }, { status: 400 });
-    }
+		const filename = path.basename(file.name);
 
-    filePath = path.join(IMAGE_DIR, filename);
+		if (!filename) {
+			return json({ error: "Invalid filename" }, { status: 400 });
+		}
 
-    try {
-      await access(filePath);
-      return json({ error: `File already exists: ${filename}` }, { status: 409 });
-    } catch {}
+		filePath = path.join(IMAGE_DIR, filename);
 
-    await mkdir(IMAGE_DIR, { recursive: true });
+		try {
+			await access(filePath);
+			return json(
+				{ error: `File already exists: ${filename}` },
+				{ status: 409 }
+			);
+		} catch {}
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
+		await mkdir(IMAGE_DIR, { recursive: true });
 
-    const image = await createImage({
-      slug: filename,
-      title: form.get('title') || filename,
-      tags: form.get('tags') || '[]'
-    });
+		const buffer = Buffer.from(await file.arrayBuffer());
+		await writeFile(filePath, buffer);
 
-    return json(image, { status: 201 });
-  } catch (error) {
-    console.error(error);
+		const image = await createImage({
+			slug: filename,
+			title: form.get("title") || filename,
+			tags: form.get("tags") || "[]"
+		});
 
-    if (filePath) {
-      try {
-        await unlink(filePath);
-      } catch {}
-    }
+		return json(image, { status: 201 });
 
-    return json({ error: error.message }, { status: 400 });
-  }
+	} catch (error) {
+		console.error(error);
+
+		if (filePath) {
+			try {
+				await unlink(filePath);
+			} catch {}
+		}
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
+	}
 }

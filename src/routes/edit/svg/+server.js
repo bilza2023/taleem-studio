@@ -1,40 +1,52 @@
+// src/routes/edit/svg/+server.js
 
-import { json } from '@sveltejs/kit';
-import { getSvg, updateSvg } from '../../../../db/svg.js';
+import { json } from "@sveltejs/kit";
+import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
+import { getSvg, updateSvg } from "$lib/server/svg.js";
 
-export async function GET({ url }) {
-  try {
-    const slug = url.searchParams.get('slug');
+export async function GET({ request, url }) {
+	try {
+		await requireAdmin(request);
 
-    if (!slug) return json({ error: 'Slug is required' }, { status: 400 });
+		const slug = url.searchParams.get("slug");
 
-    const svg = await getSvg(slug);
+		if (!slug) {
+			return json({ error: "Slug is required" }, { status: 400 });
+		}
 
-    if (!svg) return json({ error: 'SVG not found' }, { status: 404 });
+		const svg = await getSvg(slug);
 
-    return json(svg);
-  } catch (error) {
-    console.error(error);
-    return json({ error: error.message }, { status: 500 });
-  }
+		if (!svg) {
+			return json({ error: "SVG not found" }, { status: 404 });
+		}
+
+		return json(svg);
+	} catch (error) {
+		console.error(error);
+		return json({ error: error.message }, { status: 500 });
+	}
 }
 
 export async function PUT({ request, url }) {
-  try {
-    const slug = url.searchParams.get('slug');
+	try {
+		await requireAdmin(request);
 
-    if (!slug) return json({ error: 'Slug is required' }, { status: 400 });
+		const slug = url.searchParams.get("slug");
 
-    const data = await request.json();
+		if (!slug) {
+			return json({ error: "Slug is required" }, { status: 400 });
+		}
 
-    delete data.createdAt;
-    delete data.updatedAt;
+		const data = await request.json();
 
-    const svg = await updateSvg(slug, data);
+		delete data.createdAt;
+		delete data.updatedAt;
 
-    return json(svg);
-  } catch (error) {
-    console.error(error);
-    return json({ error: error.message }, { status: 400 });
-  }
+		const svg = await updateSvg(slug, data);
+
+		return json(svg);
+	} catch (error) {
+		console.error(error);
+		return json({ error: error.message }, { status: 400 });
+	}
 }

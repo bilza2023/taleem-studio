@@ -1,41 +1,48 @@
 <script>
-  import { config } from '$lib/config.js';
+	import { config } from "$lib/config.js";
 
-  let file;
-  let title = '';
-  let tags = '';
-  let message = '';
+	let file;
+	let title = "";
+	let tags = "";
+	let message = "";
 
-  async function submit() {
-    if (!file) {
-      message = 'Please select an audio file.';
-      return;
-    }
+	async function submit() {
+		if (!file) {
+			message = "Please select an audio file.";
+			return;
+		}
 
-    message = 'Uploading...';
+		message = "Uploading...";
 
-    try {
-      const data = new FormData();
-      data.append('file', file);
-      data.append('title', title);
-      data.append('tags', tags);
+		try {
+			const data = new FormData();
+			data.append("file", file);
+			data.append("title", title);
+			data.append("tags", tags);
 
-      const res = await fetch(`${config.apiUrl}create/audio`, {
-        method: 'POST',
-        body: data
-      });
+			const token = localStorage.getItem("taleem-admin-token");
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Upload failed');
+			const res = await fetch(`${config.apiUrl}/create/audio`, {
+				method: "POST",
+				headers: token
+					? { Authorization: `Bearer ${token}` }
+					: {},
+				body: data
+			});
 
-      message = `Created: ${result.slug}`;
-    } catch (error) {
-      console.error(error);
-      message = `Error: ${error.message}`;
-    }
-  }
+			const result = await res.json();
+
+			if (!res.ok) {
+				throw new Error(result.error || "Upload failed");
+			}
+
+			message = `Created: ${result.slug}`;
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`;
+		}
+	}
 </script>
-
 <div class="page">
   <h1>Create Audio</h1>
 
