@@ -132,3 +132,42 @@ export async function PUT({ request, url }) {
 		return json({ error: error.message }, { status: 400 });
 	}
 }
+
+export async function DELETE({ url }) {
+	try {
+		const slug = url.searchParams.get("slug");
+		const courseSlug = url.searchParams.get("course");
+		const groupSlug = url.searchParams.get("group");
+
+		if (!slug || !courseSlug || !groupSlug) {
+			return json(
+				{ error: "Slug, course and group are required" },
+				{ status: 400 }
+			);
+		}
+
+		const article = await kernel.library.get(slug);
+
+		if (!article) {
+			return json({ error: "Article not found" }, { status: 404 });
+		}
+
+		if (
+			article.courseSlug !== courseSlug ||
+			article.groupSlug !== groupSlug ||
+			article.type !== "ARTICLE"
+		) {
+			return json(
+				{ error: "Article identity does not match URL" },
+				{ status: 409 }
+			);
+		}
+
+		await kernel.library.delete(slug);
+
+		return json({ deleted: slug });
+	} catch (error) {
+		console.error(error);
+		return json({ error: error.message }, { status: 400 });
+	}
+}

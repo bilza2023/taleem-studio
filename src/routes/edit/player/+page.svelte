@@ -1,7 +1,7 @@
 
 <script>
 	import { page } from "$app/state";
-
+let deleting = $state(false);
 	let form = $state({
 		slug: "",
 		title: "",
@@ -97,7 +97,33 @@
 			saving = false;
 		}
 	}
+async function deletePlayer() {
+	if (!confirm(`Delete "${form.slug}"? It will return to Pending Content.`)) return;
 
+	deleting = true;
+	message = "Deleting...";
+
+	try {
+		const course = page.url.searchParams.get("course");
+		const group = page.url.searchParams.get("group");
+		const slug = page.url.searchParams.get("slug");
+
+		const res = await fetch(
+			`/edit/player?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`,
+			{ method: "DELETE" }
+		);
+
+		const data = await res.json();
+
+		if (!res.ok) throw new Error(data.error || "Failed to delete");
+
+		window.location.href = `/pending?course=${encodeURIComponent(course)}`;
+	} catch (error) {
+		console.error(error);
+		message = `Error: ${error.message}`;
+		deleting = false;
+	}
+}
 	$effect(() => {
 		load();
 	});
@@ -160,6 +186,17 @@
 			<p class="message">{message}</p>
 		{/if}
 	{/if}
+
+	<div class="danger-zone">
+	<button
+		class="delete"
+		type="button"
+		onclick={deletePlayer}
+		disabled={saving || deleting}
+	>
+		{deleting ? "Deleting..." : "Delete Player"}
+	</button>
+</div>
 </div>
 
 <style>
@@ -246,4 +283,17 @@
 		color: #222;
 		border-radius: 5px;
 	}
+	.danger-zone {
+	margin-top: 50px;
+	padding-top: 20px;
+	border-top: 1px solid #555;
+}
+
+.delete {
+	background: #8b2f2f;
+}
+
+.delete:hover {
+	background: #a33a3a;
+}
 </style>
