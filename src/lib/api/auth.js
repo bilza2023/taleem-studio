@@ -1,10 +1,10 @@
-// src/lib/api/auth.js
+import { config } from "$lib/config.js";
 
 export async function adminLogin(email, password) {
 	let response;
 
 	try {
-		response = await fetch("/signin", {
+		response = await fetch(`${config.basePath}/signin`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
