@@ -2,7 +2,6 @@
     import { page } from "$app/state";
     import Navbar from "$lib/components/Navbar.svelte";
     import SubNav from "$lib/components/SubNav.svelte";
-    import AdminNavbar from "$lib/components/AdminNavbar.svelte";
     import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
     import { blueTheme } from "$lib/taleem-themes/index.js";
 

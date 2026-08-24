@@ -8,7 +8,7 @@ export default async function apiFetch(method, path, body = null) {
 		headers: {}
 	};
 
-	const token = localStorage.getItem("taleem-token");
+	const token = localStorage.getItem("taleem-admin-token");
 
 	if (token) {
 		options.headers.Authorization = `Bearer ${token}`;

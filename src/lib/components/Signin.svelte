@@ -21,9 +21,9 @@
 
 	{#if loggedIn}
 
-		<button class="icon-btn" onclick={hub} title="Hub">
+		<!-- <button class="icon-btn" onclick={hub} title="Hub">
 			💬
-		</button>
+		</button> -->
 
 		<button class="icon-btn" onclick={logout} title="Logout">
 			🚪
@@ -35,9 +35,9 @@
 			🔑
 		</a>
 
-		<a class="icon-btn" href="/signup" title="Create Account">
+		<!-- <a class="icon-btn" href="/signup" title="Create Account">
 			🔐
-		</a>
+		</a> -->
 
 	{/if}
 

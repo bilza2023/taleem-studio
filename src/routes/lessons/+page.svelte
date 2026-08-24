@@ -4,6 +4,7 @@
 	import CourseHero from "$lib/components/CourseHero.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import { page } from "$app/state";
+	import apiFetch from "$lib/utils/fetch.js";
 	import GroupingNav from "$lib/components/GroupingNav.svelte";
 
 	let home = $state(null);
@@ -22,33 +23,27 @@
 	function handleGroupingChange(id) {
 		selectedGrouping = id;
 	}
+async function loadLibrary(courseSlug) {
+	try {
+		error = "";
 
-	async function loadLibrary(courseSlug) {
-		try {
-			error = "";
+		const data = await apiFetch(
+			"GET",
+			`lessons?course=${encodeURIComponent(courseSlug)}`
+		);
 
-			const res = await fetch(
-				`/lessons?course=${encodeURIComponent(courseSlug)}`
-			);
+		course = data.course;
 
-			const data = await res.json();
-
-			if (!res.ok) {
-				throw new Error(data.error || "Failed to load course");
-			}
-
-			course = data.course;
-
-			home = {
-				items: data.items.map(item => ({
-					...item,
-					image: `/content/images/${item.thumbnail}`
-				}))
-			};
-		} catch (err) {
-			error = err.message;
-		}
+		home = {
+			items: data.items.map(item => ({
+				...item,
+				image: `/content/images/${item.thumbnail}`
+			}))
+		};
+	} catch (err) {
+		error = err.message;
 	}
+}
 
 	$effect(() => {
 		const courseSlug = page.url.searchParams.get("course");

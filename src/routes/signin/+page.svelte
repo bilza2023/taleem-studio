@@ -1,27 +1,37 @@
 <script>
 	import { goto } from "$app/navigation";
-	import apiFetch from "$lib/utils/fetch";
 
-	let email = "";
-	let password = "";
-
-	let loading = false;
-	let error = "";
+	let email = $state("");
+	let password = $state("");
+	let loading = $state(false);
+	let error = $state("");
 
 	async function signin() {
 		error = "";
 		loading = true;
 
 		try {
-			const data = await apiFetch("POST", "/user/login", {
-				email,
-				password
+			const res = await fetch("/signin", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					email,
+					password
+				})
 			});
 
-			localStorage.setItem("taleem-token", data.token);
-			localStorage.setItem("taleem-email", email);
+			const data = await res.json();
 
-			window.dispatchEvent(new Event("authChanged"));
+			if (!res.ok) {
+				throw new Error(data.error || "Sign in failed");
+			}
+
+			localStorage.setItem("taleem-admin-token", data.token);
+			localStorage.setItem("taleem-admin-email", email);
+
+			window.dispatchEvent(new Event("adminAuthChanged"));
 
 			goto("/");
 		} catch (err) {
@@ -33,19 +43,22 @@
 </script>
 
 <svelte:head>
-	<title>Sign In | Taleem.Help</title>
+	<title>Admin Sign In | Taleem Studio</title>
 </svelte:head>
 
 <div class="page">
-	<form class="card" on:submit|preventDefault={signin}>
-		<h2>Sign In</h2>
+	<form class="card" onsubmit={(event) => {
+		event.preventDefault();
+		signin();
+	}}>
+		<h2>Admin Sign In</h2>
 
 		<label for="email">Email</label>
 		<input
 			id="email"
 			type="email"
 			bind:value={email}
-			placeholder="you@example.com"
+			placeholder="admin@example.com"
 			required
 		/>
 
@@ -63,17 +76,8 @@
 		{/if}
 
 		<button type="submit" disabled={loading}>
-			{#if loading}
-				Signing In...
-			{:else}
-				Sign In
-			{/if}
+			{loading ? "Signing In..." : "Sign In"}
 		</button>
-
-		<p class="footer">
-			Don't have an account?
-			<a href="/signup">Create Account</a>
-		</p>
 	</form>
 </div>
 
@@ -106,15 +110,12 @@
 	}
 
 	label {
-		margin: 0;
 		font-size: .9rem;
 		font-weight: 600;
-		color: var(--theme-text);
 	}
 
 	input {
 		width: 100%;
-		margin: 0;
 		box-sizing: border-box;
 		padding: .65rem .75rem;
 		border: 1px solid var(--theme-border);
@@ -131,12 +132,11 @@
 	input:focus {
 		outline: none;
 		border-color: var(--theme-accent);
-		box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-accent) 25%, transparent);
 	}
 
 	button {
 		width: 100%;
-		margin: .5rem 0 0;
+		margin-top: .5rem;
 		padding: .65rem 1rem;
 		border: 1px solid var(--theme-accent);
 		border-radius: 6px;
@@ -144,10 +144,6 @@
 		color: var(--theme-text);
 		font-weight: 600;
 		cursor: pointer;
-	}
-
-	button:hover:not(:disabled) {
-		opacity: .9;
 	}
 
 	button:disabled {
@@ -159,33 +155,5 @@
 		margin: 0;
 		color: #ff8f8f;
 		font-size: .9rem;
-	}
-
-	.footer {
-		margin: .75rem 0 0;
-		text-align: center;
-		font-size: .9rem;
-		color: var(--theme-text);
-		opacity: .75;
-	}
-
-	.footer a {
-		color: var(--theme-accent);
-		font-weight: 600;
-		text-decoration: none;
-	}
-
-	.footer a:hover {
-		text-decoration: underline;
-	}
-
-	@media (max-width: 576px) {
-		.page {
-			padding-top: 2rem;
-		}
-
-		.card {
-			padding: 1.25rem;
-		}
 	}
 </style>
