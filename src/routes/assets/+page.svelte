@@ -6,8 +6,6 @@
   let filtered = [];
   let search = '';
   let type = 'ALL';
-  let page = 1;
-  const perPage = 30;
   let loading = true;
   let error = '';
 
@@ -33,13 +31,31 @@
       const text = `${asset.slug} ${asset.title} ${tags}`.toLowerCase();
       return matchesType && (!q || text.includes(q));
     });
-
-    page = 1;
   }
 
-  $: totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  $: if (page > totalPages) page = totalPages;
-  $: visible = filtered.slice((page - 1) * perPage, page * perPage);
+  function downloadManifest() {
+    const manifest = filtered.map((asset) => ({
+      type: asset.type,
+      slug: asset.slug,
+      title: asset.title || '',
+      description: asset.description || '',
+      tags: asset.tags || ''
+    }));
+
+    const blob = new Blob(
+      [JSON.stringify(manifest, null, 2)],
+      { type: 'application/json' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = 'asset-manifest.json';
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
 </script>
 
 <div class="page">
@@ -58,6 +74,10 @@
         <option value="IMAGE">Images</option>
         <option value="SVG">SVG</option>
       </select>
+
+      <button class="download" on:click={downloadManifest}>
+        ↓ Download Manifest
+      </button>
     </div>
   </div>
 
@@ -65,7 +85,7 @@
     <p>Loading...</p>
   {:else if error}
     <p class="error">{error}</p>
-  {:else if visible.length === 0}
+  {:else if filtered.length === 0}
     <p>No assets found.</p>
   {:else}
     <div class="count">
@@ -73,7 +93,7 @@
     </div>
 
     <div class="grid">
-      {#each visible as asset}
+      {#each filtered as asset}
         <article class="card">
           <div class="preview">
             {#if asset.type === 'SVG'}
@@ -103,18 +123,6 @@
           </div>
         </article>
       {/each}
-    </div>
-
-    <div class="pagination">
-      <button on:click={() => page--} disabled={page === 1}>
-        ← Previous
-      </button>
-
-      <span>Page {page} of {totalPages}</span>
-
-      <button on:click={() => page++} disabled={page === totalPages}>
-        Next →
-      </button>
     </div>
   {/if}
 </div>
@@ -216,17 +224,14 @@
     cursor: pointer;
   }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin: 30px 0;
+  .download {
+    background: #2563eb;
+    color: white;
+    white-space: nowrap;
   }
 
-  .pagination button:disabled {
-    opacity: .4;
-    cursor: default;
+  .download:hover {
+    background: #1d4ed8;
   }
 
   .error {
