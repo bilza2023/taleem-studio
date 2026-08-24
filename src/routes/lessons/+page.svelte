@@ -79,7 +79,12 @@
 	value={selectedGrouping}
 	onChange={handleGroupingChange}
 />
-
+<a
+	class="pending-link"
+	href={`/pending?course=${encodeURIComponent(course.slug)}`}
+>
+	Pending Content
+</a>
 
 <div class="links-container">
 	<HomeLinks homeLinks={visibleItems} />
@@ -107,5 +112,19 @@
     background: var(--theme-panel);
     color: var(--theme-text);
 }
+.pending-link {
+	display: inline-block;
+	margin: .75rem .15rem;
+	padding: .5rem .8rem;
+	color: #d9f99d;
+	background: #3f3a16;
+	border: 1px solid #a3a322;
+	border-radius: 6px;
+	text-decoration: none;
+}
 
+.pending-link:hover {
+	background: #514d18;
+	border-color: #c4c43a;
+}
 </style>

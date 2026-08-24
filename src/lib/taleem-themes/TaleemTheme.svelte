@@ -17,3 +17,12 @@
 >
     <slot />
 </div>
+
+
+<style>
+    .taleem-theme {
+	min-height: 100vh;
+	background: var(--theme-panel);
+	color: var(--theme-text);
+}
+</style>

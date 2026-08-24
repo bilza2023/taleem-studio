@@ -15,7 +15,7 @@
 
 		<img
 			class="thumbnail"
-			src={`${config.apiUrl}/content/images/${course.thumbnail}`}
+			src={`/content/images/${course.thumbnail}`}
 			alt={course.title}
 		/>
 
@@ -42,11 +42,11 @@
 
 	{#if expanded}
 		<div class="details">
-			<img
-				class="large-thumbnail"
-				src={`${config.apiUrl}/content/images/${course.thumbnail}`}
-				alt={course.title}
-			/>
+		<img
+	class="large-thumbnail"
+	src={`/content/images/${course.thumbnail}`}
+	alt={course.title}
+/>
 
 			<div>
 				<h2>{course.title}</h2>
