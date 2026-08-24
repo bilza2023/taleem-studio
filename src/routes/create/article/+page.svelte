@@ -1,32 +1,24 @@
-
 <script>
+  import { config } from '$lib/config.js';
+
   let form = {
-    slug: '',
-    title: '',
-    description: '',
-    thumbnail: '',
-    body: '',
-    courseSlug: '',
-    groupSlug: '',
-    sortOrder: 0,
-    allowCommunication: true,
-    meta: ''
+    slug: '', title: '', description: '', thumbnail: '', body: '',
+    courseSlug: '', groupSlug: '', sortOrder: 0,
+    allowCommunication: true, meta: ''
   };
 
   let message = '';
 
   async function submit() {
     message = 'Saving...';
-
     try {
-      const res = await fetch('/create/article', {
+      const res = await fetch(`${config.apiUrl}create/article`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || 'Failed');
 
       message = `Created: ${data.slug}`;
@@ -36,7 +28,6 @@
     }
   }
 </script>
-
 <div class="page">
   <h1>Create Article</h1>
 

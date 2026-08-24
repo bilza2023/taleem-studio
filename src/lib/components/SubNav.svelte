@@ -3,17 +3,17 @@
 
 	let { active = "" } = $props();
 
-	const appUrl = config.apiUrl;
+	const apiUrl = config.apiUrl;
 
 	const categories = [
-		{ id: "add-article", title: "＋ Article", href: `${appUrl}/create/article` },
-		{ id: "add-player", title: "＋ Player", href: `${appUrl}/create/player` },
-		{ id: "add-svg", title: "＋ SVG", href: `${appUrl}/create/svg` },
-		{ id: "add-image", title: "＋ Image", href: `${appUrl}/create/image` },
-		{ id: "add-audio", title: "＋ Audio", href: `${appUrl}/create/audio` },
-		{ id: "courses", title: "Courses", href: `${appUrl}/courses` },
-		{ id: "assets", title: "Assets", href: `${appUrl}/assets` },
-		{ id: "manifest", title: "AI Manifest", href: `${appUrl}/manifest` }
+		{ id: "add-article", title: "＋ Article", href: `${apiUrl}create/article` },
+		{ id: "add-player", title: "＋ Player", href: `${apiUrl}create/player` },
+		{ id: "add-svg", title: "＋ SVG", href: `${apiUrl}create/svg` },
+		{ id: "add-image", title: "＋ Image", href: `${apiUrl}create/image` },
+		{ id: "add-audio", title: "＋ Audio", href: `${apiUrl}create/audio` },
+		{ id: "courses", title: "Courses", href: `${apiUrl}courses` },
+		{ id: "assets", title: "Assets", href: `${apiUrl}assets` },
+		{ id: "manifest", title: "AI Manifest", href: `${apiUrl}manifest` }
 	];
 </script>
 
