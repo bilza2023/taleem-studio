@@ -1,5 +1,6 @@
 <script>
 	import { goto } from "$app/navigation";
+	import { adminLogin } from "$lib/api/auth.js";
 
 	let email = $state("");
 	let password = $state("");
@@ -11,22 +12,7 @@
 		loading = true;
 
 		try {
-			const res = await fetch("/signin", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					email,
-					password
-				})
-			});
-
-			const data = await res.json();
-
-			if (!res.ok) {
-				throw new Error(data.error || "Sign in failed");
-			}
+			const data = await adminLogin(email, password);
 
 			localStorage.setItem("taleem-admin-token", data.token);
 			localStorage.setItem("taleem-admin-email", email);

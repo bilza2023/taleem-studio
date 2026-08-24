@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem.studio/db/library.js
 import kernel from 'taleem-kernel';
 
 export async function createArticle(data) {
@@ -28,4 +29,7 @@ export async function updateLibrary(slug, data) {
 
 export async function deleteLibrary(slug) {
   return kernel.library.delete(slug);
+}
+export async function listLibraryByGroup(courseSlug, groupSlug) {
+	return kernel.library.listByGroup(courseSlug, groupSlug);
 }

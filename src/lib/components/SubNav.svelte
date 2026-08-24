@@ -1,18 +1,17 @@
-<script>
-	import { config } from "$lib/config.js";
 
+<script>
+import { config } from "$lib/config.js";
+
+const basePath = config.basePath;
 	let { active = "" } = $props();
 
-	const apiUrl = config.apiUrl;
-
-	const categories = [
-		{ id: "home", title: "Home", href: `${apiUrl}` },
-		{ id: "assets", title: "Assets", href: `${apiUrl}assets` },
-
-		{ id: "add-svg", title: "＋ SVG", href: `${apiUrl}create/svg` },
-		{ id: "add-image", title: "＋ Image", href: `${apiUrl}create/image` },
-		{ id: "add-audio", title: "＋ Audio", href: `${apiUrl}create/audio` },
-	];
+const categories = [
+	{ id: "home", title: "Home", href: `${basePath}/` },
+	{ id: "assets", title: "Assets", href: `${basePath}/assets` },
+	{ id: "add-svg", title: "＋ SVG", href: `${basePath}/create/svg` },
+	{ id: "add-image", title: "＋ Image", href: `${basePath}/create/image` },
+	{ id: "add-audio", title: "＋ Audio", href: `${basePath}/create/audio` }
+];
 </script>
 
 <div class="wrapper">

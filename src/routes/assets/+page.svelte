@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from "svelte";
+	import { config } from "$lib/config";
 
 	let assets = $state([]);
 	let filtered = $state([]);
@@ -11,7 +12,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch("/assets");
+			const res = await fetch(`${config.apiUrl}/assets`);
 
 			if (!res.ok) {
 				throw new Error("Failed to load assets");

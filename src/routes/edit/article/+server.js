@@ -1,7 +1,19 @@
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/article/+server.js
 import { json } from "@sveltejs/kit";
-import kernel from "taleem-kernel";
+import { requireAdminForCourse } from "$lib/server/auth/requireAdmin.js";
+import {
+	getLibrary,
+	createArticle,
+	updateLibrary,
+	deleteLibrary
+} from "$lib/server/library.js";
+import {
+	getCourse,
+	getGroup,
+	getGroupItems
+} from "$lib/server/course.js";
 
-export async function GET({ url }) {
+export async function GET({ request, url }) {
 	try {
 		const slug = url.searchParams.get("slug");
 		const courseSlug = url.searchParams.get("course");
@@ -14,7 +26,9 @@ export async function GET({ url }) {
 			);
 		}
 
-		const course = await kernel.course.get(courseSlug);
+		await requireAdminForCourse(request, courseSlug);
+
+		const course = await getCourse(courseSlug);
 
 		if (!course) {
 			return json(
@@ -23,7 +37,7 @@ export async function GET({ url }) {
 			);
 		}
 
-		const group = await kernel.course.getGroup(courseSlug, groupSlug);
+		const group = await getGroup(courseSlug, groupSlug);
 
 		if (!group) {
 			return json(
@@ -32,7 +46,7 @@ export async function GET({ url }) {
 			);
 		}
 
-		const groupItems = await kernel.course.getGroupItems(courseSlug, groupSlug);
+		const groupItems = await getGroupItems(courseSlug, groupSlug);
 
 		if (!groupItems.includes(slug)) {
 			return json(
@@ -41,7 +55,7 @@ export async function GET({ url }) {
 			);
 		}
 
-		let article = await kernel.library.get(slug);
+		let article = await getLibrary(slug);
 
 		if (article) {
 			if (
@@ -64,12 +78,11 @@ export async function GET({ url }) {
 			return json(article);
 		}
 
-		article = await kernel.library.create({
+		article = await createArticle({
 			slug,
 			title: "",
 			description: "",
 			thumbnail: "",
-			type: "ARTICLE",
 			body: "",
 			courseSlug,
 			groupSlug,
@@ -79,9 +92,14 @@ export async function GET({ url }) {
 		});
 
 		return json(article, { status: 201 });
+
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 500 });
+
+		return json(
+			{ error: error.message },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -98,10 +116,15 @@ export async function PUT({ request, url }) {
 			);
 		}
 
-		const article = await kernel.library.get(slug);
+		await requireAdminForCourse(request, courseSlug);
+
+		const article = await getLibrary(slug);
 
 		if (!article) {
-			return json({ error: "Article not found" }, { status: 404 });
+			return json(
+				{ error: "Article not found" },
+				{ status: 404 }
+			);
 		}
 
 		if (
@@ -124,16 +147,21 @@ export async function PUT({ request, url }) {
 		delete data.createdAt;
 		delete data.updatedAt;
 
-		const updated = await kernel.library.update(slug, data);
+		const updated = await updateLibrary(slug, data);
 
 		return json(updated);
+
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }
 
-export async function DELETE({ url }) {
+export async function DELETE({ request, url }) {
 	try {
 		const slug = url.searchParams.get("slug");
 		const courseSlug = url.searchParams.get("course");
@@ -146,10 +174,15 @@ export async function DELETE({ url }) {
 			);
 		}
 
-		const article = await kernel.library.get(slug);
+		await requireAdminForCourse(request, courseSlug);
+
+		const article = await getLibrary(slug);
 
 		if (!article) {
-			return json({ error: "Article not found" }, { status: 404 });
+			return json(
+				{ error: "Article not found" },
+				{ status: 404 }
+			);
 		}
 
 		if (
@@ -163,11 +196,16 @@ export async function DELETE({ url }) {
 			);
 		}
 
-		await kernel.library.delete(slug);
+		await deleteLibrary(slug);
 
 		return json({ deleted: slug });
+
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }

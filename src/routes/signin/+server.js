@@ -1,5 +1,5 @@
 import { json } from "@sveltejs/kit";
-import kernel from "taleem-kernel";
+import { loginAdmin } from "$lib/server/admin.js";
 
 export async function POST({ request }) {
 	try {
@@ -12,7 +12,7 @@ export async function POST({ request }) {
 			);
 		}
 
-		const token = await kernel.admin.login(email, password);
+		const token = await loginAdmin(email, password);
 
 		return json({ token });
 	} catch (error) {

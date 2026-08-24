@@ -3,6 +3,7 @@
 	import { page } from "$app/state";
 	import Communication from "$lib/components/Communication.svelte";
 	import Discussion from "$lib/components/Discussion.svelte";
+	import { admin } from "$lib/api/admin.js";
 
 	let librarySlug = $state("");
 	let libraryItem = $state(null);
@@ -28,17 +29,9 @@
 		}
 
 		try {
-			const res = await fetch(
+			libraryItem = await admin.get(
 				`/articles?article=${encodeURIComponent(librarySlug)}`
 			);
-
-			const data = await res.json();
-
-			if (!res.ok) {
-				throw new Error(data.error || "Failed to load article");
-			}
-
-			libraryItem = data;
 		} catch (err) {
 			error = err.message;
 		} finally {

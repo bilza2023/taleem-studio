@@ -1,5 +1,6 @@
 <script>
 	import { page } from "$app/state";
+	import { admin } from "$lib/api/admin.js";
 
 	let course = $state(null);
 	let pending = $state([]);
@@ -12,10 +13,9 @@
 
 			if (!courseSlug) throw new Error("Course is required");
 
-			const res = await fetch(`/pending?course=${encodeURIComponent(courseSlug)}`);
-			const data = await res.json();
-
-			if (!res.ok) throw new Error(data.error || "Failed to load pending items");
+			const data = await admin.get(
+				`/pending?course=${encodeURIComponent(courseSlug)}`
+			);
 
 			course = data.course;
 			pending = data.pending;

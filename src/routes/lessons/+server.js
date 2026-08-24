@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
-import kernel from "taleem-kernel";
-import { requireAdminForCourse } from "$lib/utils/requireAdminForCourse.js";
-// import { requireAdmin } from "$lib/utils/requireAdmin.js";
+import { requireAdminForCourse } from "$lib/server/auth/requireAdmin.js";
+import { getCourse } from "$lib/server/course.js";
+import { listLibrary } from "$lib/server/library.js";
 
 export async function GET({ request, url }) {
 	try {
@@ -11,29 +11,9 @@ export async function GET({ request, url }) {
 			return json({ error: "Course is required" }, { status: 400 });
 		}
 
-		let admin;
+		await requireAdminForCourse(request, courseSlug);
 
-		try {
-			admin = await requireAdminForCourse(request, courseSlug);
-		} catch (error) {
-			const message = error.message || "Admin authentication failed";
-
-			if (message === "Authentication required" || message.includes("authentication")) {
-				return json({ error: message }, { status: 401 });
-			}
-
-			if (message.includes("not authorized")) {
-				return json({ error: message }, { status: 403 });
-			}
-
-			return json({ error: message }, { status: 401 });
-		}
-
-		const courses = await kernel.course.list();
-
-		const course = courses.find(
-			item => item.slug === courseSlug
-		);
+		const course = await getCourse(courseSlug);
 
 		if (!course) {
 			return json(
@@ -50,10 +30,10 @@ export async function GET({ request, url }) {
 			}
 		}
 
-		const items = await kernel.library.list({
-			course: courseSlug,
-			sort: "sortOrder"
-		});
+		const items = await listLibrary({
+	courseSlug,
+	sort: "sortOrder"
+});
 
 		return json({ course, items });
 

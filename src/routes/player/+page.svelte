@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
-import { get } from "svelte/store";
+	import { get } from "svelte/store";
 	import { getAudioFileName } from "./js/getAudioFileName.js";
 	import { resolveAssetPaths } from "./js/resolveAssetPaths.js";
 	import { getTimer } from "./js/getTimer.js";
@@ -96,7 +96,7 @@ import { get } from "svelte/store";
 			);
 
 			const audioFileName = getAudioFileName(presentation);
-debugger;
+
 			timer = await getTimer(audioFileName, Howl);
 
 			deckEndTime =
@@ -125,6 +125,7 @@ debugger;
 		};
 	});
 </script>
+
 {#if presentation}
 
 <div

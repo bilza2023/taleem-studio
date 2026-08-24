@@ -1,7 +1,9 @@
 
 <script>
 	import { page } from "$app/state";
-let deleting = $state(false);
+	import { admin } from "$lib/api/admin.js";
+
+	let deleting = $state(false);
 	let form = $state({
 		slug: "",
 		title: "",
@@ -20,32 +22,28 @@ let deleting = $state(false);
 	let saving = $state(false);
 
 	async function deleteArticle() {
-	if (!confirm(`Delete "${form.slug}"? It will return to Pending Content.`)) return;
+		if (!confirm(`Delete "${form.slug}"? It will return to Pending Content.`)) return;
 
-	deleting = true;
-	message = "Deleting...";
+		deleting = true;
+		message = "Deleting...";
 
-	try {
-		const course = page.url.searchParams.get("course");
-		const group = page.url.searchParams.get("group");
-		const slug = page.url.searchParams.get("slug");
+		try {
+			const course = page.url.searchParams.get("course");
+			const group = page.url.searchParams.get("group");
+			const slug = page.url.searchParams.get("slug");
 
-		const res = await fetch(
-			`/edit/article?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`,
-			{ method: "DELETE" }
-		);
+			await admin.delete(
+				`/edit/article?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`
+			);
 
-		const data = await res.json();
-
-		if (!res.ok) throw new Error(data.error || "Failed to delete");
-
-		window.location.href = `/pending?course=${encodeURIComponent(course)}`;
-	} catch (error) {
-		console.error(error);
-		message = `Error: ${error.message}`;
-		deleting = false;
+			window.location.href = `/pending?course=${encodeURIComponent(course)}`;
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`;
+			deleting = false;
+		}
 	}
-}
+
 	async function load() {
 		try {
 			const course = page.url.searchParams.get("course");
@@ -56,13 +54,9 @@ let deleting = $state(false);
 				throw new Error("Course, group and slug are required");
 			}
 
-			const res = await fetch(
+			const data = await admin.get(
 				`/edit/article?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`
 			);
-
-			const data = await res.json();
-
-			if (!res.ok) throw new Error(data.error || "Failed to load");
 
 			form = {
 				slug: data.slug,
@@ -95,26 +89,18 @@ let deleting = $state(false);
 			const group = page.url.searchParams.get("group");
 			const slug = page.url.searchParams.get("slug");
 
-			const res = await fetch(
+			const data = await admin.put(
 				`/edit/article?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`,
 				{
-					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						title: form.title,
-						description: form.description,
-						thumbnail: form.thumbnail,
-						body: form.body,
-						sortOrder: form.sortOrder,
-						allowCommunication: form.allowCommunication,
-						meta: form.meta
-					})
+					title: form.title,
+					description: form.description,
+					thumbnail: form.thumbnail,
+					body: form.body,
+					sortOrder: form.sortOrder,
+					allowCommunication: form.allowCommunication,
+					meta: form.meta
 				}
 			);
-
-			const data = await res.json();
-
-			if (!res.ok) throw new Error(data.error || "Failed");
 
 			message = `Saved: ${data.slug}`;
 		} catch (error) {

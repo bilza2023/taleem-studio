@@ -1,9 +1,0 @@
-GET /library/:librarySlug
-GET /public/course
-GET /communication/me
-GET /public/course
-GET /public/library?course=:courseSlug
-GET /library/:lessonSlug
-POST /user/login
-POST /user/register
-POST /communication
