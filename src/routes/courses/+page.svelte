@@ -2,8 +2,6 @@
 	import { onMount } from "svelte";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import SubNav from "$lib/components/SubNav.svelte";
-
 	let active = $state("courses");
 	let home = $state(null);
 	let error = $state("");
@@ -35,7 +33,6 @@
 	});
 </script>
 
-<SubNav active={active} />
 
 {#if error}
 	<p>{error}</p>

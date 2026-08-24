@@ -35,7 +35,7 @@
 		"howler": "^2.2.4",
 		"katex": "^0.16.47",
 		"taleem-action-runner": "^0.0.1",
-		"taleem-kernel": "^1.0.1",
+		"taleem-kernel": "^1.2.0",
 		"taleem-pam": "^1.0.1",
 		"taleem-tag-engine": "^1.0.0",
 		"zod": "^4.4.3"

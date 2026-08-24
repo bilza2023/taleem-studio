@@ -73,11 +73,14 @@
 	course={course}
 	lessonCount={home.items.length}
 />
+
 <GroupingNav
 	groupings={course.groupings}
 	value={selectedGrouping}
 	onChange={handleGroupingChange}
 />
+
+
 <div class="links-container">
 	<HomeLinks homeLinks={visibleItems} />
 

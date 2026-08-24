@@ -14,16 +14,9 @@ async function main() {
   console.log('\nCreating syllabus...');
 
   for (const [name, course] of Object.entries(syllabus)) {
-    const data = {
-      ...course,
-      groupings: JSON.stringify(course.groupings ?? [])
-    };
-
-    const created = await kernel.course.create(data);
+    const created = await kernel.course.seed(course);
     console.log(`Created: ${created.slug}`);
   }
-
-//   console.log('\nCourses:', await kernel.course.list());
 }
 
 main()

@@ -24,6 +24,18 @@ enum AdminRole {
   SUPER_ADMIN
 }
 
+model Group {
+  id          Int      @id @default(autoincrement())
+  courseSlug  String
+  slug        String
+  title       String
+  thumbnail   String?
+  items       Json
+
+  @@unique([courseSlug, slug])
+  @@index([courseSlug])
+}
+
 model Course {
   slug        String       @unique
   title       String
@@ -31,7 +43,6 @@ model Course {
   thumbnail   String?
   access      CourseAccess @default(OPEN)
   price       Int          @default(0)
-  groupings   String       @default("[]")
 }
 
 model User {

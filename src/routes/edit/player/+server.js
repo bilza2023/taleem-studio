@@ -1,45 +1,98 @@
-
-import { json } from '@sveltejs/kit';
-import { getLibrary, updateLibrary } from '../../../../db/library.js';
+import { json } from "@sveltejs/kit";
+import kernel from "taleem-kernel";
 
 export async function GET({ url }) {
-  try {
-    const slug = url.searchParams.get('slug');
+	try {
+		const slug = url.searchParams.get("slug");
+		const courseSlug = url.searchParams.get("course");
+		const groupSlug = url.searchParams.get("group");
 
-    if (!slug) return json({ error: 'Slug is required' }, { status: 400 });
+		if (!slug || !courseSlug || !groupSlug) {
+			return json({ error: "Slug, course and group are required" }, { status: 400 });
+		}
 
-    const player = await getLibrary(slug);
+		const course = await kernel.course.get(courseSlug);
+		if (!course) return json({ error: `Course "${courseSlug}" not found` }, { status: 404 });
 
-    if (!player) return json({ error: 'Player not found' }, { status: 404 });
+		const group = await kernel.course.getGroup(courseSlug, groupSlug);
+		if (!group) return json({ error: `Group "${groupSlug}" not found` }, { status: 404 });
 
-    if (player.type !== 'PLAYER') {
-      return json({ error: 'Library item is not a Player' }, { status: 400 });
-    }
+		const groupItems = await kernel.course.getGroupItems(courseSlug, groupSlug);
+		if (!groupItems.includes(slug)) {
+			return json({ error: `Item "${slug}" is not part of group "${groupSlug}"` }, { status: 400 });
+		}
 
-    return json(player);
-  } catch (error) {
-    console.error(error);
-    return json({ error: error.message }, { status: 500 });
-  }
+		let player = await kernel.library.get(slug);
+
+		if (player) {
+			if (player.courseSlug !== courseSlug || player.groupSlug !== groupSlug) {
+				return json({ error: "Library item belongs to a different course or group" }, { status: 409 });
+			}
+
+			if (player.type !== "PLAYER") {
+				return json({ error: `Item already exists as ${player.type}` }, { status: 409 });
+			}
+
+			return json(player);
+		}
+
+		player = await kernel.library.create({
+			slug,
+			title: "",
+			description: "",
+			thumbnail: "",
+			type: "PLAYER",
+			body: "",
+			courseSlug,
+			groupSlug,
+			sortOrder: 0,
+			allowCommunication: true,
+			meta: ""
+		});
+
+		return json(player, { status: 201 });
+	} catch (error) {
+		console.error(error);
+		return json({ error: error.message }, { status: 500 });
+	}
 }
 
 export async function PUT({ request, url }) {
-  try {
-    const slug = url.searchParams.get('slug');
+	try {
+		const slug = url.searchParams.get("slug");
+		const courseSlug = url.searchParams.get("course");
+		const groupSlug = url.searchParams.get("group");
 
-    if (!slug) return json({ error: 'Slug is required' }, { status: 400 });
+		if (!slug || !courseSlug || !groupSlug) {
+			return json({ error: "Slug, course and group are required" }, { status: 400 });
+		}
 
-    const data = await request.json();
+		const player = await kernel.library.get(slug);
 
-    delete data.type;
-    delete data.createdAt;
-    delete data.updatedAt;
+		if (!player) return json({ error: "Player not found" }, { status: 404 });
 
-    const player = await updateLibrary(slug, data);
+		if (
+			player.courseSlug !== courseSlug ||
+			player.groupSlug !== groupSlug ||
+			player.type !== "PLAYER"
+		) {
+			return json({ error: "Player identity does not match URL" }, { status: 409 });
+		}
 
-    return json(player);
-  } catch (error) {
-    console.error(error);
-    return json({ error: error.message }, { status: 400 });
-  }
+		const data = await request.json();
+
+		delete data.slug;
+		delete data.courseSlug;
+		delete data.groupSlug;
+		delete data.type;
+		delete data.createdAt;
+		delete data.updatedAt;
+
+		const updated = await kernel.library.update(slug, data);
+
+		return json(updated);
+	} catch (error) {
+		console.error(error);
+		return json({ error: error.message }, { status: 400 });
+	}
 }
