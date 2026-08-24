@@ -1,94 +1,60 @@
 <script>
-	import HomeLinks from "$lib/components/HomeLinks.svelte";
-	
+	import { onMount } from "svelte";
+	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import apiFetch from "$lib/utils/fetch";
 
+	let active = $state("courses");
 	let home = $state(null);
 	let error = $state("");
-	
 
-async function loadLibrary() {
+	async function loadCourses(id = "courses") {
+		active = id;
 
-	try {
+		try {
+			error = "";
 
-		error = "";
+			const res = await fetch("/");
+			const items = await res.json();
 
-		const courses = await apiFetch(
-			"GET",
-			"/public/course"
-		);
+			if (!res.ok) {
+				throw new Error(items.error || "Failed to load courses");
+			}
 
-		const lists = await Promise.all(
-			courses.map(course =>
-				apiFetch(
-					"GET",
-					`/public/course/${course.slug}/list`
-				)
-			)
-		);
-
-		const items = lists.flat();
-
-		items.sort((a, b) =>
-			new Date(b.createdAt) - new Date(a.createdAt)
-		);
-
-		home = {
-			items: items.map(item => ({
-				...item,
-				image: `/content/images/${item.thumbnail}`
-			}))
-		};
-
-	}
-	catch (err) {
-
-		error = err.message;
-
+			home = {
+				items: items.map(item => ({
+					...item,
+					image: item.thumbnail
+				}))
+			};
+		} catch (err) {
+			error = err.message;
+		}
 	}
 
-}
-
-	$effect(() => {
-		loadLibrary();
+	onMount(() => {
+		loadCourses();
 	});
-
 </script>
 
-
-
 {#if error}
-
 	<p>{error}</p>
-
 {:else if !home}
-
 	<p>Loading...</p>
-
 {:else}
-
 	<div class="container">
-
-		<HomeLinks homeLinks={home.items} />
-
+		<CourseLinks homeLinks={home.items} />
 	</div>
 
-	<br/>
-	<br/>
+	<br />
+	<br />
 
 	<Footer />
-
 {/if}
 
 <style>
-
-.container {
-	min-height: 100vh;
-	margin: 0;
-	padding: 0;
-	background: var(--theme-panel);
-	color: var(--theme-text);
-}
-
+	.container {
+		padding: 10px;
+		margin: 10px;
+		min-height: 100vh;
+	}
 </style>

@@ -9,6 +9,7 @@
   let loading = true;
   let error = '';
 
+	let active = $state("assets");
   onMount(async () => {
     try {
       const res = await fetch('/assets');

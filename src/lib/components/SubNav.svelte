@@ -6,11 +6,9 @@
 	const apiUrl = config.apiUrl;
 
 	const categories = [
-		{ id: "courses", title: "Courses", href: `${apiUrl}courses` },
+		{ id: "home", title: "Home", href: `${apiUrl}` },
 		{ id: "assets", title: "Assets", href: `${apiUrl}assets` },
 
-		{ id: "add-article", title: "＋ Article", href: `${apiUrl}create/article` },
-		{ id: "add-player", title: "＋ Player", href: `${apiUrl}create/player` },
 		{ id: "add-svg", title: "＋ SVG", href: `${apiUrl}create/svg` },
 		{ id: "add-image", title: "＋ Image", href: `${apiUrl}create/image` },
 		{ id: "add-audio", title: "＋ Audio", href: `${apiUrl}create/audio` },
