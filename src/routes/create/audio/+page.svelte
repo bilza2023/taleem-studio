@@ -1,5 +1,6 @@
 <script>
-import { config } from '$lib/config.js';
+  import { config } from '$lib/config.js';
+
   let file;
   let title = '';
   let tags = '';
@@ -7,7 +8,7 @@ import { config } from '$lib/config.js';
 
   async function submit() {
     if (!file) {
-      message = 'Please select an image.';
+      message = 'Please select an audio file.';
       return;
     }
 
@@ -19,13 +20,12 @@ import { config } from '$lib/config.js';
       data.append('title', title);
       data.append('tags', tags);
 
-    const res = await fetch(`${config.apiUrl}create/image`, {
-  method: 'POST',
-  body: data
-  });
+      const res = await fetch(`${config.apiUrl}create/audio`, {
+        method: 'POST',
+        body: data
+      });
 
       const result = await res.json();
-
       if (!res.ok) throw new Error(result.error || 'Upload failed');
 
       message = `Created: ${result.slug}`;
@@ -35,15 +35,16 @@ import { config } from '$lib/config.js';
     }
   }
 </script>
+
 <div class="page">
-  <h1>Create Image</h1>
+  <h1>Create Audio</h1>
 
   <form on:submit|preventDefault={submit}>
     <label>
-      Image
+      Audio
       <input
         type="file"
-        accept="image/*"
+        accept="audio/*"
         on:change={(e) => file = e.currentTarget.files[0]}
         required
       >
@@ -56,10 +57,10 @@ import { config } from '$lib/config.js';
 
     <label>
       Tags
-      <input bind:value={tags} placeholder="math, number-line, chapter-1">
+      <input bind:value={tags} placeholder="algebra, introduction, chapter-1">
     </label>
 
-    <button type="submit">Upload Image</button>
+    <button type="submit">Upload Audio</button>
   </form>
 
   {#if message}
@@ -96,7 +97,6 @@ import { config } from '$lib/config.js';
     border: 1px solid #bbb;
     border-radius: 5px;
     font: inherit;
-    font-weight: 400;
     background: white;
   }
 

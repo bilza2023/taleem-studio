@@ -1,3 +1,4 @@
+
 import { json } from '@sveltejs/kit';
 import { listAssets } from '../../../db/assets.js';
 
