@@ -129,7 +129,7 @@
 	{#each homeLinks as card}
 		<div class={`card ${card.access?.toLowerCase()}`}>
 			{#if card.image}
-				<img src={card.image} alt={card.title} />
+<img src={`${config.basePath}/content/images/${card.image}`} alt={card.title} />
 			{/if}
 
 			<div class="content">

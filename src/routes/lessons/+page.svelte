@@ -1,5 +1,6 @@
 <script>
-	import HomeLinks from "$lib/components/HomeLinks.svelte";
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/lessons/+page.svelte
+import HomeLinks from "$lib/components/HomeLinks.svelte";
 	import CourseHero from "$lib/components/CourseHero.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import { page } from "$app/state";
@@ -35,11 +36,17 @@
 			course = data.course;
 
 			home = {
-				items: data.items.map(item => ({
-					...item,
-					image: `/content/images/${item.thumbnail}`
-				}))
-			};
+		items: data.items.map(item => ({
+		...item,
+		image: item.thumbnail
+		}))
+		};
+			// home = {
+			// 	items: data.items.map(item => ({
+			// 		...item,
+			// 		image: `/content/images/${item.thumbnail}`
+			// 	}))
+			// };
 		} catch (err) {
 			error = err.message;
 		}

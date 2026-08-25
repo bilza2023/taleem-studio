@@ -11,7 +11,7 @@ import { config } from "$lib/config.js";
 		>
 			{#if card.image}
 				<img
-					src={`/content/images/${card.image}`}
+				src={`${config.basePath}/content/images/${card.image}`}
 					alt={card.title}
 				/>
 			{/if}

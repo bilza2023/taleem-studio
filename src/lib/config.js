@@ -6,7 +6,7 @@ export const config = {
   basePath: "/admin",
   
   // apiUrl: "http://localhost:5173",
-  // imageDir : '/home/bilal-tariq/00--TALEEM/taleem.studio/content/images',
+  // imageDir : 'content/images',
   // contentDir: "/home/bilal-tariq/00--TALEEM/taleem.studio/content",
   // basePath: "",
 };
