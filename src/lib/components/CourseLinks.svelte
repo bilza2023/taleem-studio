@@ -1,6 +1,32 @@
 <script>
 	let { homeLinks = [] } = $props();
+import { config } from "$lib/config.js";
 </script>
+
+<div class="grid">
+	{#each homeLinks as card}
+		<a
+			class={`card ${card.access?.toLowerCase()}`}
+			href={`${config.basePath}/lessons?course=${encodeURIComponent(card.slug)}`}
+		>
+			{#if card.image}
+				<img
+					src={`/content/images/${card.image}`}
+					alt={card.title}
+				/>
+			{/if}
+
+			<div class="content">
+				<h2>{card.title}</h2>
+
+				{#if card.description}
+					<p>{card.description}</p>
+				{/if}
+			</div>
+		</a>
+	{/each}
+</div>
+
 
 <style>
 	.grid {
@@ -78,27 +104,3 @@
 		overflow: hidden;
 	}
 </style>
-
-<div class="grid">
-	{#each homeLinks as card}
-		<a
-			class={`card ${card.access?.toLowerCase()}`}
-			href={`/lessons?course=${encodeURIComponent(card.slug)}`}
-		>
-			{#if card.image}
-				<img
-					src={`/content/images/${card.image}`}
-					alt={card.title}
-				/>
-			{/if}
-
-			<div class="content">
-				<h2>{card.title}</h2>
-
-				{#if card.description}
-					<p>{card.description}</p>
-				{/if}
-			</div>
-		</a>
-	{/each}
-</div>

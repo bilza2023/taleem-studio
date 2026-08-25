@@ -5,7 +5,8 @@
 	import { page } from "$app/state";
 	import { admin } from "$lib/api/admin.js";
 	import GroupingNav from "$lib/components/GroupingNav.svelte";
-
+	import { config } from "$lib/config.js";
+	
 	let home = $state(null);
 	let course = $state(null);
 	let error = $state("");
@@ -76,7 +77,7 @@
 />
 <a
 	class="pending-link"
-	href={`/pending?course=${encodeURIComponent(course.slug)}`}
+	href={`${config.basePath}/pending?course=${encodeURIComponent(course.slug)}`}
 >
 	Pending Content
 </a>
