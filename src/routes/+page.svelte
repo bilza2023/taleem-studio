@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from "svelte";
+	import { admin } from "$lib/api/admin.js";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 
@@ -13,12 +14,7 @@
 		try {
 			error = "";
 
-			const res = await fetch("/");
-			const items = await res.json();
-
-			if (!res.ok) {
-				throw new Error(items.error || "Failed to load courses");
-			}
+			const items = await admin.get("/");
 
 			home = {
 				items: items.map(item => ({
@@ -35,7 +31,6 @@
 		loadCourses();
 	});
 </script>
-
 {#if error}
 	<p>{error}</p>
 {:else if !home}
