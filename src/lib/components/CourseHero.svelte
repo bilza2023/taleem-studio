@@ -9,15 +9,19 @@
 
 {#if course}
 
-<section class:expanded class="course-hero">
+<section class="course-hero">
 
-	<button class="course-strip" onclick={() => expanded = !expanded} aria-expanded={expanded}>
+	<button
+		class="course-strip"
+		onclick={() => expanded = !expanded}
+		aria-expanded={expanded}
+	>
 
 		<img
-	class="thumbnail"
-	src={`${config.basePath}/content/images/${course.thumbnail}`}
-	alt={course.title}
-/>
+			class="thumbnail"
+			src={`${config.basePath}/content/images/${course.thumbnail}`}
+			alt={course.title}
+		/>
 
 		<div class="summary">
 			<h1>{course.title}</h1>
@@ -42,16 +46,18 @@
 
 	{#if expanded}
 		<div class="details">
-	<img
-	class="large-thumbnail"
-	src={`/content/images/${course.thumbnail}`}
-	alt={course.title}
-/>
+
+			<img
+				class="large-thumbnail"
+				src={`${config.basePath}/content/images/${course.thumbnail}`}
+				alt={course.title}
+			/>
 
 			<div>
 				<h2>{course.title}</h2>
 				<p>{course.description}</p>
 			</div>
+
 		</div>
 	{/if}
 
@@ -60,7 +66,6 @@
 {/if}
 
 <style>
-
 .course-hero {
 	margin-bottom: 12px;
 	border: 1px solid #ddd;
@@ -120,91 +125,89 @@
 .item {
 	padding: 6px 10px;
 	border-radius: 7px;
-	background: rgba(0, 0, 0, .04);
+	background: rgba(0,0,0,.04);
 }
 
 .item span {
-	display: block;
-	font-size: .7rem;
-	opacity: .65;
+	display:block;
+	font-size:.7rem;
+	opacity:.65;
 }
 
 .item strong {
-	font-size: .85rem;
+	font-size:.85rem;
 }
 
 .arrow {
-	width: 24px;
-	flex-shrink: 0;
-	opacity: .6;
-	text-align: center;
+	width:24px;
+	flex-shrink:0;
+	opacity:.6;
+	text-align:center;
 }
 
 .course-strip:hover {
-	background: rgba(0, 0, 0, .03);
+	background:rgba(0,0,0,.03);
 }
 
 .details {
-	display: flex;
-	gap: 20px;
-	padding: 0 18px 18px;
-	border-top: 1px solid rgba(128, 128, 128, .2);
-	padding-top: 18px;
+	display:flex;
+	gap:20px;
+	padding:18px;
+	border-top:1px solid rgba(128,128,128,.2);
 }
 
 .large-thumbnail {
-	width: 180px;
-	height: 180px;
-	object-fit: cover;
-	border-radius: 10px;
-	flex-shrink: 0;
+	width:180px;
+	height:180px;
+	object-fit:cover;
+	border-radius:10px;
+	flex-shrink:0;
 }
 
 .details h2 {
-	margin-top: 0;
+	margin-top:0;
 }
 
 .details p {
-	line-height: 1.5;
+	line-height:1.5;
 }
 
-@media (max-width: 700px) {
+@media(max-width:700px) {
 
 	.course-strip {
-		padding: 8px 10px;
-		gap: 10px;
+		padding:8px 10px;
+		gap:10px;
 	}
 
 	.thumbnail {
-		width: 56px;
-		height: 56px;
+		width:56px;
+		height:56px;
 	}
 
 	.summary h1 {
-		font-size: 1.05rem;
+		font-size:1.05rem;
 	}
 
 	.summary p {
-		display: none;
+		display:none;
 	}
 
 	.meta {
-		gap: 4px;
+		gap:4px;
 	}
 
 	.item {
-		padding: 5px 7px;
+		padding:5px 7px;
 	}
 
 	.details {
-		flex-direction: column;
+		flex-direction:column;
 	}
 
 	.large-thumbnail {
-		width: 100%;
-		height: auto;
+		width:100%;
+		height:auto;
 	}
 
 }
-
 </style>
