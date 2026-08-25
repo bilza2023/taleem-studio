@@ -41,12 +41,7 @@ import HomeLinks from "$lib/components/HomeLinks.svelte";
 		image: item.thumbnail
 		}))
 		};
-			// home = {
-			// 	items: data.items.map(item => ({
-			// 		...item,
-			// 		image: `/content/images/${item.thumbnail}`
-			// 	}))
-			// };
+			
 		} catch (err) {
 			error = err.message;
 		}
