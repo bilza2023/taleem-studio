@@ -1,119 +1,86 @@
 
 <script>
-	import { page } from "$app/state";
-	import { admin } from "$lib/api/admin.js";
+	import { onMount } from "svelte";
 
-	let deleting = $state(false);
-	let form = $state({
+	let form = {
 		slug: "",
 		title: "",
-		description: "",
-		thumbnail: "",
 		body: "",
-		courseSlug: "",
-		groupSlug: "",
-		sortOrder: 0,
-		allowCommunication: true,
-		meta: ""
-	});
+		tags: "[]"
+	};
 
-	let message = $state("Loading...");
-	let loading = $state(true);
-	let saving = $state(false);
+	let message = "";
 
-	async function load() {
+	let slug = "";
+
+	onMount(async () => {
+		slug = new URLSearchParams(location.search).get("slug") || "";
+
+		if (!slug) {
+			message = "Missing SVG slug";
+			return;
+		}
+
 		try {
-			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
-
-			if (!course || !group || !slug) {
-				throw new Error("Course, group and slug are required");
-			}
-
-			const data = await admin.get(
-				`/edit/player?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`
+			const res = await fetch(
+				`/edit/svg?slug=${encodeURIComponent(slug)}`
 			);
 
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.error || "Failed to load SVG");
+			}
+
 			form = {
-				slug: data.slug,
-				title: data.title ?? "",
-				description: data.description ?? "",
-				thumbnail: data.thumbnail ?? "",
-				body: data.body ?? "",
-				courseSlug: data.courseSlug,
-				groupSlug: data.groupSlug,
-				sortOrder: data.sortOrder ?? 0,
-				allowCommunication: data.allowCommunication ?? true,
-				meta: data.meta ?? ""
+				...form,
+				...data
 			};
 
 			message = "";
+
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
-		} finally {
-			loading = false;
 		}
-	}
+	});
+
 
 	async function submit() {
+
 		message = "Saving...";
-		saving = true;
 
 		try {
-			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
 
-			const data = await admin.put(
-				`/edit/player?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`,
+			const res = await fetch(
+				`/edit/svg?slug=${encodeURIComponent(slug)}`,
 				{
-					title: form.title,
-					description: form.description,
-					thumbnail: form.thumbnail,
-					body: form.body,
-					sortOrder: form.sortOrder,
-					allowCommunication: form.allowCommunication,
-					meta: form.meta
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(form)
 				}
 			);
 
-			message = `Saved: ${data.slug}`;
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.error || "Failed");
+			}
+
+			form = {
+				...form,
+				...data
+			};
+
+			message = `Updated: ${data.slug}`;
+
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
-		} finally {
-			saving = false;
 		}
 	}
-
-	async function deletePlayer() {
-		if (!confirm(`Delete "${form.slug}"? It will return to Pending Content.`)) return;
-
-		deleting = true;
-		message = "Deleting...";
-
-		try {
-			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
-
-			await admin.delete(
-				`/edit/player?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}`
-			);
-
-			window.location.href = `/pending?course=${encodeURIComponent(course)}`;
-		} catch (error) {
-			console.error(error);
-			message = `Error: ${error.message}`;
-			deleting = false;
-		}
-	}
-
-	$effect(() => {
-		load();
-	});
 </script>
 
 <div class="page">

@@ -2,11 +2,19 @@
 	import { onMount } from "svelte";
 	import { admin } from "$lib/api/admin.js";
 
-	let form = { slug: "", title: "", tags: "", body: "" };
-	let message = "Loading...";
+	let form = {
+		slug: "",
+		title: "",
+		body: "",
+		tags: "[]"
+	};
+
+	let message = "";
+	let slug = "";
 
 	onMount(async () => {
-		const slug = new URLSearchParams(location.search).get("slug");
+
+		slug = new URLSearchParams(location.search).get("slug");
 
 		if (!slug) {
 			message = "Missing SVG slug";
@@ -18,47 +26,62 @@
 				`/edit/svg?slug=${encodeURIComponent(slug)}`
 			);
 
-			form = { ...form, ...data };
-			message = "";
+			form = {
+				...form,
+				...data
+			};
+
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
 		}
 	});
 
+
 	async function submit() {
+
 		message = "Saving...";
 
 		try {
+
 			const data = await admin.put(
-				`/edit/svg?slug=${encodeURIComponent(form.slug)}`,
+				`/edit/svg?slug=${encodeURIComponent(slug)}`,
 				form
 			);
 
+			form = {
+				...form,
+				...data
+			};
+
 			message = `Updated: ${data.slug}`;
+
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
 		}
 	}
 </script>
+
+
 <div class="page">
   <h1>Edit SVG</h1>
 
   <form on:submit|preventDefault={submit}>
+
     <label>
       Slug
-      <input bind:value={form.slug} required>
+      <input bind:value={form.slug} disabled>
     </label>
 
     <label>
       Title
-      <input bind:value={form.title}>
+      <input bind:value={form.title} required>
     </label>
 
     <label>
       Tags
-      <input bind:value={form.tags} placeholder='["math","number-line"]'>
+      <input bind:value={form.tags} placeholder='["number-line","math"]'>
     </label>
 
     <label>
@@ -66,13 +89,15 @@
       <textarea class="body" bind:value={form.body} required></textarea>
     </label>
 
-    <button type="submit">Save SVG</button>
+    <button type="submit">Update SVG</button>
+
   </form>
 
   {#if message}
     <p class="message">{message}</p>
   {/if}
 </div>
+
 
 <style>
   .page {

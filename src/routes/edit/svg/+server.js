@@ -2,7 +2,11 @@
 
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
-import { getSvg, updateSvg } from "$lib/server/svg.js";
+import {
+	getSvg,
+	updateSvg
+} from "$lib/server/svg.js";
+
 
 export async function GET({ request, url }) {
 	try {
@@ -11,21 +15,33 @@ export async function GET({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json({ error: "Slug is required" }, { status: 400 });
+			return json(
+				{ error: "Slug required" },
+				{ status: 400 }
+			);
 		}
 
 		const svg = await getSvg(slug);
 
 		if (!svg) {
-			return json({ error: "SVG not found" }, { status: 404 });
+			return json(
+				{ error: "SVG not found" },
+				{ status: 404 }
+			);
 		}
 
 		return json(svg);
+
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 500 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }
+
 
 export async function PUT({ request, url }) {
 	try {
@@ -34,19 +50,28 @@ export async function PUT({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json({ error: "Slug is required" }, { status: 400 });
+			return json(
+				{ error: "Slug required" },
+				{ status: 400 }
+			);
 		}
 
 		const data = await request.json();
 
+		delete data.slug;
 		delete data.createdAt;
 		delete data.updatedAt;
 
 		const svg = await updateSvg(slug, data);
 
 		return json(svg);
+
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }

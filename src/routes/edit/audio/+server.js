@@ -1,10 +1,10 @@
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
 import {
-	getImage,
-	updateImage,
-	deleteImage
-} from "$lib/server/image.js";
+	getAudio,
+	updateAudio,
+	deleteAudio
+} from "$lib/server/audio.js";
 
 
 export async function GET({ request, url }) {
@@ -14,20 +14,30 @@ export async function GET({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json({ error: "Slug required" }, { status: 400 });
+			return json(
+				{ error: "Slug required" },
+				{ status: 400 }
+			);
 		}
 
-		const image = await getImage(slug);
+		const audio = await getAudio(slug);
 
-		if (!image) {
-			return json({ error: "Image not found" }, { status: 404 });
+		if (!audio) {
+			return json(
+				{ error: "Audio not found" },
+				{ status: 404 }
+			);
 		}
 
-		return json(image);
+		return json(audio);
 
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }
 
@@ -39,22 +49,30 @@ export async function PUT({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json({ error: "Slug required" }, { status: 400 });
+			return json(
+				{ error: "Slug required" },
+				{ status: 400 }
+			);
 		}
 
 		const data = await request.json();
 
+		// identity stays fixed
 		delete data.slug;
 		delete data.createdAt;
 		delete data.updatedAt;
 
-		const image = await updateImage(slug, data);
+		const audio = await updateAudio(slug, data);
 
-		return json(image);
+		return json(audio);
 
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }
 
@@ -66,15 +84,24 @@ export async function DELETE({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json({ error: "Slug required" }, { status: 400 });
+			return json(
+				{ error: "Slug required" },
+				{ status: 400 }
+			);
 		}
 
-		await deleteImage(slug);
+		await deleteAudio(slug);
 
-		return json({ deleted: slug });
+		return json({
+			deleted: slug
+		});
 
 	} catch (error) {
 		console.error(error);
-		return json({ error: error.message }, { status: 400 });
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
 	}
 }

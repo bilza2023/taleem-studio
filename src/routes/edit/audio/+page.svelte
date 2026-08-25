@@ -16,18 +16,19 @@
 		slug = new URLSearchParams(location.search).get("slug");
 
 		if (!slug) {
-			message = "Missing image slug";
+			message = "Missing audio slug";
 			return;
 		}
 
 		try {
 			const data = await admin.get(
-				`/edit/image?slug=${encodeURIComponent(slug)}`
+				`/edit/audio?slug=${encodeURIComponent(slug)}`
 			);
 
 			form = {
-				...form,
-				...data
+				slug: data.slug,
+				title: data.title || "",
+				tags: data.tags || "[]"
 			};
 
 		} catch (error) {
@@ -44,7 +45,7 @@
 		try {
 
 			const data = await admin.put(
-				`/edit/image?slug=${encodeURIComponent(slug)}`,
+				`/edit/audio?slug=${encodeURIComponent(slug)}`,
 				{
 					title: form.title,
 					tags: form.tags
@@ -52,13 +53,14 @@
 			);
 
 			form = {
-				...form,
-				...data
+				slug: data.slug,
+				title: data.title || "",
+				tags: data.tags || "[]"
 			};
 
 			message = `Updated: ${data.slug}`;
 
-		} catch(error) {
+		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
 		}
@@ -67,8 +69,7 @@
 
 
 <div class="page">
-
-	<h1>Edit Image</h1>
+	<h1>Edit Audio</h1>
 
 	<form on:submit|preventDefault={submit}>
 
@@ -86,21 +87,19 @@
 			Tags
 			<input
 				bind:value={form.tags}
-				placeholder='["math","number-line"]'
+				placeholder="algebra, introduction, chapter-1"
 			>
 		</label>
 
 		<button type="submit">
-			Update Image
+			Update Audio
 		</button>
 
 	</form>
 
-
 	{#if message}
 		<p class="message">{message}</p>
 	{/if}
-
 </div>
 
 
@@ -135,7 +134,6 @@
 		border: 1px solid #bbb;
 		border-radius: 5px;
 		font: inherit;
-		font-weight: 400;
 		background: white;
 	}
 
