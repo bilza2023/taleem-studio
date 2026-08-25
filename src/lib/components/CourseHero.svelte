@@ -14,10 +14,10 @@
 	<button class="course-strip" onclick={() => expanded = !expanded} aria-expanded={expanded}>
 
 		<img
-			class="thumbnail"
-			src={`/content/images/${course.thumbnail}`}
-			alt={course.title}
-		/>
+	class="thumbnail"
+	src={`${config.basePath}/content/images/${course.thumbnail}`}
+	alt={course.title}
+/>
 
 		<div class="summary">
 			<h1>{course.title}</h1>
@@ -42,7 +42,7 @@
 
 	{#if expanded}
 		<div class="details">
-		<img
+	<img
 	class="large-thumbnail"
 	src={`/content/images/${course.thumbnail}`}
 	alt={course.title}
