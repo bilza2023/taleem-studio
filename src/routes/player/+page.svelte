@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
+	import { admin } from "$lib/api/admin.js";
 	import { get } from "svelte/store";
 	import { getAudioFileName } from "./js/getAudioFileName.js";
 	import { resolveAssetPaths } from "./js/resolveAssetPaths.js";
@@ -76,15 +77,10 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch(
-				`/player?lesson=${encodeURIComponent(lessonSlug)}`
-			);
+		const item = await admin.get(`/player?lesson=${encodeURIComponent(lessonSlug)}`);
 
-			const item = await res.json();
+		presentation = JSON.parse(item.body);
 
-			if (!res.ok) {
-				throw new Error(item.error || "Failed to load player");
-			}
 
 			presentation = JSON.parse(item.body);
 

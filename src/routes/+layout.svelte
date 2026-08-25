@@ -4,18 +4,18 @@
     import SubNav from "$lib/components/SubNav.svelte";
     import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
     import { blueTheme } from "$lib/taleem-themes/index.js";
-
+let isPlayer = $derived(page.url.pathname.startsWith("/player"));
     let active = "home";
     let { children } = $props();
 </script>
 
 <TaleemTheme theme={blueTheme}>
-    {#if !page.url.pathname.startsWith("/player")}
 
-        <Navbar />
+    {#if !isPlayer}
+    	<Navbar />
         <SubNav active={active} />
     {/if}
-
+    
     <main>
         {@render children()}
     </main>
