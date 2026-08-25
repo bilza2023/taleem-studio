@@ -48,7 +48,7 @@ import { config } from "$lib/config.js";
 			<a
 				class="auth-button"
 				title="Sign in"
-				href="/signin"
+				href={`${config.basePath}/signin`}
 			>
 				🔑
 			</a>
