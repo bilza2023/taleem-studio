@@ -11,6 +11,7 @@
 	import { Howl } from "howler";
 	import Communication from "$lib/components/Communication.svelte";
 	import Discussion from "$lib/components/Discussion.svelte";
+	import { config } from "$lib/config.js";
 
 	let presentation = null;
 	let timer = null;
@@ -88,7 +89,7 @@
 
 			resolveAssetPaths(
 				presentation,
-				"/content/images/"
+				`${config.basePath}/content/images/`
 			);
 
 			const audioFileName = getAudioFileName(presentation);

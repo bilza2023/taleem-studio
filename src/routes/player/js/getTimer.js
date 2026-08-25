@@ -1,10 +1,9 @@
-// getTimer.js
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/player/js/getTimer.js
 import {config} from "$lib/config.js";
 import { createAudioTimer } from "./createAudioTimer.js";
 import { createSilentTimer } from "./createSilentTimer.js";
 
-// const AUDIO_BASE = `${config.apiUrl}/content/audio/`;
-const AUDIO_BASE = `/content/audio/`;
+const AUDIO_BASE = `${config.basePath}/content/audio/`;
 
 export async function getTimer(
 	audioFileName,
