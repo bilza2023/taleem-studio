@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/assets/+server.js
 import { json } from "@sveltejs/kit";
 import kernel from "taleem-kernel";
 

@@ -1,3 +1,5 @@
+
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/audio/+server.js
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
 import {
@@ -75,7 +77,9 @@ export async function PUT({ request, url }) {
 		);
 	}
 }
-
+import { unlink } from "node:fs/promises";
+import path from "node:path";
+import { config } from "$lib/config.js";
 
 export async function DELETE({ request, url }) {
 	try {
@@ -84,17 +88,15 @@ export async function DELETE({ request, url }) {
 		const slug = url.searchParams.get("slug");
 
 		if (!slug) {
-			return json(
-				{ error: "Slug required" },
-				{ status: 400 }
-			);
+			return json({ error: "Slug required" }, { status: 400 });
 		}
 
+		const filePath = path.resolve(config.contentDir, "audio", slug);
+
+		await unlink(filePath);
 		await deleteAudio(slug);
 
-		return json({
-			deleted: slug
-		});
+		return json({ deleted: slug });
 
 	} catch (error) {
 		console.error(error);

@@ -20,9 +20,11 @@ export async function POST({ request }) {
 			return json({ error: "Image file is required" }, { status: 400 });
 		}
 
-		if (!file.type.startsWith("image/")) {
-			return json({ error: "File must be an image" }, { status: 400 });
-		}
+	const allowedTypes = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+
+if (!allowedTypes.includes(file.type)) {
+	return json({ error: "Unsupported image type" }, { status: 400 });
+}
 
 		const filename = path.basename(file.name);
 

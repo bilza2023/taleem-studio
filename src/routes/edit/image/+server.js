@@ -1,10 +1,10 @@
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/image/+server.js
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
-import {
-	getImage,
-	updateImage,
-	deleteImage
-} from "$lib/server/image.js";
+import {getImage,updateImage,deleteImage} from "$lib/server/image.js";
+import { unlink } from "node:fs/promises";
+import path from "node:path";
+import { config } from "$lib/config.js";
 
 
 export async function GET({ request, url }) {
@@ -69,6 +69,9 @@ export async function DELETE({ request, url }) {
 			return json({ error: "Slug required" }, { status: 400 });
 		}
 
+		const filePath = path.resolve(config.imageDir, slug);
+
+		await unlink(filePath);
 		await deleteImage(slug);
 
 		return json({ deleted: slug });

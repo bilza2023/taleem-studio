@@ -51,7 +51,7 @@
       Image
       <input
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp,image/gif"
         on:change={(e) => file = e.currentTarget.files[0]}
         required
       >

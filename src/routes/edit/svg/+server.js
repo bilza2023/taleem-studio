@@ -1,9 +1,10 @@
-// src/routes/edit/svg/+server.js
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/svg/+server.js
 
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
 import {
 	getSvg,
+	deleteSvg,
 	updateSvg
 } from "$lib/server/svg.js";
 
@@ -65,6 +66,29 @@ export async function PUT({ request, url }) {
 		const svg = await updateSvg(slug, data);
 
 		return json(svg);
+
+	} catch (error) {
+		console.error(error);
+
+		return json(
+			{ error: error.message },
+			{ status: 400 }
+		);
+	}
+}
+export async function DELETE({ request, url }) {
+	try {
+		await requireAdmin(request);
+
+		const slug = url.searchParams.get("slug");
+
+		if (!slug) {
+			return json({ error: "Slug required" }, { status: 400 });
+		}
+
+		await deleteSvg(slug);
+
+		return json({ deleted: slug });
 
 	} catch (error) {
 		console.error(error);
