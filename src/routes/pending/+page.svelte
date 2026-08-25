@@ -6,6 +6,7 @@
 	let pending = $state([]);
 	let error = $state("");
 	let loading = $state(true);
+	let creating = $state("");
 
 	async function load() {
 		try {
@@ -26,8 +27,25 @@
 		}
 	}
 
-	function editUrl(type, item) {
-		return `/edit/${type}?course=${encodeURIComponent(course.slug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`;
+	async function createContent(role, item) {
+		creating = `${item.slug}:${role}`;
+		error = "";
+
+		try {
+			await admin.post(
+				`/pending?course=${encodeURIComponent(course.slug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}&role=${encodeURIComponent(role)}`,
+				{}
+			);
+
+			pending = pending.filter(p => p.slug !== item.slug);
+
+			alert(`${role} created: ${item.slug}`);
+		} catch (err) {
+			console.error(err);
+			error = err.message;
+		} finally {
+			creating = "";
+		}
 	}
 
 	$effect(() => {
@@ -62,8 +80,23 @@
 						</div>
 
 						<div class="actions">
-							<a href={editUrl("article", item)}>＋ Article</a>
-							<a href={editUrl("player", item)}>＋ Player</a>
+							<button
+								onclick={() => createContent("ARTICLE", item)}
+								disabled={creating !== "" || creating === `${item.slug}:ARTICLE`}
+							>
+								{creating === `${item.slug}:ARTICLE`
+									? "Creating..."
+									: "＋ Article"}
+							</button>
+
+							<button
+								onclick={() => createContent("PLAYER", item)}
+								disabled={creating !== "" || creating === `${item.slug}:PLAYER`}
+							>
+								{creating === `${item.slug}:PLAYER`
+									? "Creating..."
+									: "＋ Player"}
+							</button>
 						</div>
 					</div>
 				{/each}
@@ -124,19 +157,29 @@
 		gap: 8px;
 	}
 
-	a {
+	button {
 		color: inherit;
-		text-decoration: none;
+		background: transparent;
 		padding: 6px 12px;
 		border: 1px solid #555;
 		border-radius: 5px;
+		cursor: pointer;
 	}
 
-	a:hover {
+	button:hover {
 		background: #333;
 	}
 
-	.error { color: #ff8f8f; }
+	button:disabled {
+		opacity: .5;
+		cursor: default;
+	}
 
-	.empty { margin-top: 30px; }
+	.error {
+		color: #ff8f8f;
+	}
+
+	.empty {
+		margin-top: 30px;
+	}
 </style>

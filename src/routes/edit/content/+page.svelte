@@ -6,17 +6,17 @@
 	let deleting = $state(false);
 
 	let form = $state({
-		slug: "",
-		title: "",
-		description: "",
-		thumbnail: "",
-		body: "",
-		courseSlug: "",
-		groupSlug: "",
-		sortOrder: 0,
-		allowCommunication: true,
-		meta: ""
-	});
+	slug: "",
+	title: "",
+	description: "",
+	thumbnail: "",
+	body: "",
+	courseSlug: "",
+	groupSlug: "",
+	sortOrder: 0,
+	allowCommunication: true,
+	meta: ""
+});
 
 	let role = $state("");
 	let message = $state("Loading...");

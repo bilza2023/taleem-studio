@@ -1,3 +1,5 @@
+
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/course.js
 import kernel from "taleem-kernel";
 
 export async function listCourses() {
