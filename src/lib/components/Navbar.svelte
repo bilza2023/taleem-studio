@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-
+import { config } from "$lib/config.js";
 	let email = $state("");
 
 	function refresh() {
@@ -26,10 +26,10 @@
 </script>
 
 <nav class="navbar">
+<a class="home" href={`${config.basePath}`}>
 
-	<a class="home" href="/">
 		<span class="icon">📘</span>
-		<span>Taleem.Help</span>
+		<span style="color:orange">Taleem.Admin</span>
 	</a>
 
 	<div class="right">

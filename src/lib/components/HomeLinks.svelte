@@ -1,19 +1,21 @@
 <script>
+	import { config } from "$lib/config.js";
+
 	let { homeLinks = [] } = $props();
 
 	function getPlayHref(card) {
 		switch (card.type) {
 			case "ARTICLE":
-				return `/articles?article=${card.slug}`;
+				return `${config.basePath}/articles?article=${encodeURIComponent(card.slug)}`;
 			case "PLAYER":
-				return `/player?lesson=${card.slug}`;
+				return `${config.basePath}/player?lesson=${encodeURIComponent(card.slug)}`;
 			default:
 				return "#";
 		}
 	}
 
 	function getEditHref(card) {
-		return `/edit/${card.type.toLowerCase()}?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}`;
+		return `${config.basePath}/edit/${card.type.toLowerCase()}?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}`;
 	}
 </script>
 
