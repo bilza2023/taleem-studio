@@ -19,7 +19,7 @@
 
 			window.dispatchEvent(new Event("adminAuthChanged"));
 
-			goto("/");
+			goto("/admin");
 		} catch (err) {
 			error = err.message;
 		} finally {
