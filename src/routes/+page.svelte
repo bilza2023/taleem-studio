@@ -3,7 +3,7 @@
 	import { admin } from "$lib/api/admin.js";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import { frontend } from "$lib";
+	import { frontend } from "$lib/frontEnd";
 
 	let active = $state("courses");
 	let home = $state(null);

@@ -1,6 +1,6 @@
 
 
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/api/server/server.js
+// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/api/server/+server.js
 
 import { json } from "@sveltejs/kit";
 import { request as serverRequest } from "$lib/server/server.js";
