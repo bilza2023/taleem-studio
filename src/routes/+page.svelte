@@ -3,6 +3,7 @@
 	import { admin } from "$lib/api/admin.js";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
+	import { frontend } from "$lib";
 
 	let active = $state("courses");
 	let home = $state(null);
@@ -22,6 +23,11 @@
 					image: item.thumbnail
 				}))
 			};
+				if(frontend){	
+				// const f = await frontend.course.get( "fbise9math");;
+				const f = await frontend.course.list();;
+					console.log("frontend" , f);
+				}
 		} catch (err) {
 			error = err.message;
 		}

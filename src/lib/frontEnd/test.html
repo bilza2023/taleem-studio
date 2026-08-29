@@ -1,0 +1,109 @@
+<!-- /home/bilal-tariq/00--TALEEM/taleem.studio/static/frontend-test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Frontend API Test</title>
+	<style>
+		body { font-family: monospace; padding: 2rem; background: #111; color: #eee; }
+		button { margin: 0.2rem; padding: 0.4rem 0.8rem; cursor: pointer; }
+		section { margin-bottom: 1.5rem; border: 1px solid #444; padding: 1rem; border-radius: 6px; }
+		h3 { margin-top: 0; }
+		pre { background: #000; padding: 1rem; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow: auto; }
+		input { padding: 0.3rem; margin: 0.2rem; }
+	</style>
+</head>
+<body>
+	<h1>Taleem Frontend API — Manual Test</h1>
+
+	<section>
+		<h3>Auth</h3>
+		<input id="email" placeholder="email" value="admin@example.com" />
+		<input id="password" placeholder="password" type="password" value="12345678" />
+		<button id="login">admin.login()</button>
+		<div>Token stored: <span id="tokenStatus">none</span></div>
+	</section>
+
+	<section>
+		<h3>Course</h3>
+		<input id="courseSlug" placeholder="courseSlug" value="test-course" />
+		<button data-call="course.list">list()</button>
+		<button data-call="course.get">get(slug)</button>
+		<button data-call="course.getGroups">getGroups(slug)</button>
+	</section>
+
+	<section>
+		<h3>Library</h3>
+		<input id="librarySlug" placeholder="librarySlug" value="test-article" />
+		<button data-call="library.list">list()</button>
+		<button data-call="library.get">get(slug)</button>
+	</section>
+
+	<section>
+		<h3>Assets (svg / image / audio)</h3>
+		<button data-call="svg.list">svg.list()</button>
+		<button data-call="image.list">image.list()</button>
+		<button data-call="audio.list">audio.list()</button>
+	</section>
+
+	<h3>Output</h3>
+	<pre id="output">Ready.</pre>
+
+	<script type="module">
+		import { frontend } from "/src/lib/frontEnd/index.js";
+
+		const output = document.getElementById("output");
+		const tokenStatus = document.getElementById("tokenStatus");
+
+		function log(label, result, isError = false) {
+			const time = new Date().toLocaleTimeString();
+			const prefix = isError ? "❌ ERROR" : "✅ OK";
+			output.textContent =
+				`[${time}] ${prefix} — ${label}\n` +
+				JSON.stringify(result, null, 2) +
+				"\n\n" + output.textContent;
+		}
+
+		tokenStatus.textContent = localStorage.getItem("token") ? "present" : "none";
+
+		document.getElementById("login").addEventListener("click", async () => {
+			const email = document.getElementById("email").value;
+			const password = document.getElementById("password").value;
+			try {
+				const result = await frontend.admin.login(email, password);
+				if (result?.token) {
+					localStorage.setItem("token", result.token);
+					tokenStatus.textContent = "present";
+				}
+				log("admin.login", result);
+			} catch (err) {
+				log("admin.login", err.message, true);
+			}
+		});
+
+		document.querySelectorAll("button[data-call]").forEach((btn) => {
+			btn.addEventListener("click", async () => {
+				const [module, method] = btn.dataset.call.split(".");
+				let args = [];
+
+				if (module === "course") {
+					const slug = document.getElementById("courseSlug").value;
+					if (method === "get" || method === "getGroups") args = [slug];
+				}
+				if (module === "library") {
+					const slug = document.getElementById("librarySlug").value;
+					if (method === "get") args = [slug];
+				}
+
+				try {
+					const result = await frontend[module][method](...args);
+					log(`${btn.dataset.call}(${args.join(", ")})`, result);
+				} catch (err) {
+					log(`${btn.dataset.call}(${args.join(", ")})`, err.message, true);
+				}
+			});
+		});
+	</script>
+</body>
+</html>

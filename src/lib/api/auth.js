@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/api/auth.js
 import { config } from "$lib/config.js";
 
 export async function adminLogin(email, password) {

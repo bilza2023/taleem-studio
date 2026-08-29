@@ -1,3 +1,4 @@
+
 import { json } from "@sveltejs/kit";
 import { requireAdmin } from "$lib/server/auth/requireAdmin.js";
 import { listCourses } from "$lib/server/course.js";
