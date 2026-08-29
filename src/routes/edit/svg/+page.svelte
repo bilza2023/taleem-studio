@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let form = {
 		slug: "",
@@ -22,9 +22,7 @@
 		}
 
 		try {
-			const data = await admin.get(
-				`/edit/svg?slug=${encodeURIComponent(slug)}`
-			);
+			const data = await frontend.svg.get(slug);
 
 			form = {
 				...form,
@@ -44,10 +42,7 @@
 
 		try {
 
-			const data = await admin.put(
-				`/edit/svg?slug=${encodeURIComponent(slug)}`,
-				form
-			);
+			const data = await frontend.svg.update(slug, form);
 
 			form = {
 				...form,
@@ -62,7 +57,6 @@
 		}
 	}
 </script>
-
 
 <div class="page">
   <h1>Edit SVG</h1>

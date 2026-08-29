@@ -1,22 +1,21 @@
-
 <script>
 	import { page } from "$app/state";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let deleting = $state(false);
 
 	let form = $state({
-	slug: "",
-	title: "",
-	description: "",
-	thumbnail: "",
-	body: "",
-	courseSlug: "",
-	groupSlug: "",
-	sortOrder: 0,
-	allowCommunication: true,
-	meta: ""
-});
+		slug: "",
+		title: "",
+		description: "",
+		thumbnail: "",
+		body: "",
+		courseSlug: "",
+		groupSlug: "",
+		sortOrder: 0,
+		allowCommunication: true,
+		meta: ""
+	});
 
 	let role = $state("");
 	let message = $state("Loading...");
@@ -34,13 +33,11 @@
 				throw new Error("Course, group, slug and role are required");
 			}
 
-			if (!["ARTICLE", "PLAYER"].includes(role)) {
-				throw new Error(`Invalid role: ${role}`);
-			}
+			const data = await frontend.library.get(slug);
 
-			const data = await admin.get(
-				`/edit/content?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}&role=${encodeURIComponent(role)}`
-			);
+			if (!data) {
+				throw new Error(`"${slug}" not found`);
+			}
 
 			form = {
 				slug: data.slug,
@@ -69,22 +66,15 @@
 		saving = true;
 
 		try {
-			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
-
-			const data = await admin.put(
-				`/edit/content?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}&role=${encodeURIComponent(role)}`,
-				{
-					title: form.title,
-					description: form.description,
-					thumbnail: form.thumbnail,
-					body: form.body,
-					sortOrder: form.sortOrder,
-					allowCommunication: form.allowCommunication,
-					meta: form.meta
-				}
-			);
+			const data = await frontend.library.update(form.slug, {
+				title: form.title,
+				description: form.description,
+				thumbnail: form.thumbnail,
+				body: form.body,
+				sortOrder: form.sortOrder,
+				allowCommunication: form.allowCommunication,
+				meta: form.meta
+			});
 
 			message = `Saved: ${data.slug}`;
 		} catch (error) {
@@ -103,12 +93,8 @@
 
 		try {
 			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
 
-			await admin.delete(
-				`/edit/content?course=${encodeURIComponent(course)}&group=${encodeURIComponent(group)}&slug=${encodeURIComponent(slug)}&role=${encodeURIComponent(role)}`
-			);
+			await frontend.library.delete(form.slug);
 
 			window.location.href =
 				`/pending?course=${encodeURIComponent(course)}`;

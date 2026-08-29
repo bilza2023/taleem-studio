@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 	import { get } from "svelte/store";
 	import { getAudioFileName } from "./js/getAudioFileName.js";
 	import { resolveAssetPaths } from "./js/resolveAssetPaths.js";
@@ -78,10 +78,7 @@
 
 	onMount(async () => {
 		try {
-		const item = await admin.get(`/player?lesson=${encodeURIComponent(lessonSlug)}`);
-
-		presentation = JSON.parse(item.body);
-
+			const item = await frontend.library.get(lessonSlug);
 
 			presentation = JSON.parse(item.body);
 
@@ -121,6 +118,7 @@
 			}
 		};
 	});
+
 </script>
 
 {#if presentation}

@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { config } from "$lib/config";
+	import { frontend } from "$lib/frontEnd";
 
 	let assets = $state([]);
 	let filtered = $state([]);
@@ -13,13 +14,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch(`${config.apiUrl}/assets`);
-
-			if (!res.ok) {
-				throw new Error("Failed to load assets");
-			}
-
-			assets = await res.json();
+			assets = await frontend.assets.list();
 			filter();
 
 		} catch (e) {
@@ -80,35 +75,15 @@
 
 		try {
 
-			const endpoint =
-				asset.type === "IMAGE"
-					? "/edit/image"
-					: asset.type === "SVG"
-					? "/edit/svg"
-					: "/edit/audio";
-
-
-			const token =
-				localStorage.getItem("taleem-admin-token");
-
-
-			const res = await fetch(
-				`${config.apiUrl}${endpoint}?slug=${encodeURIComponent(asset.slug)}`,
-				{
-					method: "DELETE",
-					headers: token
-						? {
-							Authorization: `Bearer ${token}`
-						}
-						: {}
-				}
-			);
-
-
-			if (!res.ok) {
-				throw new Error("Delete failed");
+			if (asset.type === "IMAGE") {
+				await frontend.image.delete(asset.slug);
+			} else if (asset.type === "SVG") {
+				await frontend.svg.delete(asset.slug);
+			} else if (asset.type === "AUDIO") {
+				await frontend.audio.delete(asset.slug);
+			} else {
+				throw new Error(`Unknown asset type: ${asset.type}`);
 			}
-
 
 			assets = assets.filter(
 				a => !(a.slug === asset.slug && a.type === asset.type)

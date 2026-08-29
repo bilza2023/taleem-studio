@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let form = {
 		slug: "",
@@ -21,9 +21,7 @@
 		}
 
 		try {
-			const data = await admin.get(
-				`/edit/image?slug=${encodeURIComponent(slug)}`
-			);
+			const data = await frontend.image.get(slug);
 
 			form = {
 				...form,
@@ -43,13 +41,10 @@
 
 		try {
 
-			const data = await admin.put(
-				`/edit/image?slug=${encodeURIComponent(slug)}`,
-				{
-					title: form.title,
-					tags: form.tags
-				}
-			);
+			const data = await frontend.image.update(slug, {
+				title: form.title,
+				tags: form.tags
+			});
 
 			form = {
 				...form,
@@ -64,8 +59,6 @@
 		}
 	}
 </script>
-
-
 <div class="page">
 
 	<h1>Edit Image</h1>

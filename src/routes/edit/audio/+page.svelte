@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let form = {
 		slug: "",
@@ -21,9 +21,7 @@
 		}
 
 		try {
-			const data = await admin.get(
-				`/edit/audio?slug=${encodeURIComponent(slug)}`
-			);
+			const data = await frontend.audio.get(slug);
 
 			form = {
 				slug: data.slug,
@@ -44,13 +42,10 @@
 
 		try {
 
-			const data = await admin.put(
-				`/edit/audio?slug=${encodeURIComponent(slug)}`,
-				{
-					title: form.title,
-					tags: form.tags
-				}
-			);
+			const data = await frontend.audio.update(slug, {
+				title: form.title,
+				tags: form.tags
+			});
 
 			form = {
 				slug: data.slug,
@@ -66,7 +61,6 @@
 		}
 	}
 </script>
-
 
 <div class="page">
 	<h1>Edit Audio</h1>

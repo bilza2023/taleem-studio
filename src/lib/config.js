@@ -8,5 +8,5 @@ export const config = {
   apiUrl: "http://localhost:5173",
   imageDir : 'content/images',
   contentDir: "content",
-  basePath: "/api/server",
+  basePath: "",
 };

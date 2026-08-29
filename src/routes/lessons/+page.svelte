@@ -1,59 +1,68 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/lessons/+page.svelte
 import HomeLinks from "$lib/components/HomeLinks.svelte";
-	import CourseHero from "$lib/components/CourseHero.svelte";
-	import Footer from "$lib/components/Footer.svelte";
-	import { page } from "$app/state";
-	import { admin } from "$lib/api/admin.js";
-	import GroupingNav from "$lib/components/GroupingNav.svelte";
-	import { config } from "$lib/config.js";
-	
-	let home = $state(null);
-	let course = $state(null);
-	let error = $state("");
-	let selectedGrouping = $state("");
+import CourseHero from "$lib/components/CourseHero.svelte";
+import Footer from "$lib/components/Footer.svelte";
+import { page } from "$app/state";
+import { frontend } from "$lib/frontEnd";
+import GroupingNav from "$lib/components/GroupingNav.svelte";
+import { config } from "$lib/config.js";
 
-	let visibleItems = $derived(
-		!selectedGrouping
-			? home?.items ?? []
-			: (home?.items ?? []).filter(
-				item => item.groupSlug === selectedGrouping
-			)
-	);
+let home = $state(null);
+let course = $state(null);
+let groupings = $state([]);
+let error = $state("");
+let selectedGrouping = $state("");
 
-	function handleGroupingChange(id) {
-		selectedGrouping = id;
-	}
+let visibleItems = $derived(
+	!selectedGrouping
+		? home?.items ?? []
+		: (home?.items ?? []).filter(
+			item => item.groupSlug === selectedGrouping
+		)
+);
 
-	async function loadLibrary(courseSlug) {
-		try {
-			error = "";
+function handleGroupingChange(id) {
+	selectedGrouping = id;
+}
 
-			const data = await admin.get(
-				`/lessons?course=${encodeURIComponent(courseSlug)}`
-			);
+async function loadLibrary(courseSlug) {
+	try {
+		error = "";
 
-			course = data.course;
+		const [courseData, groups, items] = await Promise.all([
+			frontend.course.get(courseSlug),
+			frontend.course.getGroups(courseSlug),
+			frontend.library.list({ courseSlug })
+		]);
 
-			home = {
-		items: data.items.map(item => ({
-		...item,
-		image: item.thumbnail
-		}))
+		if (!courseData) {
+			error = `Course "${courseSlug}" not found.`;
+			return;
+		}
+
+		course = courseData;
+		groupings = groups;
+
+		home = {
+			items: items.map(item => ({
+				...item,
+				image: item.thumbnail
+			}))
 		};
-			
-		} catch (err) {
-			error = err.message;
-		}
+
+	} catch (err) {
+		error = err.message;
 	}
+}
 
-	$effect(() => {
-		const courseSlug = page.url.searchParams.get("course");
+$effect(() => {
+	const courseSlug = page.url.searchParams.get("course");
 
-		if (courseSlug) {
-			loadLibrary(courseSlug);
-		}
-	});
+	if (courseSlug) {
+		loadLibrary(courseSlug);
+	}
+});
 </script>
 
 {#if error}
@@ -73,12 +82,12 @@ import HomeLinks from "$lib/components/HomeLinks.svelte";
 />
 
 <GroupingNav
-	groupings={course.groupings}
+	groupings={groupings}
 	value={selectedGrouping}
 	onChange={handleGroupingChange}
 />
-<a
-	class="pending-link"
+
+<a	class="pending-link"
 	href={`${config.basePath}/pending?course=${encodeURIComponent(course.slug)}`}
 >
 	Pending Content

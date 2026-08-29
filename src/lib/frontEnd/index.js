@@ -8,15 +8,20 @@ export const frontend = {
 		get: (slug) => send("course", "get", { slug }),
 		getGroups: (courseSlug) => send("course", "getGroups", { courseSlug }),
 		getGroup: (courseSlug, groupSlug) =>
-			send("course", "getGroup", { courseSlug, groupSlug })
+			send("course", "getGroup", { courseSlug, groupSlug }),
+		getGroupItems: (courseSlug, groupSlug) =>
+			send("course", "getGroupItems", { courseSlug, groupSlug })
 	},
 
 	library: {
 		list: (filters) => send("library", "list", filters),
 		get: (slug) => send("library", "get", { slug }),
-		create: (data) => send("library", "create", data),
+		createArticle: (data) => send("library", "createArticle", data),
+		createPlayer: (data) => send("library", "createPlayer", data),
 		update: (slug, data) => send("library", "update", { slug, data }),
-		delete: (slug) => send("library", "delete", { slug })
+		delete: (slug) => send("library", "delete", { slug }),
+		listByGroup: (courseSlug, groupSlug) =>
+			send("library", "listByGroup", { courseSlug, groupSlug })
 	},
 
 	svg: {
@@ -41,6 +46,10 @@ export const frontend = {
 		create: (data) => send("audio", "create", data),
 		update: (slug, data) => send("audio", "update", { slug, data }),
 		delete: (slug) => send("audio", "delete", { slug })
+	},
+
+	assets: {
+		list: () => send("assets", "list")
 	},
 
 	admin: {

@@ -1,11 +1,8 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/frontEnd/send.js
 
-import { config } from "../config.js";
-
-const baseUrl = `${config.apiUrl}${config.basePath || ""}`;
+const ENDPOINT = "/api/server";
 
 function getToken() {
-	// wherever the JWT actually lives client-side
 	return localStorage.getItem("token");
 }
 
@@ -24,7 +21,7 @@ export async function send(module, method, data = {}) {
 	let response;
 
 	try {
-		response = await fetch(baseUrl, options);
+		response = await fetch(ENDPOINT, options);
 	} catch {
 		throw new Error("Unable to contact Taleem Server.");
 	}
