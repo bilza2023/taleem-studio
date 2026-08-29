@@ -2,6 +2,20 @@
 import kernel from 'taleem-kernel';
 import { requireAdminForCourse } from "./utils/requireAdmin.js";
 
+const VALID_TYPES = ["ARTICLE", "PLAYER"];
+
+export async function createLibrary(data, token) {
+	if (!VALID_TYPES.includes(data.type)) {
+		const err = new Error(`Invalid type: ${data.type}`);
+		err.status = 400;
+		throw err;
+	}
+
+	await requireAdminForCourse(token, data.courseSlug);
+
+	return kernel.library.create(data);
+}
+
 export async function getLibrary(slug) {
 	return kernel.library.get(slug);
 }

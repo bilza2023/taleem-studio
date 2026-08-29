@@ -1,6 +1,6 @@
 <script>
 	import { page } from "$app/state";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let course = $state(null);
 	let pending = $state([]);
@@ -14,9 +14,7 @@
 
 			if (!courseSlug) throw new Error("Course is required");
 
-			const data = await admin.get(
-				`/pending?course=${encodeURIComponent(courseSlug)}`
-			);
+			const data = await frontend.pending.get(courseSlug);
 
 			course = data.course;
 			pending = data.pending;
@@ -32,10 +30,19 @@
 		error = "";
 
 		try {
-			await admin.post(
-				`/pending?course=${encodeURIComponent(course.slug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}&role=${encodeURIComponent(role)}`,
-				{}
-			);
+			await frontend.library.create({
+				slug: item.slug,
+				type: role,
+				title: "",
+				description: "",
+				thumbnail: "",
+				body: "",
+				courseSlug: course.slug,
+				groupSlug: item.groupSlug,
+				sortOrder: 0,
+				allowCommunication: true,
+				meta: ""
+			});
 
 			pending = pending.filter(p => p.slug !== item.slug);
 
@@ -47,7 +54,6 @@
 			creating = "";
 		}
 	}
-
 	$effect(() => {
 		load();
 	});

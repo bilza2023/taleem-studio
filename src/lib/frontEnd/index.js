@@ -12,17 +12,19 @@ export const frontend = {
 		getGroupItems: (courseSlug, groupSlug) =>
 			send("course", "getGroupItems", { courseSlug, groupSlug })
 	},
+	pending: {
+	get: (courseSlug) => send("pending", "get", { courseSlug })
+},
 
 	library: {
-		list: (filters) => send("library", "list", filters),
-		get: (slug) => send("library", "get", { slug }),
-		createArticle: (data) => send("library", "createArticle", data),
-		createPlayer: (data) => send("library", "createPlayer", data),
-		update: (slug, data) => send("library", "update", { slug, data }),
-		delete: (slug) => send("library", "delete", { slug }),
-		listByGroup: (courseSlug, groupSlug) =>
-			send("library", "listByGroup", { courseSlug, groupSlug })
-	},
+	get: (slug) => send("library", "get", { slug }),
+	list: (filters) => send("library", "list", filters),
+	create: (data) => send("library", "create", data),
+	update: (slug, data) => send("library", "update", { slug, data }),
+	delete: (slug) => send("library", "delete", { slug }),
+	listByGroup: (courseSlug, groupSlug) =>
+		send("library", "listByGroup", { courseSlug, groupSlug })
+},
 
 	svg: {
 		list: () => send("svg", "list"),

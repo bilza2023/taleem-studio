@@ -12,9 +12,10 @@ import {
 	createImage, getImage, listImages, updateImage, deleteImage
 } from "./image.js";
 import {
-	createArticle, createPlayer, getLibrary, listLibrary,
+	createLibrary, getLibrary, listLibrary,
 	updateLibrary, deleteLibrary, listLibraryByGroup
 } from "./library.js";
+import { getPendingContent } from "./pending.js";
 import {
 	createSvg, getSvg, listSvg, updateSvg, deleteSvg
 } from "./svg.js";
@@ -53,13 +54,16 @@ export const backend = {
 	},
 
 	library: {
-		get: (data) => getLibrary(data.slug),
-		list: (data) => listLibrary(data),
-		update: (data, token) => updateLibrary(data.slug, data.data, token),
-		delete: (data, token) => deleteLibrary(data.slug, token),
-		createArticle: (data, token) => createArticle(data, token),
-		createPlayer: (data, token) => createPlayer(data, token),
-		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug)
+	get: (data) => getLibrary(data.slug),
+	list: (data) => listLibrary(data),
+	create: (data, token) => createLibrary(data, token),
+	update: (data, token) => updateLibrary(data.slug, data.data, token),
+	delete: (data, token) => deleteLibrary(data.slug, token),
+	listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug)
+},
+
+	pending: {
+		get: (data, token) => getPendingContent(data.courseSlug, token)
 	},
 
 	svg: {
