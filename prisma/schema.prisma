@@ -23,6 +23,11 @@ enum AdminRole {
   ADMIN
   SUPER_ADMIN
 }
+enum LibraryStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
 
 model Group {
   id          Int      @id @default(autoincrement())
@@ -74,6 +79,7 @@ model Library {
   description        String?
   thumbnail          String?
   type               ContentType
+   status             LibraryStatus @default(DRAFT)
   body               String?
   courseSlug         String
   groupSlug          String
