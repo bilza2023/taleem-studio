@@ -25,15 +25,15 @@ export const backend = {
 	},
 
 	assets: {
-		list: () => listAssets()
+		list: (data, token) => listAssets(token)
 	},
 
 	audio: {
 		get: (data) => getAudio(data.slug),
 		list: (data) => listAudio(data),
-		create: (data) => createAudio(data),
-		update: (data) => updateAudio(data.slug, data.data),
-		delete: (data) => deleteAudio(data.slug)
+		create: (data, token) => createAudio(data, token),
+		update: (data, token) => updateAudio(data.slug, data.data, token),
+		delete: (data, token) => deleteAudio(data.slug, token)
 	},
 
 	course: {
@@ -47,26 +47,26 @@ export const backend = {
 	image: {
 		get: (data) => getImage(data.slug),
 		list: (data) => listImages(data),
-		create: (data) => createImage(data),
-		update: (data) => updateImage(data.slug, data.data),
-		delete: (data) => deleteImage(data.slug)
+		create: (data, token) => createImage(data, token),
+		update: (data, token) => updateImage(data.slug, data.data, token),
+		delete: (data, token) => deleteImage(data.slug, token)
 	},
 
 	library: {
 		get: (data) => getLibrary(data.slug),
 		list: (data) => listLibrary(data),
-		update: (data) => updateLibrary(data.slug, data.data),
-		delete: (data) => deleteLibrary(data.slug),
-		createArticle: (data) => createArticle(data),
-		createPlayer: (data) => createPlayer(data),
+		update: (data, token) => updateLibrary(data.slug, data.data, token),
+		delete: (data, token) => deleteLibrary(data.slug, token),
+		createArticle: (data, token) => createArticle(data, token),
+		createPlayer: (data, token) => createPlayer(data, token),
 		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug)
 	},
 
 	svg: {
 		get: (data) => getSvg(data.slug),
 		list: (data) => listSvg(data),
-		create: (data) => createSvg(data),
-		update: (data) => updateSvg(data.slug, data.data),
-		delete: (data) => deleteSvg(data.slug)
+		create: (data, token) => createSvg(data, token),
+		update: (data, token) => updateSvg(data.slug, data.data, token),
+		delete: (data, token) => deleteSvg(data.slug, token)
 	}
 };

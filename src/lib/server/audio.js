@@ -1,21 +1,25 @@
 import kernel from 'taleem-kernel';
+import { requireAdmin } from './utils/requireAdmin.js';
 
-export async function createAudio(data) {
-  return kernel.audio.create(data);
+export async function createAudio(data, token) {
+	await requireAdmin(token);
+	return kernel.audio.create(data);
 }
 
 export async function getAudio(slug) {
-  return kernel.audio.get(slug);
+	return kernel.audio.get(slug);
 }
 
 export async function listAudio(filters) {
-  return kernel.audio.list(filters);
+	return kernel.audio.list(filters);
 }
 
-export async function updateAudio(slug, data) {
-  return kernel.audio.update(slug, data);
+export async function updateAudio(slug, data, token) {
+	await requireAdmin(token);
+	return kernel.audio.update(slug, data);
 }
 
-export async function deleteAudio(slug) {
-  return kernel.audio.delete(slug);
+export async function deleteAudio(slug, token) {
+	await requireAdmin(token);
+	return kernel.audio.delete(slug);
 }
