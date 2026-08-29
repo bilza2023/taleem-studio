@@ -1,6 +1,7 @@
 <script>
 	import { goto } from "$app/navigation";
-	import { adminLogin } from "$lib/api/auth.js";
+	import { frontend } from "$lib/frontEnd";
+	import { config } from "$lib/config";
 
 	let email = $state("");
 	let password = $state("");
@@ -12,14 +13,15 @@
 		loading = true;
 
 		try {
-			const data = await adminLogin(email, password);
+			const token = await frontend.admin.login(email, password);
 
-			localStorage.setItem("taleem-admin-token", data.token);
+			localStorage.setItem("taleem-admin-token", token);
 			localStorage.setItem("taleem-admin-email", email);
 
 			window.dispatchEvent(new Event("adminAuthChanged"));
 
-			goto("/admin");
+		goto(`${config.basePath}/`);
+		// goto("/");
 		} catch (err) {
 			error = err.message;
 		} finally {

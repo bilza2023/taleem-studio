@@ -3,7 +3,7 @@
 const ENDPOINT = "/api/server";
 
 function getToken() {
-	return localStorage.getItem("token");
+	return localStorage.getItem("taleem-admin-token");
 }
 
 export async function send(module, method, data = {}) {
