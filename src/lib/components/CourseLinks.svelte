@@ -1,4 +1,5 @@
 <script>
+
 	let { homeLinks = [] } = $props();
 import { config } from "$lib/config.js";
 </script>

@@ -1,5 +1,4 @@
-// src/routes/content/[...path]/+server.js
-
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
 import { error } from "@sveltejs/kit";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -22,7 +21,7 @@ const TYPES = {
 
 export async function GET({ params }) {
 	const relativePath = params.path;
-
+// console.log("content route hit:", { relativePath, CONTENT_DIR, resolved: path.resolve(CONTENT_DIR) });
 	if (!relativePath) {
 		throw error(404, "File not found");
 	}
