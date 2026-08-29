@@ -1,6 +1,4 @@
 <script>
-	import { config } from "$lib/config.js";
-
 	let file;
 	let title = "";
 	let tags = "";
@@ -16,13 +14,14 @@
 
 		try {
 			const data = new FormData();
+			data.append("type", "image");
 			data.append("file", file);
 			data.append("title", title);
 			data.append("tags", tags);
 
 			const token = localStorage.getItem("taleem-admin-token");
 
-			const res = await fetch(`${config.apiUrl}/create/image`, {
+			const res = await fetch("/api/upload", {
 				method: "POST",
 				headers: token
 					? { Authorization: `Bearer ${token}` }

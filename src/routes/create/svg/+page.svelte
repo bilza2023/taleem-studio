@@ -1,5 +1,5 @@
 <script>
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let form = {
 		slug: "",
@@ -14,7 +14,7 @@
 		message = "Saving...";
 
 		try {
-			const data = await admin.post("/create/svg", form);
+			const data = await frontend.svg.create(form);
 
 			message = `Created: ${data.slug}`;
 		} catch (error) {
