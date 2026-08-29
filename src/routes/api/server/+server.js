@@ -13,7 +13,7 @@ export async function GET({ request, url }) {
 	const data = JSON.parse(url.searchParams.get("data") || "{}");
 	const token = getBearerToken(request);
 
-	console.log("api/server GET:", { module, data, token });
+	// console.log("api/server GET:", { module, data, token });
 
 	return json(await serverRequest({
 		method: request.method,
