@@ -3,7 +3,7 @@
 	import { page } from "$app/state";
 	import Communication from "$lib/components/Communication.svelte";
 	import Discussion from "$lib/components/Discussion.svelte";
-	import { admin } from "$lib/api/admin.js";
+	import { frontend } from "$lib/frontEnd";
 
 	let librarySlug = $state("");
 	let libraryItem = $state(null);
@@ -29,9 +29,11 @@
 		}
 
 		try {
-			libraryItem = await admin.get(
-				`/articles?article=${encodeURIComponent(librarySlug)}`
-			);
+			libraryItem = await frontend.library.get(librarySlug);
+
+			if (!libraryItem) {
+				error = "Article not found.";
+			}
 		} catch (err) {
 			error = err.message;
 		} finally {
