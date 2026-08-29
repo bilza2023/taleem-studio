@@ -2,8 +2,8 @@
 
 import { backend } from "./backend.js";
 
-export async function request({ method, module, data }) {
-	console.log("server.request():", { module, method, data });
+export async function request({ method, module, data, token }) {
+	console.log("server.request():", { module, method, data, token });
 
 	if (!backend[module]) {
 		const err = new Error(`Unknown module: ${module}`);
@@ -19,5 +19,5 @@ export async function request({ method, module, data }) {
 		throw err;
 	}
 
-	return await handler(data);
+	return await handler(data, token);
 }
