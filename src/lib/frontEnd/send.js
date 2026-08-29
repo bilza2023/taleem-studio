@@ -1,6 +1,8 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/frontEnd/send.js
 
-const ENDPOINT = "/api/server";
+import { config } from "$lib/config.js";
+
+const ENDPOINT = `${config.basePath}/api/server`;
 
 function getToken() {
 	return localStorage.getItem("taleem-admin-token");
