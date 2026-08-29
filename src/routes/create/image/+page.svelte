@@ -1,4 +1,5 @@
 <script>
+import { config } from "$lib/config.js";
 	let file;
 	let title = "";
 	let tags = "";
@@ -21,7 +22,7 @@
 
 			const token = localStorage.getItem("taleem-admin-token");
 
-			const res = await fetch("/api/upload", {
+			const res = await fetch(`${config.basePath}/api/upload`, {
 				method: "POST",
 				headers: token
 					? { Authorization: `Bearer ${token}` }
