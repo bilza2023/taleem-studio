@@ -1,6 +1,6 @@
 <script>
 	import { goto } from "$app/navigation";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 	import { config } from "$lib/config";
 
 	let email = $state("");
@@ -13,7 +13,7 @@
 		loading = true;
 
 		try {
-			const token = await frontend.admin.login(email, password);
+			const token = await send("admin", "login", { email, password });
 
 			localStorage.setItem("taleem-admin-token", token);
 			localStorage.setItem("taleem-admin-email", email);

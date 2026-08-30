@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let form = {
 		slug: "",
@@ -22,7 +22,7 @@
 		}
 
 		try {
-			const data = await frontend.svg.get(slug);
+			const data = await send("svg", "get", { slug });
 
 			form = {
 				...form,
@@ -42,7 +42,7 @@
 
 		try {
 
-			const data = await frontend.svg.update(slug, form);
+			const data = await send("svg", "update", { slug, data: form });
 
 			form = {
 				...form,

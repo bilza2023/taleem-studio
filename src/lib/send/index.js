@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/frontEnd/send.js
+// src/lib/send/index.js
 
 import { config } from "$lib/config.js";
 
@@ -34,11 +34,7 @@ export async function send(module, method, data = {}) {
 		: await response.text();
 
 	if (!response.ok) {
-		throw new Error(
-			result?.error ||
-			result?.message ||
-			`HTTP ${response.status}`
-		);
+		throw new Error(result?.error || result?.message || `HTTP ${response.status}`);
 	}
 
 	return result;

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { config } from "$lib/config";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let assets = $state([]);
 	let filtered = $state([]);
@@ -14,7 +14,7 @@
 
 	onMount(async () => {
 		try {
-			assets = await frontend.assets.list();
+			assets = await send("assets", "list", {});
 			filter();
 
 		} catch (e) {
@@ -76,11 +76,11 @@
 		try {
 
 			if (asset.type === "IMAGE") {
-				await frontend.image.delete(asset.slug);
+				await send("image", "delete", { slug: asset.slug });
 			} else if (asset.type === "SVG") {
-				await frontend.svg.delete(asset.slug);
+				await send("svg", "delete", { slug: asset.slug });
 			} else if (asset.type === "AUDIO") {
-				await frontend.audio.delete(asset.slug);
+				await send("audio", "delete", { slug: asset.slug });
 			} else {
 				throw new Error(`Unknown asset type: ${asset.type}`);
 			}

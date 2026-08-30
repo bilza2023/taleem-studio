@@ -1,5 +1,5 @@
 <script>
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let form = {
 		slug: "",
@@ -14,7 +14,7 @@
 		message = "Saving...";
 
 		try {
-			const data = await frontend.svg.create(form);
+			const data = await send("svg", "create", form);
 
 			message = `Created: ${data.slug}`;
 		} catch (error) {

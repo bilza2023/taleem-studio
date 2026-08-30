@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let form = {
 		slug: "",
@@ -21,7 +21,7 @@
 		}
 
 		try {
-			const data = await frontend.image.get(slug);
+			const data = await send("image", "get", { slug });
 
 			form = {
 				...form,
@@ -41,10 +41,7 @@
 
 		try {
 
-			const data = await frontend.image.update(slug, {
-				title: form.title,
-				tags: form.tags
-			});
+const data = await send("image", "update", { slug, data: { title: form.title, tags: form.tags } });
 
 			form = {
 				...form,

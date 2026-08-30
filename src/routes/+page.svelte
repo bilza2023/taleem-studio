@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import CourseLinks from "$lib/components/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let active = $state("courses");
 	let home = $state(null);
@@ -14,7 +14,7 @@
 		try {
 			error = "";
 
-			const items = await frontend.course.list();
+			const items = await send("course", "list", {});
 
 			home = {
 				items: items.map(item => ({

@@ -4,7 +4,7 @@ import HomeLinks from "$lib/components/HomeLinks.svelte";
 import CourseHero from "$lib/components/CourseHero.svelte";
 import Footer from "$lib/components/Footer.svelte";
 import { page } from "$app/state";
-import { frontend } from "$lib/frontEnd";
+import { send } from "$lib/send";
 import GroupingNav from "$lib/components/GroupingNav.svelte";
 import { config } from "$lib/config.js";
 
@@ -31,9 +31,9 @@ async function loadLibrary(courseSlug) {
 		error = "";
 
 		const [courseData, groups, items] = await Promise.all([
-			frontend.course.get(courseSlug),
-			frontend.course.getGroups(courseSlug),
-			frontend.library.list({ courseSlug })
+			send("course", "get", { slug: courseSlug }),
+			send("group", "list", { courseSlug }),
+			send("library", "list", { courseSlug })
 		]);
 
 		if (!courseData) {
@@ -87,10 +87,12 @@ $effect(() => {
 	onChange={handleGroupingChange}
 />
 
-<a	class="pending-link"
-	href={`${config.basePath}/pending?course=${encodeURIComponent(course.slug)}`}
->
-	Pending Content
+<a class="pending-link" href={`${config.basePath}/create/content?course=${encodeURIComponent(course.slug)}`}>
+	New
+</a>
+
+<a class="pending-link" href={`${config.basePath}/create/group?course=${encodeURIComponent(course.slug)}`}>
+	Add Group
 </a>
 
 <div class="links-container">

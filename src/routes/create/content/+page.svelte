@@ -1,63 +1,37 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/content/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/create/content/+page.svelte
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
 
-	let deleting = $state(false);
+	const courseSlug = page.url.searchParams.get("course");
+
+	let groupings = $state([]);
+	let message = $state(courseSlug ? "" : "Error: course is required");
+	let loading = $state(true);
+	let saving = $state(false);
 
 	let form = $state({
 		slug: "",
 		title: "",
+		type: "ARTICLE",
+		groupSlug: "",
 		description: "",
 		thumbnail: "",
 		body: "",
-		courseSlug: "",
-		groupSlug: "",
-		type: "ARTICLE",
-		status: "DRAFT",
 		sortOrder: 0,
 		allowCommunication: true,
 		meta: ""
 	});
 
-	let message = $state("Loading...");
-	let loading = $state(true);
-	let saving = $state(false);
-
-	async function load() {
+	async function loadGroups() {
 		try {
-			const course = page.url.searchParams.get("course");
-			const group = page.url.searchParams.get("group");
-			const slug = page.url.searchParams.get("slug");
+			groupings = await send("group", "list", { courseSlug });
 
-			if (!course || !group || !slug) {
-				throw new Error("Course, group and slug are required");
+			if (groupings.length) {
+				form.groupSlug = groupings[0].slug;
 			}
-
-			const data = await send("library", "get", { slug });
-
-			if (!data) {
-				throw new Error(`"${slug}" not found`);
-			}
-
-			form = {
-				slug: data.slug,
-				title: data.title ?? "",
-				description: data.description ?? "",
-				thumbnail: data.thumbnail ?? "",
-				body: data.body ?? "",
-				courseSlug: data.courseSlug ?? course,
-				groupSlug: data.groupSlug ?? group,
-				type: data.type ?? "ARTICLE",
-				status: data.status ?? "DRAFT",
-				sortOrder: data.sortOrder ?? 0,
-				allowCommunication: data.allowCommunication ?? true,
-				meta: data.meta ?? ""
-			};
-
-			message = "";
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
@@ -71,22 +45,21 @@
 		saving = true;
 
 		try {
-			const data = await send("library", "update", {
+			const data = await send("library", "create", {
 				slug: form.slug,
-				data: {
-					title: form.title,
-					description: form.description,
-					thumbnail: form.thumbnail,
-					body: form.body,
-					type: form.type,
-					status: form.status,
-					sortOrder: form.sortOrder,
-					allowCommunication: form.allowCommunication,
-					meta: form.meta
-				}
+				courseSlug,
+				groupSlug: form.groupSlug,
+				type: form.type,
+				title: form.title,
+				description: form.description,
+				thumbnail: form.thumbnail,
+				body: form.body,
+				sortOrder: form.sortOrder,
+				allowCommunication: form.allowCommunication,
+				meta: form.meta
 			});
 
-			message = `Saved: ${data.slug}`;
+			goto(`${config.basePath}/lessons?course=${encodeURIComponent(courseSlug)}`);
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
@@ -95,27 +68,8 @@
 		}
 	}
 
-	async function deleteContent() {
-		if (!confirm(`Delete "${form.slug}"?`)) return;
-
-		deleting = true;
-		message = "Deleting...";
-
-		try {
-			const course = page.url.searchParams.get("course");
-
-			await send("library", "delete", { slug: form.slug });
-
-			goto(`${config.basePath}/lessons?course=${encodeURIComponent(course)}`);
-		} catch (error) {
-			console.error(error);
-			message = `Error: ${error.message}`;
-			deleting = false;
-		}
-	}
-
 	$effect(() => {
-		load();
+		if (courseSlug) loadGroups();
 	});
 </script>
 
@@ -126,12 +80,10 @@
 
 	{:else}
 
-		<h1>Edit {form.type === "PLAYER" ? "Player" : form.type === "MCQ" ? "MCQ" : "Article"}</h1>
+		<h1>New Content</h1>
 
 		<div class="identity">
-			<div><strong>Slug:</strong> {form.slug}</div>
-			<div><strong>Course:</strong> {form.courseSlug}</div>
-			<div><strong>Group:</strong> {form.groupSlug}</div>
+			<div><strong>Course:</strong> {courseSlug}</div>
 		</div>
 
 		<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -141,17 +93,21 @@
 				<select bind:value={form.type}>
 					<option value="ARTICLE">Article</option>
 					<option value="PLAYER">Player</option>
-					<option value="MCQ">MCQ</option>
 				</select>
 			</label>
 
 			<label>
-				Status
-				<select bind:value={form.status}>
-					<option value="DRAFT">Draft</option>
-					<option value="PUBLISHED">Published</option>
-					<option value="ARCHIVED">Archived</option>
+				Group
+				<select bind:value={form.groupSlug} required>
+					{#each groupings as group}
+						<option value={group.slug}>{group.title}</option>
+					{/each}
 				</select>
+			</label>
+
+			<label>
+				Slug
+				<input bind:value={form.slug} required>
 			</label>
 
 			<label>
@@ -196,7 +152,7 @@
 			</label>
 
 			<button type="submit" disabled={saving}>
-				{saving ? "Saving..." : "Save Content"}
+				{saving ? "Saving..." : "Create Content"}
 			</button>
 
 		</form>
@@ -206,17 +162,6 @@
 		{/if}
 
 	{/if}
-
-	<div class="danger-zone">
-		<button
-			class="delete"
-			type="button"
-			onclick={deleteContent}
-			disabled={saving || deleting}
-		>
-			{deleting ? "Deleting..." : "Delete Content"}
-		</button>
-	</div>
 </div>
 
 <style>
@@ -302,19 +247,5 @@
 		background: #eee;
 		color: #222;
 		border-radius: 5px;
-	}
-
-	.danger-zone {
-		margin-top: 50px;
-		padding-top: 20px;
-		border-top: 1px solid #555;
-	}
-
-	.delete {
-		background: #8b2f2f;
-	}
-
-	.delete:hover {
-		background: #a33a3a;
 	}
 </style>

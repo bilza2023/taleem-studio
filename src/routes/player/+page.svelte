@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 	import { get } from "svelte/store";
 	import { getAudioFileName } from "./js/getAudioFileName.js";
 	import { resolveAssetPaths } from "./js/resolveAssetPaths.js";
@@ -78,7 +78,7 @@
 
 	onMount(async () => {
 		try {
-			const item = await frontend.library.get(lessonSlug);
+			const item = await send("library", "get", { slug: lessonSlug });
 
 			presentation = JSON.parse(item.body);
 
@@ -123,10 +123,7 @@
 
 {#if presentation}
 
-<div
-	class="player"
-	style={`width:${PLAYER_WIDTH}px`}
->
+<div class="player" style={`width:${PLAYER_WIDTH}px`} >
 
 	<div class="viewer">
 

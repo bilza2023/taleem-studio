@@ -27,7 +27,7 @@ export async function POST({ request }) {
 	const body = await request.json();
 	const token = getBearerToken(request);
 
-	console.log("api/server POST:", { ...body, token });
+	// console.log("api/server POST:", { ...body, token });
 
 	return json(await serverRequest({
 		method: request.method,

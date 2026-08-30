@@ -1,9 +1,9 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/server.js
 
-import { backend } from "./backend.js";
+import { backend } from "./backend";
 
 export async function request({ method, module, data, token }) {
-	console.log("server.request():", { module, method, data, token });
+	// console.log("server.request():", { module, method, data, token });
 
 	if (!backend[module]) {
 		const err = new Error(`Unknown module: ${module}`);

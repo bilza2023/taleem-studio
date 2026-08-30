@@ -3,7 +3,7 @@
 	import { page } from "$app/state";
 	import Communication from "$lib/components/Communication.svelte";
 	import Discussion from "$lib/components/Discussion.svelte";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let librarySlug = $state("");
 	let libraryItem = $state(null);
@@ -29,8 +29,7 @@
 		}
 
 		try {
-			libraryItem = await frontend.library.get(librarySlug);
-
+			libraryItem = await send("library", "get", { slug: librarySlug });
 			if (!libraryItem) {
 				error = "Article not found.";
 			}

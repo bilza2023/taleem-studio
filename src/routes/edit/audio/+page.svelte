@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { frontend } from "$lib/frontEnd";
+	import { send } from "$lib/send";
 
 	let form = {
 		slug: "",
@@ -21,7 +21,7 @@
 		}
 
 		try {
-			const data = await frontend.audio.get(slug);
+			const data = await send("audio", "get", { slug });
 
 			form = {
 				slug: data.slug,
@@ -42,10 +42,7 @@
 
 		try {
 
-			const data = await frontend.audio.update(slug, {
-				title: form.title,
-				tags: form.tags
-			});
+			const data = await send("audio", "update", { slug, data: { title: form.title, tags: form.tags } });
 
 			form = {
 				slug: data.slug,
