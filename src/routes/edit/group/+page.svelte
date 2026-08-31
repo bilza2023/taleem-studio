@@ -1,7 +1,9 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/group/+page.svelte
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
+	import { config } from "$lib/config.js";
 
 	const params = new URLSearchParams(location.search);
 	const courseSlug = params.get("course");
@@ -47,7 +49,7 @@
 
 		try {
 			await send("group", "delete", { courseSlug, groupSlug });
-			goto(`/groups?course=${encodeURIComponent(courseSlug)}`);
+			goto(`${config.basePath}/groups?course=${encodeURIComponent(courseSlug)}`);
 		} catch (error) {
 			message = `Error: ${error.message}`;
 		}

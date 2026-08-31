@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { send } from "$lib/send";
+	import { config } from "$lib/config.js";
 
 	const courseSlug = new URLSearchParams(location.search).get("course");
 
@@ -21,7 +22,7 @@
 <div class="page">
 	<h1>Groups</h1>
 
-	<a class="button" href={`/edit/group?course=${encodeURIComponent(courseSlug)}`}>
+	<a class="button" href={`${config.basePath}/edit/group?course=${encodeURIComponent(courseSlug)}`}>
 		+ New Group
 	</a>
 
@@ -31,12 +32,12 @@
 
 	<ul>
 		{#each groups as group (group.slug)}
-	<li>
-		<span class="title">{group.title}</span>
-		<span class="slug">{group.slug}</span>
-		<a class="button" href={`/edit/group?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(group.slug)}`}>Edit</a>
-	</li>
-{/each}
+			<li>
+				<span class="title">{group.title}</span>
+				<span class="slug">{group.slug}</span>
+				<a class="button" href={`${config.basePath}/edit/group?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(group.slug)}`}>Edit</a>
+			</li>
+		{/each}
 	</ul>
 </div>
 
