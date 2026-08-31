@@ -4,10 +4,10 @@ import kernel from 'taleem-kernel';
 
 async function main() {
 	const course = await kernel.course.create({
-		slug: 'blog',
-		title: 'Taleem.Help Blog',
-		description: 'Brain Waves',
-		access: 'OPEN',      // OPEN | MEMBERS | SUBSCRIPTION
+		slug: 'fbise7math',
+		title: 'Class 7th Math (FBISE)',
+		description: 'Class 7th Math (FBISE)',
+		access: 'MEMBERS',      // OPEN | MEMBERS | SUBSCRIPTION
 		isActive: true,
 		thumbnail: 'taleem.webp'
 	});

@@ -5,9 +5,9 @@ import kernel from 'taleem-kernel';
 
 async function main() {
 	const admin = await kernel.admin.create({
-		email: 'bilal@taleem.help',
+		email: 'mustafa@taleem.help',
 		password: '12345678',
-		courseSlugs: JSON.stringify(["fbise9math" , "blog"])
+		courseSlugs: JSON.stringify(["fbise7math" , "blog"])
 	});
 
 	console.log('Created:', admin.email);
