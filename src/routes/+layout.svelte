@@ -1,28 +1,63 @@
 <script>
 	import { page } from "$app/state";
+	import { goto } from "$app/navigation";
 	import { config } from "$lib/config.js";
+	import { send } from "$lib/send";
 	import Navbar from "$lib/components/Navbar.svelte";
 	import SubNav from "$lib/components/SubNav.svelte";
 	import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
 	import { blueTheme } from "$lib/taleem-themes/index.js";
 
+	const SIGNIN_PATH = `${config.basePath}/signin`;
+
 	let isPlayer = $derived(
 		page.url.pathname === `${config.basePath}/player` ||
 		page.url.pathname.startsWith(`${config.basePath}/player/`)
 	);
+	let isSignin = $derived(page.url.pathname === SIGNIN_PATH);
 
 	let active = "home";
 	let { children } = $props();
+
+	let checking = $state(true);
+	let authed = $state(false);
+
+	$effect(() => {
+		const path = page.url.pathname;
+
+		if (path === SIGNIN_PATH) {
+			checking = false;
+			authed = false;
+			return;
+		}
+
+		checking = true;
+
+		(async () => {
+			try {
+				const admin = await send("admin", "authenticate", {});
+				authed = !!admin;
+			} catch {
+				authed = false;
+			}
+
+			checking = false;
+
+			if (!authed) goto(SIGNIN_PATH);
+		})();
+	});
 </script>
 
 <TaleemTheme theme={blueTheme}>
-	{#if !isPlayer}
+	{#if !isPlayer && !isSignin}
 		<Navbar />
 		<SubNav active={active} />
 	{/if}
 
 	<main>
-		{@render children()}
+		{#if isSignin || (!checking && authed)}
+			{@render children()}
+		{/if}
 	</main>
 </TaleemTheme>
 

@@ -7,6 +7,7 @@ export async function loginAdmin(email, password) {
 }
 
 export async function authenticateAdmin(token) {
+	if (!token) return null;
 	return kernel.admin.authenticate(token);
 }
 

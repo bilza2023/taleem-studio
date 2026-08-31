@@ -95,6 +95,9 @@ $effect(() => {
 	Add Group
 </a>
 
+<a class="pending-link" href={`${config.basePath}/groups?course=${encodeURIComponent(course.slug)}`}>
+	Edit Groups
+</a>
 <div class="links-container">
 	<HomeLinks homeLinks={visibleItems} />
 

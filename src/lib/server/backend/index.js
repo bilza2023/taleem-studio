@@ -43,9 +43,9 @@ export const backend = {
 	group: {
 		list: (data) => listGroups(data.courseSlug),
 		get: (data) => getGroup(data.courseSlug, data.groupSlug),
-		create: (data) => createGroup(data),
-		update: (data) => updateGroup(data.courseSlug, data.groupSlug, data.data),
-		delete: (data) => deleteGroup(data.courseSlug, data.groupSlug)
+		create: (data, token) => createGroup(data, token),
+		update: (data, token) => updateGroup(data.courseSlug, data.groupSlug, data.data, token),
+		delete: (data, token) => deleteGroup(data.courseSlug, data.groupSlug, token)
 	},
 
 	image: {
