@@ -119,7 +119,6 @@
 	</div>
 
 </div>
-
 <style>
 
 .slide-header{
@@ -128,10 +127,11 @@
 	align-items:center;
 	justify-content:space-between;
 
-	padding:4px 8px;
+	padding:8px 10px;
 
-	background:#0f172a;
-	border-bottom:1px solid #333;
+	background: color-mix(in srgb, var(--theme-panel) 80%, color-mix(in srgb, #f59e0b 45%, #22c55e));
+	border-bottom:1px solid var(--theme-border);
+	color: var(--theme-text);
 
 }
 
@@ -139,7 +139,7 @@
 
 	display:flex;
 	align-items:center;
-	gap:6px;
+	gap:8px;
 
 }
 
@@ -154,6 +154,7 @@
 .type{
 
 	min-width:140px;
+	color: var(--theme-accent);
 
 }
 
@@ -164,6 +165,7 @@
 	gap:4px;
 
 	font-size:11px;
+	color: var(--theme-text);
 
 }
 
@@ -177,6 +179,11 @@
 
 	font-size:12px;
 
+	background: var(--theme-panel);
+	border:1px solid var(--theme-border);
+	border-radius:3px;
+	color: var(--theme-text);
+
 }
 
 .end{
@@ -186,7 +193,8 @@
 	gap:4px;
 
 	font-size:11px;
-	color:#aaa;
+	color: var(--theme-text);
+	opacity: 0.6;
 
 	min-width:80px;
 
@@ -205,11 +213,11 @@
 
 	font-size:12px;
 
-	border:1px solid #3a3a3a;
-	border-radius:3px;
+	border:1px solid var(--theme-border);
+	border-radius:4px;
 
-	background:#1d1d1d;
-	color:#ddd;
+	background: color-mix(in srgb, var(--theme-panel) 85%, white);
+	color: var(--theme-text);
 
 	cursor:pointer;
 
@@ -217,7 +225,7 @@
 
 .icon:hover:not(:disabled){
 
-	background:#2b2b2b;
+	background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
 
 }
 

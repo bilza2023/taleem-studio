@@ -96,7 +96,6 @@
   </tbody>
 
 </table>
-
 <style>
 
 .toolbar{
@@ -111,7 +110,7 @@ table{
 }
 
 td{
-  border:1px solid #333;
+  border:1px solid var(--theme-border);
   padding:0;
 }
 
@@ -121,6 +120,8 @@ input{
   padding:8px;
   box-sizing:border-box;
   background:transparent;
+  color: var(--theme-text);
+  font:inherit;
 }
 
 .action{
@@ -130,6 +131,15 @@ input{
 
 button{
   padding:4px 8px;
+  cursor:pointer;
+  background: color-mix(in srgb, var(--theme-panel) 85%, white);
+  border:1px solid var(--theme-border);
+  border-radius:3px;
+  color: var(--theme-text);
+}
+
+button:hover{
+  background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
 }
 
 </style>

@@ -211,3 +211,67 @@ function setShowAt(line) {
 	</button>
 
 </div>
+
+<style>
+
+	fieldset {
+		border: 1px solid var(--theme-border);
+		border-radius: 8px;
+		padding: 10px 14px 14px;
+		background: color-mix(in srgb, var(--theme-panel) 85%, black);
+	}
+
+	legend {
+		padding: 0 6px;
+		color: var(--theme-text);
+	}
+
+	select,
+	input,
+	textarea {
+		background: var(--theme-panel);
+		border: 1px solid var(--theme-border);
+		border-radius: 5px;
+		color: var(--theme-text);
+		font: inherit;
+		padding: 4px 8px;
+	}
+
+	select:focus,
+	input:focus,
+	textarea:focus {
+		outline: none;
+		border-color: var(--theme-accent);
+	}
+
+	textarea {
+		width: 100%;
+		min-height: 70px;
+		box-sizing: border-box;
+		padding: 8px 10px;
+		resize: vertical;
+	}
+
+	hr {
+		border: none;
+		border-top: 1px solid var(--theme-border);
+	}
+
+	h4 {
+		color: var(--theme-text);
+		font-size: 13px;
+	}
+
+	button {
+		background: color-mix(in srgb, var(--theme-panel) 85%, white);
+		border: 1px solid var(--theme-border);
+		border-radius: 5px;
+		color: var(--theme-text);
+		cursor: pointer;
+	}
+
+	button:hover {
+		background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
+	}
+
+</style>

@@ -135,31 +135,39 @@
     <Slides {deck} {runningTime} />
 
 </div>
-
 <style>
-    .editor {
-        width: 100%;
-        margin: 0 auto;
-        padding: 2px;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
+	.editor {
+		--editor-danger: #ef4444;
+		--editor-surface: color-mix(in srgb, var(--theme-panel) 85%, white);
+		--editor-surface-hover: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
 
-    .settings-bar {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        gap: 0;
-    }
+		width: 100%;
+		margin: 0 auto;
+		padding: 12px;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		background: var(--theme-panel);
+		color: var(--theme-text);
+		font-family: system-ui, sans-serif;
+	}
 
-    .audio-bar {
-        width: 100%;
-    }
+	.settings-bar {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
 
-    @media (max-width: 900px) {
-        .settings-bar {
-            flex-wrap: wrap;
-        }
-    }
+	.audio-bar {
+		width: 100%;
+	}
+
+	@media (max-width: 900px) {
+		.settings-bar {
+			flex-wrap: wrap;
+		}
+	}
 </style>

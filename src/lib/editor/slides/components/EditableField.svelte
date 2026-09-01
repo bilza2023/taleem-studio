@@ -74,12 +74,11 @@
 	{/if}
 
 </div>
-
 <style>
 
 .field-editor{
 
-	margin-bottom:12px;
+	margin-bottom:14px;
 
 }
 
@@ -89,7 +88,8 @@
 	align-items:center;
 	justify-content:space-between;
 
-	margin-bottom:4px;
+	margin-bottom:6px;
+	color: var(--theme-text);
 
 }
 
@@ -100,6 +100,8 @@
 	gap:4px;
 
 	font-size:12px;
+	color: var(--theme-text);
+	opacity: 0.8;
 
 }
 
@@ -113,6 +115,11 @@
 
 	text-align:right;
 
+	background: var(--theme-panel);
+	border:1px solid var(--theme-border);
+	border-radius:3px;
+	color: var(--theme-text);
+
 }
 
 textarea,
@@ -120,6 +127,23 @@ input[type="text"]{
 
 	width:100%;
 	font:inherit;
+
+	padding:8px 10px;
+	box-sizing:border-box;
+
+	background: color-mix(in srgb, var(--theme-panel) 90%, black);
+	border:1px solid var(--theme-border);
+	border-radius:5px;
+	color: var(--theme-text);
+
+}
+
+textarea:focus,
+input[type="text"]:focus,
+.showat input:focus{
+
+	outline:none;
+	border-color: var(--theme-accent);
 
 }
 
@@ -134,6 +158,17 @@ button{
 
 	padding:2px 6px;
 	cursor:pointer;
+
+	background: color-mix(in srgb, var(--theme-panel) 85%, white);
+	border:1px solid var(--theme-border);
+	border-radius:3px;
+	color: var(--theme-text);
+
+}
+
+button:hover{
+
+	background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
 
 }
 

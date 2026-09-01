@@ -31,22 +31,22 @@
         </option>
     {/each}
 </select>
-
 <style>
     select {
         width: 260px;
-        height: 30px;
+        height: 32px;
         padding: 4px 8px;
-        border: 1px solid #334155;
+        box-sizing: border-box;
+        border: 1px solid var(--theme-border);
         border-radius: 5px;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: color-mix(in srgb, var(--theme-panel) 90%, black);
+        color: var(--theme-text);
         font-size: 12px;
         cursor: pointer;
     }
 
     select:focus {
         outline: none;
-        border-color: #64748b;
+        border-color: var(--theme-accent);
     }
 </style>

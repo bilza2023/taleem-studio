@@ -219,48 +219,28 @@ function startChanged(i, value) {
 
   {/each}
 
+<style>
 
+	.empty {
+		color: var(--theme-text);
+		opacity: 0.5;
+	}
 
-  <style>
+	.slide {
+		border: 1px solid var(--theme-border);
+		margin-bottom: 14px;
+		border-radius: 8px;
+		overflow: hidden;
+		background: color-mix(in srgb, var(--theme-panel) 85%, black);
+	}
 
-  .empty {
-    color: #777;
-  }
+	.slide-body {
+		padding: 12px;
+	}
 
-  .slide {
-    border: 1px solid #333;
-    margin-bottom: 14px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #1a1a1a;
-  }
-
-  .slide-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #0f172a;
-    padding: 6px 10px;
-    border-bottom: 1px solid #333;
-  }
-
-  .slide-header .left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .slide-header .right {
-    display: flex;
-    gap: 6px;
-  }
-
-  .slide-body {
-    padding: 10px;
-  }
-
-  .fallback {
-    color: #777;
-    font-size: 13px;
-  }
-  </style>
+	.fallback {
+		color: var(--theme-text);
+		opacity: 0.5;
+		font-size: 13px;
+	}
+</style>
