@@ -107,7 +107,7 @@
 	.identity {
 		margin-bottom: 10px;
 		padding: 12px;
-		background: #171717;
+		background: #01310d;
 		border: 1px solid #333;
 		border-radius: 6px;
 		display: flex;

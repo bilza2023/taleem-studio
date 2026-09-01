@@ -13,6 +13,13 @@
     let runningTime = 0;
     let showTools = true;
 
+    let collapsed = {};
+let allCollapsed = false;
+
+function toggleCollapseAll() {
+	allCollapsed = !allCollapsed;
+	collapsed = Object.fromEntries(deck.deck.map((_, i) => [i, allCollapsed]));
+}
     function addSlide(type) {
         const fn = slideFactory[type];
         if (!fn) return;
@@ -104,6 +111,7 @@
         onSave={handleSave}
         onMockTiming={handleMockTiming}
         onToggleTools={() => showTools = !showTools}
+       onCollapseAll={toggleCollapseAll}
     />
 
     {#if showTools}
@@ -132,7 +140,7 @@
     {/if}
 
     <!-- SLIDES -->
-    <Slides {deck} {runningTime} />
+  <Slides {deck} {runningTime} bind:collapsed />
 
 </div>
 <style>

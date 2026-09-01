@@ -24,7 +24,7 @@
   $: slides = deck?.deck || [];
   export let runningTime;
 
-  let collapsed = {};
+ export let collapsed = {};
 
   function setStart(i) {
 

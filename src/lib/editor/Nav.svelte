@@ -6,6 +6,7 @@
     export let onSave;
     export let onMockTiming;
     export let onToggleTools;
+    export let onCollapseAll;
 
     const buttons = [
         { type: SlideType.TitleAndSubtitle, icon: "🅣" },
@@ -28,9 +29,8 @@
         { type: SlideType.Quote, icon: "❝❞" },
         { type: SlideType.KeyIdeas, icon: "💡" },
 
-        { action: "download", icon: "⬇️" },
-        { action: "mock", icon: "⏱️" },
-        { action: "export", icon: "💾" }
+        { action: "export", icon: "💾" },
+        { action: "mock", icon: "⏱️" }
     ];
 
     function handleClick(button) {
@@ -123,8 +123,16 @@
             on:click={onToggleTools}
             title="Show / Hide Editor Tools"
         >
-            ⚙️
+            🎧
         </button>
+
+        <button
+	class="tools-button"
+	on:click={onCollapseAll}
+	title="Collapse / Expand All"
+>
+	🪗
+</button>
 
     </div>
 

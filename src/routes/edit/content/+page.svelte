@@ -133,7 +133,14 @@
 			<div><strong>Course:</strong> {form.courseSlug}</div>
 			<div><strong>Group:</strong> {form.groupSlug}</div>
 		</div>
-
+{#if form.type === "PLAYER"}
+	<a
+		class="editor-link"
+		href={`${config.basePath}/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}
+	>
+		Slide Editor 🚧 🚜 🏗️ 
+	</a>
+{/if}
 		<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
 			<label>
@@ -220,6 +227,27 @@
 </div>
 
 <style>
+.editor-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 20px;
+	padding: 6px 12px;
+	width: fit-content;
+	border: 1px solid #3a4a63;
+	border-radius: 6px;
+	background: #16202e;
+	color: #5fa8ff;
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: background .15s, border-color .15s;
+}
+
+.editor-link:hover {
+	background: #1e2c40;
+	border-color: #5fa8ff;
+}
 	.page {
 		max-width: 800px;
 		color: aliceblue;

@@ -14,6 +14,10 @@
 		page.url.pathname === `${config.basePath}/player` ||
 		page.url.pathname.startsWith(`${config.basePath}/player/`)
 	);
+	let isEditor = $derived(
+		page.url.pathname === `${config.basePath}/edit/editor` ||
+		page.url.pathname.startsWith(`${config.basePath}/edit/editor/`)
+	);
 	let isSignin = $derived(page.url.pathname === SIGNIN_PATH);
 
 	let active = "home";
@@ -49,7 +53,7 @@
 </script>
 
 <TaleemTheme theme={blueTheme}>
-	{#if !isPlayer && !isSignin}
+	{#if !isPlayer && !isSignin && !isEditor}
 		<Navbar />
 		<SubNav active={active} />
 	{/if}

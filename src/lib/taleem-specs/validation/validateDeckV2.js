@@ -3,7 +3,7 @@
 import { zodDeckV2 } from "../schema/zodDeckV2.js";
 
 export function validateDeckV2(deck) {
- debugger;
+//  debugger;
 	const result = zodDeckV2.safeParse(deck);
 
 	if (result.success) {
