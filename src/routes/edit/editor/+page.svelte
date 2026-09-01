@@ -5,7 +5,7 @@
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
 	import Editor from "$lib/editor/Editor.svelte";
-
+import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 	let item = $state(null);
 	let deck = $state({ deck: [] });
 
@@ -36,7 +36,7 @@
 
 			item = data;
 
-			deck = data.body ? JSON.parse(data.body) : { deck: [] };
+			deck = patchDeckV2(data.body ? JSON.parse(data.body) : null);
 
 			message = "";
 		} catch (error) {
