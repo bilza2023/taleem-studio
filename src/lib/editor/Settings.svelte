@@ -1,8 +1,9 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/editor/Settings.svelte
     import { onMount } from "svelte";
-    // import apiFetch from "$lib/utils/fetch";
-import { send } from "$lib/send/index.js";
+    import { send } from "$lib/send/index.js";
+    import ImagePicker from "./slides/components/ImagePicker.svelte";
+
     export let background;
     export let audio = "";
     export let onUse = () => {};
@@ -12,23 +13,27 @@ import { send } from "$lib/send/index.js";
 
     onMount(load);
 
-async function load() {
-	try {
-		files = await send("audio", "list", {});
-        console.log("files",files);
-		if (audio) {
-			selected = audio;
-		} else if (files.length) {
-			selected = files[0].filename;
-		}
-	}
-	catch (err) {
-		console.error(err);
-	}
-}
+    async function load() {
+        try {
+            files = await send("audio", "list", {});
+
+            if (audio) {
+                selected = audio;
+            } else if (files.length) {
+                selected = files[0].slug;
+            }
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
 
     function useAudio() {
         onUse(selected);
+    }
+
+    function useBackgroundImage(slug) {
+        background.backgroundImage = slug;
     }
 </script>
 
@@ -44,10 +49,9 @@ async function load() {
 
     <label class="image">
         <span>Image</span>
-        <input
-            type="text"
-            placeholder="bg.webp"
-            bind:value={background.backgroundImage}
+        <ImagePicker
+            value={background.backgroundImage}
+            onUse={useBackgroundImage}
         />
     </label>
 
@@ -139,11 +143,6 @@ async function load() {
     .image {
         flex: 1;
         min-width: 180px;
-    }
-
-    .image input {
-        width: 100%;
-        min-width: 140px;
     }
 
     input[type="text"],

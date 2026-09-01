@@ -4,8 +4,13 @@
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
+import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 
 	let deleting = $state(false);
+
+	function useThumbnail(slug) {
+	form.thumbnail = slug;
+}
 
 	let form = $state({
 		slug: "",
@@ -171,10 +176,13 @@
 				<textarea bind:value={form.description}></textarea>
 			</label>
 
-			<label>
-				Thumbnail
-				<input bind:value={form.thumbnail}>
-			</label>
+		<label>
+	Thumbnail
+	<ImagePicker
+		value={form.thumbnail}
+		onUse={useThumbnail}
+	/>
+</label>
 
 			<label>
 				{form.type === "PLAYER" ? "Deck JSON" : "Body"}
