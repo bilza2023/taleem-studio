@@ -26,13 +26,12 @@ export function assignMockTimings(goldenDeck, slideDuration = 5) {
       const end = start + slideDuration;
       currentTime = end;
 
-      const data = Array.isArray(slide.data)
-        ? slide.data.map(item => ({
-            ...item,
-            showAt:
-              start + (typeof item.showAt === "number" ? item.showAt : 0)
-          }))
-        : slide.data;
+    const data = Array.isArray(slide.data)
+	? slide.data.map(item => ({
+			...item,
+			showAt: 0
+		}))
+	: slide.data;
 
       return {
         ...slide,

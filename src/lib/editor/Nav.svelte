@@ -1,3 +1,13 @@
+<svelte:window on:keydown={(e) => {
+	if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+		e.preventDefault();
+		onSave?.();
+	}
+	if ((e.ctrlKey || e.metaKey) && e.key === "c" && !window.getSelection()?.toString()) {
+		e.preventDefault();
+		onCollapseAll?.();
+	}
+}} />
 <script>
     import { SlideType } from "$lib/taleem-specs/enums";
 
@@ -29,8 +39,8 @@
         { type: SlideType.Quote, icon: "❝❞" },
         { type: SlideType.KeyIdeas, icon: "💡" },
 
+        { action: "mock", icon: "⏱️" },
         { action: "export", icon: "💾" },
-        { action: "mock", icon: "⏱️" }
     ];
 
     function handleClick(button) {
