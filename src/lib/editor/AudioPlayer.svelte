@@ -26,28 +26,26 @@
 
 		}
 
-		player = new Howl({
+player = new Howl({
 
-			src: [
-				`${config.apiUrl}/content/audio/${filename}`
-			],
+	src: [
+		`${config.apiUrl}/content/audio/${filename}`
+	],
 
-			html5: true,
+	onload() {
 
-			onload() {
+		duration = player.duration();
 
-				duration = player.duration();
+	},
 
-			},
+	onend() {
 
-			onend() {
+		playing = false;
+		runningTime = duration;
 
-				playing = false;
-				runningTime = duration;
+	}
 
-			}
-
-		});
+});
 
 		runningTime = 0;
 		playing = false;
@@ -150,6 +148,7 @@
 		}
 
 	});
+
 
 </script>
 <div class="player">

@@ -30,7 +30,7 @@
 
         { action: "download", icon: "⬇️" },
         { action: "mock", icon: "⏱️" },
-        { action: "export", icon: "⬇💡" }
+        { action: "export", icon: "💾" }
     ];
 
     function handleClick(button) {

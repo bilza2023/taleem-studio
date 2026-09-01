@@ -24,7 +24,7 @@
             {
                 ...fn(),
                 start: last ? last.end : 0,
-                end: (last ? last.end : 0) + 5
+                end: (last ? last.end : 0) + 10
             }
         ];
     }

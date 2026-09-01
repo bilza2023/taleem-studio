@@ -1,7 +1,8 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/editor/Settings.svelte
     import { onMount } from "svelte";
-    import apiFetch from "$lib/utils/fetch";
-
+    // import apiFetch from "$lib/utils/fetch";
+import { send } from "$lib/send/index.js";
     export let background;
     export let audio = "";
     export let onUse = () => {};
@@ -11,20 +12,20 @@
 
     onMount(load);
 
-    async function load() {
-        try {
-            files = await apiFetch("GET", "/media/audio");
-
-            if (audio) {
-                selected = audio;
-            } else if (files.length) {
-                selected = files[0].filename;
-            }
-        }
-        catch (err) {
-            console.error(err);
-        }
-    }
+async function load() {
+	try {
+		files = await send("audio", "list", {});
+        console.log("files",files);
+		if (audio) {
+			selected = audio;
+		} else if (files.length) {
+			selected = files[0].filename;
+		}
+	}
+	catch (err) {
+		console.error(err);
+	}
+}
 
     function useAudio() {
         onUse(selected);
@@ -83,8 +84,8 @@
 
         <select bind:value={selected}>
             {#each files as file}
-                <option value={file.filename}>
-                    {file.filename}
+                <option value={file.slug}>
+                    {file.slug}
                 </option>
             {/each}
         </select>
