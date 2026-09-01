@@ -41,25 +41,24 @@
 
 			<span>Start</span>
 
-			<input
-				type="number"
-				step="1"
-				min="0"
-				bind:value={slide.start}
-				on:change={() => onStartChange(slide.start)}
-				disabled={index === 0}
-			/>
-
+		<input
+	type="number"
+	step="1"
+	min="0"
+	value={Math.round(slide.start ?? 0)}
+	on:change={(e) => { slide.start = Math.round(e.target.value); onStartChange(slide.start); }}
+	disabled={index === 0}
+/>
 		</label>
 
-		<button
-			class="icon"
-			on:click={onSetStart}
-			disabled={index === 0}
-			title="Set Start From Audio"
-		>
-			⏱
-		</button>
+<button
+	class="icon"
+	on:click={() => { onSetStart(); slide.start = Math.round(slide.start); }}
+	disabled={index === 0}
+	title="Set Start From Audio"
+>
+	⏱
+</button>
 
 		<!-- END -->
 
@@ -69,12 +68,13 @@
 
 				<span>End</span>
 
-				<input
-					type="number"
-					step="0.1"
-					min="0"
-					bind:value={slide.end}
-				/>
+			<input
+	type="number"
+	step="1"
+	min="0"
+	value={Math.round(slide.end ?? 0)}
+	on:change={(e) => { slide.end = Math.round(e.target.value); }}
+/>
 
 			</label>
 
@@ -93,7 +93,7 @@
 				End
 
 				<strong>
-					{slide.end ?? 0}
+					{Math.round(slide.end ?? 0)}
 				</strong>
 
 			</div>
