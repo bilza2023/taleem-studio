@@ -82,7 +82,7 @@
 
 			presentation = JSON.parse(item.body);
 
-			console.log("presentation", presentation);
+			// console.log("presentation", presentation);
 
 			resolveAssetPaths(
 				presentation,

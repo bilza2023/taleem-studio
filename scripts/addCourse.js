@@ -4,7 +4,7 @@ import kernel from 'taleem-kernel';
 
 async function main() {
 	const course = await kernel.course.create({
-		slug: 'fbise7math',
+		slug: 'fbise9mathQuickReference',
 		title: 'Class 7th Math (FBISE)',
 		description: 'Class 7th Math (FBISE)',
 		access: 'MEMBERS',      // OPEN | MEMBERS | SUBSCRIPTION

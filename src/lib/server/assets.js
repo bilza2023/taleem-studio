@@ -6,7 +6,22 @@ import { requireAdmin } from './backend/utils/requireAdmin.js';
 import { createImage } from './backend/image.js';
 import { createAudio } from './backend/audio.js';
 import { config } from '$lib/config.js';
+import { readFile } from 'node:fs/promises';
 
+const CONTENT_DIR = path.resolve(config.basePath + "/content");
+
+const MIME_TYPES = {
+	".png": "image/png",
+	".jpg": "image/jpeg",
+	".jpeg": "image/jpeg",
+	".webp": "image/webp",
+	".gif": "image/gif",
+	".svg": "image/svg+xml",
+	".mp3": "audio/mpeg",
+	".wav": "audio/wav",
+	".opus": "audio/ogg",
+	".ogg": "audio/ogg"
+};
 export async function listAssets(token) {
 	await requireAdmin(token);
 
@@ -99,5 +114,50 @@ export async function uploadAsset(type, form, token) {
 	} catch (dbErr) {
 		await unlink(filePath).catch(() => {});
 		throw dbErr;
+	}
+}
+
+export async function getAsset(relativePath) {
+	if (!relativePath) {
+		const err = new Error("Asset path required");
+		err.status = 404;
+		throw err;
+	}
+
+	const ext = path.extname(relativePath).toLowerCase();
+
+	if (ext === ".svg") {
+		const slug = path.basename(relativePath, ".svg");
+		const svg = await kernel.svg.get(slug);
+
+		if (!svg) {
+			const err = new Error(`SVG not found: ${slug}`);
+			err.status = 404;
+			throw err;
+		}
+
+		return { data: svg.body, contentType: "image/svg+xml" };
+	}
+
+	const contentRoot = path.resolve(config.contentDir);
+	const filePath = path.resolve(contentRoot, relativePath);
+
+	// Prevent ../ from escaping contentRoot
+	if (!filePath.startsWith(contentRoot + path.sep)) {
+		const err = new Error("Forbidden");
+		err.status = 403;
+		throw err;
+	}
+
+	try {
+		const data = await readFile(filePath);
+		return { data, contentType: MIME_TYPES[ext] || "application/octet-stream" };
+	} catch (err) {
+		if (err.code === "ENOENT") {
+			const notFound = new Error("Asset not found");
+			notFound.status = 404;
+			throw notFound;
+		}
+		throw err;
 	}
 }

@@ -1,9 +1,15 @@
 import kernel from 'taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 
+
 export async function createSvg(data, token) {
 	await requireAdmin(token);
-	return kernel.svg.create(data);
+
+	const slug = data.slug?.endsWith('.svg')
+		? data.slug
+		: `${data.slug}.svg`;
+
+	return kernel.svg.create({ ...data, slug });
 }
 
 export async function getSvg(slug) {

@@ -9,17 +9,17 @@
 	export let runningTime;
 
 	function setImageShowAt() {
-		slide.data[0].showAt = runningTime;
+		slide.data[1].showAt = runningTime;
 		slide.data = [...slide.data];
 	}
 
 	function updateImageShowAt(e) {
-		slide.data[0].showAt = Number(e.target.value);
+		slide.data[1].showAt = Number(e.target.value);
 		slide.data = [...slide.data];
 	}
 
 	function useImage(slug) {
-		slide.data[0].content = slug;
+		slide.data[1].content = slug;
 		slide.data = [...slide.data];
 	}
 
@@ -27,7 +27,7 @@
 
 <EditableField
 	label="Title"
-	object={slide.data[1]}
+	object={slide.data[0]}
 	property="content"
 	multiline={false}
 	{runningTime}
@@ -47,7 +47,7 @@
 				type="number"
 				step="0.1"
 				min="0"
-				value={slide.data[0].showAt ?? 0}
+				value={slide.data[1].showAt ?? 0}
 				oninput={updateImageShowAt}
 			/>
 
@@ -64,7 +64,7 @@
 	</div>
 
 	<ImagePicker
-		value={slide.data[0].content}
+		value={slide.data[1].content}
 		onUse={useImage}
 	/>
 

@@ -16,7 +16,7 @@
 		try {
 			const assets = await send("assets", "list", {});
 
-			files = assets.filter(a => a.type === "IMAGE");
+		files = assets.filter(a => a.type === "IMAGE" || a.type === "SVG");
 
 			if (value) {
 				selected = value;

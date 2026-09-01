@@ -1,7 +1,7 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend.js
 
 import { loginAdmin, authenticateAdmin, authorizeAdmin } from "./admin.js";
-import { listAssets } from "../assets.js";
+import { listAssets,getAsset } from "../assets.js";
 
 import {createAudio, getAudio, listAudio, updateAudio, deleteAudio} from "./audio.js";
 import {listCourses, getCourse, createCourse, updateCourse, deleteCourse} from "./course.js";
@@ -21,7 +21,8 @@ export const backend = {
 	},
 
 	assets: {
-		list: (data, token) => listAssets(token)
+		list: (data, token) => listAssets(token),
+		get: (data) => getAsset(data.slug)
 	},
 
 	audio: {
@@ -67,7 +68,7 @@ export const backend = {
 
 	svg: {
 		get: (data) => getSvg(data.slug),
-		list: (data) => listSvg(data),
+		list: (data) => listSvg(data.slug),
 		create: (data, token) => createSvg(data, token),
 		update: (data, token) => updateSvg(data.slug, data.data, token),
 		delete: (data, token) => deleteSvg(data.slug, token)

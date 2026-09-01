@@ -1,8 +1,10 @@
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
+
+// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
 import { error } from "@sveltejs/kit";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { config } from "$lib/config.js";
+import { getSvg } from "$lib/server/backend/svg.js";
 
 const CONTENT_DIR = config.contentDir;
 
@@ -21,9 +23,28 @@ const TYPES = {
 
 export async function GET({ params }) {
 	const relativePath = params.path;
-// console.log("content route hit:", { relativePath, CONTENT_DIR, resolved: path.resolve(CONTENT_DIR) });
+
 	if (!relativePath) {
 		throw error(404, "File not found");
+	}
+
+	const ext = path.extname(relativePath).toLowerCase();
+
+	if (ext === ".svg") {
+		// const slug = path.basename(relativePath, ".svg");
+		const slug = path.basename(relativePath);
+		const svg = await getSvg(slug);
+
+		if (!svg) {
+			throw error(404, "SVG not found");
+		}
+
+		return new Response(svg.body, {
+			headers: {
+				"Content-Type": "image/svg+xml",
+				"Cache-Control": "no-cache"
+			}
+		});
 	}
 
 	const contentRoot = path.resolve(CONTENT_DIR);
@@ -36,7 +57,6 @@ export async function GET({ params }) {
 
 	try {
 		const data = await readFile(filePath);
-		const ext = path.extname(filePath).toLowerCase();
 
 		return new Response(data, {
 			headers: {
