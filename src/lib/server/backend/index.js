@@ -1,10 +1,10 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend.js
 
-import { loginAdmin, authenticateAdmin, authorizeAdmin } from "./admin.js";
+import { loginAdmin, authenticateAdmin, authorizeAdmin,listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { listAssets,getAsset } from "../assets.js";
 
 import {createAudio, getAudio, listAudio, updateAudio, deleteAudio} from "./audio.js";
-import {listCourses, getCourse, createCourse, updateCourse, deleteCourse} from "./course.js";
+import {listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse} from "./course.js";
 import {listGroups, getGroup, createGroup, updateGroup, deleteGroup} from "./group.js";
 import {createImage, getImage, listImages, updateImage, deleteImage} from "./image.js";
 import {createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup
@@ -17,7 +17,14 @@ export const backend = {
 	admin: {
 		login: (data) => loginAdmin(data.email, data.password),
 		authenticate: (data, token) => authenticateAdmin(token),
-		authorize: (data) => authorizeAdmin(data.email, data.courseSlug)
+		authorize: (data) => authorizeAdmin(data.email, data.courseSlug),
+		list: (data, token) => listAdmins(data, token),
+		get: (data, token) => getAdmin(data.email, token),
+		create: (data, token) => createAdmin(data, token),
+		update: (data, token) => updateAdmin(data.email, data.data, token),
+		delete: (data, token) => deleteAdmin(data.email, token),
+		assignCourse: (data, token) => assignCourseToAdmin(data.email, data.courseSlug, token),
+		unassignCourse: (data, token) => unassignCourseFromAdmin(data.email, data.courseSlug, token)
 	},
 
 	assets: {
@@ -36,9 +43,10 @@ export const backend = {
 	course: {
 		list: (data) => listCourses(data),
 		get: (data) => getCourse(data.slug),
-		create: (data) => createCourse(data),
-		update: (data) => updateCourse(data.slug, data.data),
-		delete: (data) => deleteCourse(data.slug)
+		create: (data, token) => createCourse(data, token),
+		update: (data, token) => updateCourse(data.slug, data.data, token),
+		delete: (data, token) => deleteCourse(data.slug, token),
+		authorize: (data) => authorizeCourse(data.userId, data.courseSlug)
 	},
 
 	group: {
