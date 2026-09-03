@@ -15,7 +15,7 @@
 	}
 
 	function getEditHref(card) {
-	return `${config.basePath}/edit/content?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}&role=${encodeURIComponent(card.type)}`;
+	return `${config.basePath}/admin/edit/content?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}&role=${encodeURIComponent(card.type)}`;
 }
 </script>
 

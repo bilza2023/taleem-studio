@@ -141,7 +141,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 {#if form.type === "PLAYER"}
 	<a
 		class="editor-link"
-		href={`${config.basePath}/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}
+		href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}
 	>
 		Slide Editor 🚧 🚜 🏗️ 
 	</a>
