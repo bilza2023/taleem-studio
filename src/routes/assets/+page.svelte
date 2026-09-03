@@ -179,9 +179,14 @@
 
 					<div class="preview">
 
-						{#if asset.type === "SVG"}
+				{#if asset.type === "SVG"}
 
-							{@html asset.body}
+    <a href={`${config.basePath}/content/images/${asset.slug}`} target="_blank" rel="noopener noreferrer">
+        <img
+            src={`${config.basePath}/content/images/${asset.slug}`}
+            alt={asset.title || asset.slug}
+        />
+    </a>
 
 					{:else if asset.type === "IMAGE"}
 
