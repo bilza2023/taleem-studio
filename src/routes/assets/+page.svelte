@@ -183,12 +183,14 @@
 
 							{@html asset.body}
 
-						{:else if asset.type === "IMAGE"}
+					{:else if asset.type === "IMAGE"}
 
-							<img
-								src={`${config.basePath}/content/images/${asset.slug}`}
-								alt={asset.title || asset.slug}
-							/>
+    <a href={`${config.basePath}/content/images/${asset.slug}`} target="_blank" rel="noopener noreferrer">
+        <img
+            src={`${config.basePath}/content/images/${asset.slug}`}
+            alt={asset.title || asset.slug}
+        />
+    </a>
 
 						{:else if asset.type === "AUDIO"}
 

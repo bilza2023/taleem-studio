@@ -1,0 +1,44 @@
+<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="260" fill="#101827"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#60a5fa"/>
+    </marker>
+  </defs>
+
+  <!-- Node 1: You type -->
+  <circle cx="90" cy="120" r="45" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+  <text x="90" y="135" text-anchor="middle" font-size="34">📱</text>
+  <text x="90" y="185" text-anchor="middle" font-family="Arial" font-size="13" fill="#9ca3af">you type</text>
+
+  <line x1="140" y1="120" x2="195" y2="120" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Node 2: Text -->
+  <circle cx="245" cy="120" r="45" fill="#1f2937" stroke="#d4af37" stroke-width="2"/>
+  <text x="245" y="135" text-anchor="middle" font-size="34">📃</text>
+  <text x="245" y="185" text-anchor="middle" font-family="Arial" font-size="13" fill="#9ca3af">text</text>
+
+  <line x1="295" y1="120" x2="350" y2="120" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Node 3: Numbers -->
+  <circle cx="400" cy="120" r="45" fill="#1f2937" stroke="#d4af37" stroke-width="2"/>
+  <text x="400" y="135" text-anchor="middle" font-size="34">🔢</text>
+  <text x="400" y="185" text-anchor="middle" font-family="Arial" font-size="13" fill="#9ca3af">numbers</text>
+
+  <line x1="450" y1="120" x2="505" y2="120" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Node 4: Model thinks -->
+  <circle cx="555" cy="120" r="45" fill="#1f2937" stroke="#34d399" stroke-width="2"/>
+  <text x="555" y="135" text-anchor="middle" font-size="34">💻</text>
+  <text x="555" y="185" text-anchor="middle" font-family="Arial" font-size="13" fill="#9ca3af">model thinks</text>
+
+  <line x1="605" y1="120" x2="660" y2="120" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Node 5: Reply -->
+  <circle cx="710" cy="120" r="45" fill="#1f2937" stroke="#f472b6" stroke-width="2"/>
+  <text x="710" y="135" text-anchor="middle" font-size="34">💬</text>
+  <text x="710" y="185" text-anchor="middle" font-family="Arial" font-size="13" fill="#9ca3af">reply</text>
+
+  <text x="400" y="35" text-anchor="middle" font-family="Arial" font-size="18" fill="#d4af37" font-weight="bold">What Happens When You Ask an LLM Something</text>
+</svg>
