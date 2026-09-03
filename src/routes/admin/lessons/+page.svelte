@@ -1,6 +1,6 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/lessons/+page.svelte
-import HomeLinks from "./HomeLinks.svelte";
+import HomeLinks from "$lib/components/HomeLinks.svelte";
 import CourseHero from "$lib/components/CourseHero.svelte";
 import Footer from "$lib/components/Footer.svelte";
 import { page } from "$app/state";
@@ -87,6 +87,17 @@ $effect(() => {
 	onChange={handleGroupingChange}
 />
 
+<a class="pending-link" href={`${config.basePath}/create/content?course=${encodeURIComponent(course.slug)}`}>
+	New
+</a>
+
+<a class="pending-link" href={`${config.basePath}/create/group?course=${encodeURIComponent(course.slug)}`}>
+	Add Group
+</a>
+
+<a class="pending-link" href={`${config.basePath}/groups?course=${encodeURIComponent(course.slug)}`}>
+	Edit Groups
+</a>
 <div class="links-container">
 	<HomeLinks homeLinks={visibleItems} />
 

@@ -3,16 +3,26 @@
 	import { send } from "$lib/send";
 	import { config } from "$lib/config";
 
+	let name = $state("");
 	let email = $state("");
 	let password = $state("");
+	let confirmPassword = $state("");
 	let loading = $state(false);
 	let error = $state("");
 
-	async function signin() {
+	async function signup() {
 		error = "";
+
+		if (password !== confirmPassword) {
+			error = "Passwords do not match.";
+			return;
+		}
+
 		loading = true;
 
 		try {
+			await send("user", "register", { name, email, password });
+
 			const token = await send("user", "login", { email, password });
 
 			localStorage.setItem("taleem-token", token);
@@ -30,22 +40,30 @@
 </script>
 
 <svelte:head>
-	<title>Student Sign In | Taleem.Help</title>
+	<title>Sign Up | Taleem</title>
 </svelte:head>
 
 <div class="page">
 	<form class="card" onsubmit={(event) => {
 		event.preventDefault();
-		signin();
+		signup();
 	}}>
-		<h2>Student Sign In</h2>
+		<h2>Sign Up</h2>
+
+		<label for="name">Name</label>
+		<input
+			id="name"
+			type="text"
+			bind:value={name}
+			placeholder="Your name"
+		/>
 
 		<label for="email">Email</label>
 		<input
 			id="email"
 			type="email"
 			bind:value={email}
-			placeholder="admin@example.com"
+			placeholder="you@example.com"
 			required
 		/>
 
@@ -58,12 +76,21 @@
 			required
 		/>
 
+		<label for="confirmPassword">Confirm Password</label>
+		<input
+			id="confirmPassword"
+			type="password"
+			bind:value={confirmPassword}
+			placeholder="Confirm password"
+			required
+		/>
+
 		{#if error}
 			<p class="error">{error}</p>
 		{/if}
 
 		<button type="submit" disabled={loading}>
-			{loading ? "Signing In..." : "Sign In"}
+			{loading ? "Signing Up..." : "Sign Up"}
 		</button>
 	</form>
 </div>

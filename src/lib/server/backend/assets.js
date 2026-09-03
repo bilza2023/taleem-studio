@@ -2,9 +2,9 @@
 import kernel from 'taleem-kernel';
 import { mkdir, writeFile, access, unlink } from 'node:fs/promises';
 import path from 'node:path';
-import { requireAdmin } from './backend/utils/requireAdmin.js';
-import { createImage } from './backend/image.js';
-import { createAudio } from './backend/audio.js';
+import { requireAdmin } from './utils/requireAdmin.js';
+import { createImage } from './image.js';
+import { createAudio } from './audio.js';
 import { config } from '$lib/config.js';
 import { readFile } from 'node:fs/promises';
 

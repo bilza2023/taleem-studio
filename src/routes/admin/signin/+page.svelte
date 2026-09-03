@@ -13,14 +13,15 @@
 		loading = true;
 
 		try {
-			const token = await send("user", "login", { email, password });
+			const token = await send("admin", "login", { email, password });
 
-			localStorage.setItem("taleem-token", token);
-			localStorage.setItem("taleem-email", email);
+			localStorage.setItem("taleem-admin-token", token);
+			localStorage.setItem("taleem-admin-email", email);
 
-			window.dispatchEvent(new Event("userAuthChanged"));
+			window.dispatchEvent(new Event("adminAuthChanged"));
 
-			goto(`${config.basePath}/`);
+		goto(`${config.basePath}/`);
+		// goto("/");
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -30,7 +31,7 @@
 </script>
 
 <svelte:head>
-	<title>Student Sign In | Taleem.Help</title>
+	<title>Admin Sign In | Taleem Studio</title>
 </svelte:head>
 
 <div class="page">
@@ -38,7 +39,7 @@
 		event.preventDefault();
 		signin();
 	}}>
-		<h2>Student Sign In</h2>
+		<h2>Admin Sign In</h2>
 
 		<label for="email">Email</label>
 		<input

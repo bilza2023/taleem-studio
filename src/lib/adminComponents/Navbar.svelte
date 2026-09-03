@@ -4,12 +4,12 @@ import { config } from "$lib/config.js";
 	let email = $state("");
 
 	function refresh() {
-		email = localStorage.getItem("taleem-email") || "";
+		email = localStorage.getItem("taleem-admin-email") || "";
 	}
 
 	function logout() {
-		localStorage.removeItem("taleem-token");
-		localStorage.removeItem("taleem-email");
+		localStorage.removeItem("taleem-admin-token");
+		localStorage.removeItem("taleem-admin-email");
 		email = "";
 		window.dispatchEvent(new Event("authChanged"));
 	}
@@ -27,10 +27,9 @@ import { config } from "$lib/config.js";
 
 <nav class="navbar">
 <a class="home" href={config.basePath || "/"}>
-	<span class="icon">📘</span>
-	<span class="brand">Taleem.Help</span>
-	<span class="beta">(Beta)</span>
-</a>
+		<span class="icon">📘</span>
+		<span style="color:orange">Taleem.Admin</span>
+	</a>
 
 	<div class="right">
 
@@ -45,8 +44,13 @@ import { config } from "$lib/config.js";
 				🚪
 			</button>
 		{:else}
-			<a class="auth-button" title="Sign in" href={`${config.basePath}/signin`}>🔑</a>
-			<a class="auth-button" title="Sign in" href={`${config.basePath}/signup`}>🔒</a>
+			<a
+				class="auth-button"
+				title="Sign in"
+				href={`${config.basePath}/signin`}
+			>
+				🔑
+			</a>
 		{/if}
 
 	</div>
@@ -54,17 +58,6 @@ import { config } from "$lib/config.js";
 </nav>
 
 <style>
-.brand {
-	color: #bbe793;
-	font-weight: 700;
-}
-
-.beta {
-	color: #E8791A;
-	font-weight: 600;
-	font-size: 0.8em;
-	margin-left: 4px;
-}
 	.navbar {
 		margin: 0;
 		padding: .6rem 1rem;
