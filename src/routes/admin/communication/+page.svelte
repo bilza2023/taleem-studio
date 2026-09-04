@@ -15,7 +15,7 @@
 		error = "";
 
 		try {
-			communications = await send("adminCommunication", "listForCourse", { courseSlug });
+		communications = await send("adminCommunication", "listUnanswered", { courseSlug });
 		}
 		catch (err) {
 			console.error(err);
