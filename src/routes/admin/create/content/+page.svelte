@@ -50,7 +50,7 @@
 		saving = true;
 
 		try {
-			const data = await send("library", "create", {
+	const data = await send("adminLibrary", "create", {
 				slug: form.slug,
 				courseSlug,
 				groupSlug: form.groupSlug,
