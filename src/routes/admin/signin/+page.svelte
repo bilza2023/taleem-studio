@@ -20,7 +20,7 @@
 
 			window.dispatchEvent(new Event("adminAuthChanged"));
 
-		goto(`${config.basePath}/`);
+		goto(`/admin`);
 		// goto("/");
 		} catch (err) {
 			error = err.message;

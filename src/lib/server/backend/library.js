@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/library.js
+// src/lib/server/library.js
 
 import kernel from "taleem-kernel";
 
@@ -14,13 +14,18 @@ export async function createLibrary(data) {
 	return kernel.library.create(data);
 }
 
-export async function getLibrary(slug) {
-	return kernel.library.get(slug, { includeUnpublished: true });
+export async function getLibrary(slug, options = {}) {
+	const { includeUnpublished = false } = options;
+
+	return kernel.library.get(slug, { includeUnpublished });
 }
 
-export async function listLibrary(filters) {
-	return kernel.library.list(filters, { includeUnpublished: true });
+export async function listLibrary(filters, options = {}) {
+	const { includeUnpublished = false } = options;
+
+	return kernel.library.list(filters, { includeUnpublished });
 }
+
 export async function updateLibrary(slug, data) {
 	const existing = await kernel.library.get(slug, { includeUnpublished: true });
 
@@ -45,6 +50,8 @@ export async function deleteLibrary(slug) {
 	return kernel.library.delete(slug);
 }
 
-export async function listLibraryByGroup(courseSlug, groupSlug) {
-	return kernel.library.listByGroup(courseSlug, groupSlug, { includeUnpublished: true });
+export async function listLibraryByGroup(courseSlug, groupSlug, options = {}) {
+	const { includeUnpublished = false } = options;
+
+	return kernel.library.listByGroup(courseSlug, groupSlug, { includeUnpublished });
 }

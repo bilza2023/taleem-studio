@@ -6,11 +6,11 @@ const basePath = config.basePath;
 	let { active = "" } = $props();
 
 const categories = [
-	{ id: "home", title: "Home", href: `${basePath}/` },
-	{ id: "assets", title: "Assets", href: `${basePath}/assets` },
-	{ id: "add-svg", title: "＋ SVG", href: `${basePath}/create/svg` },
-	{ id: "add-image", title: "＋ Image", href: `${basePath}/create/image` },
-	{ id: "add-audio", title: "＋ Audio", href: `${basePath}/create/audio` }
+	{ id: "home", title: "Home", href: `${basePath}/admin` },
+	{ id: "assets", title: "Assets", href: `${basePath}/admin/assets` },
+	{ id: "add-svg", title: "＋ SVG", href: `${basePath}/admin/create/svg` },
+	{ id: "add-image", title: "＋ Image", href: `${basePath}/admin/create/image` },
+	{ id: "add-audio", title: "＋ Audio", href: `${basePath}/admin/create/audio` }
 ];
 </script>
 

@@ -1,5 +1,5 @@
 <script>
-	// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/editor/+page.svelte
+	// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/edit/editor/+page.svelte
 
 	import { page } from "$app/state";
 	import { send } from "$lib/send";
@@ -86,7 +86,7 @@ import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 			<div><strong>Group:</strong> {item.groupSlug}</div>
 			<a
 				class="back"
-				href={`${config.basePath}/edit/content?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
+				href={`${config.basePath}/admin/edit/content?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
 			>
 				Edit as raw content
 			</a>

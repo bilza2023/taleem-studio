@@ -1,5 +1,4 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/articles/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/state";
 	import Communication from "$lib/components/Communication.svelte";
@@ -30,7 +29,7 @@
 		}
 
 		try {
-			libraryItem = await send("library", "get", { slug: librarySlug });
+		libraryItem = await send("adminLibrary", "get", { slug: librarySlug });
 			if (!libraryItem) {
 				error = "Article not found.";
 			}

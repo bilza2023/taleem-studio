@@ -6,9 +6,9 @@
 	function getPlayHref(card) {
 		switch (card.type) {
 			case "ARTICLE":
-				return `${config.basePath}/articles?article=${encodeURIComponent(card.slug)}`;
+				return `${config.basePath}/admin/articles?article=${encodeURIComponent(card.slug)}`;
 			case "PLAYER":
-				return `${config.basePath}/player?lesson=${encodeURIComponent(card.slug)}`;
+				return `${config.basePath}/admin/player?lesson=${encodeURIComponent(card.slug)}`;
 			default:
 				return "#";
 		}

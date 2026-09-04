@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/course.js
+// src/lib/server/course.js
 
 import kernel from "taleem-kernel";
 import { requireSuperAdmin } from "./utils/requireSuperAdmin.js";

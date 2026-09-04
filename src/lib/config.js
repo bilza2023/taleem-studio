@@ -5,7 +5,7 @@ export const config = {
   // contentDir: "/root/taleem-studio/content",
   // basePath: "/admin",
   
-  apiUrl: "http://localhost:5173",
+  apiUrl: "http://localhost:5173/admin",
   imageDir : 'content/images',
   contentDir: "content",
   basePath: "",

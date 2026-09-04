@@ -1,5 +1,6 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/edit/content/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/edit/content/+page.svelte
+
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
@@ -41,7 +42,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 				throw new Error("Course, group and slug are required");
 			}
 
-			const data = await send("library", "get", { slug });
+						const data = await send("adminLibrary", "get", { slug });
 
 			if (!data) {
 				throw new Error(`"${slug}" not found`);
@@ -76,7 +77,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 		saving = true;
 
 		try {
-			const data = await send("library", "update", {
+		const data = await send("adminLibrary", "update", {
 				slug: form.slug,
 				data: {
 					title: form.title,

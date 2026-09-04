@@ -33,7 +33,7 @@ async function loadLibrary(courseSlug) {
 		const [courseData, groups, items] = await Promise.all([
 			send("course", "get", { slug: courseSlug }),
 			send("group", "list", { courseSlug }),
-			send("library", "list", { courseSlug })
+			send("adminLibrary", "list", { courseSlug })
 		]);
 
 		if (!courseData) {
@@ -87,15 +87,15 @@ $effect(() => {
 	onChange={handleGroupingChange}
 />
 
-<a class="pending-link" href={`${config.basePath}/create/content?course=${encodeURIComponent(course.slug)}`}>
+<a class="pending-link" href={`${config.basePath}/admin/create/content?course=${encodeURIComponent(course.slug)}`}>
 	New
 </a>
 
-<a class="pending-link" href={`${config.basePath}/create/group?course=${encodeURIComponent(course.slug)}`}>
+<a class="pending-link" href={`${config.basePath}/admin/create/group?course=${encodeURIComponent(course.slug)}`}>
 	Add Group
 </a>
 
-<a class="pending-link" href={`${config.basePath}/groups?course=${encodeURIComponent(course.slug)}`}>
+<a class="pending-link" href={`${config.basePath}/admin/groups?course=${encodeURIComponent(course.slug)}`}>
 	Edit Groups
 </a>
 <div class="links-container">

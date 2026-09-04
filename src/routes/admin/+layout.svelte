@@ -9,10 +9,10 @@
 	import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
 	import { blueTheme } from "$lib/taleem-themes/index.js";
 
-	const SIGNIN_PATH = `${config.basePath}/signin`;
+	const SIGNIN_PATH = `${config.basePath}/admin/signin`;
 
 	let isPlayer = $derived(
-		page.url.pathname === `${config.basePath}/player` ||
+		page.url.pathname === `${config.basePath}/admin/player` ||
 		page.url.pathname.startsWith(`${config.basePath}/player/`)
 	);
 	let isEditor = $derived(

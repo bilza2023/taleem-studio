@@ -26,7 +26,7 @@ import { config } from "$lib/config.js";
 </script>
 
 <nav class="navbar">
-<a class="home" href={config.basePath || "/"}>
+<a class="home" href={config.basePath || "/admin"}>
 		<span class="icon">📘</span>
 		<span style="color:orange">Taleem.Admin</span>
 	</a>
@@ -47,7 +47,7 @@ import { config } from "$lib/config.js";
 			<a
 				class="auth-button"
 				title="Sign in"
-				href={`${config.basePath}/signin`}
+				href={`${config.basePath}/admin/signin`}
 			>
 				🔑
 			</a>
