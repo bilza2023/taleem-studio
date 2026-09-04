@@ -273,7 +273,11 @@
 
 
 <style>
-
+.preview img {
+	width: 100%;
+	height: 140px;
+	object-fit: contain;
+}
 .page {
 	max-width:1200px;
 	margin:40px auto;

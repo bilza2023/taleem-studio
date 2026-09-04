@@ -1,5 +1,5 @@
 
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
 import { error } from "@sveltejs/kit";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -30,10 +30,15 @@ export async function GET({ params }) {
 
 	const ext = path.extname(relativePath).toLowerCase();
 
-	if (ext === ".svg") {
-		// const slug = path.basename(relativePath, ".svg");
-		const slug = path.basename(relativePath);
-		const svg = await getSvg(slug);
+		if (ext === ".svg") {
+		const filename = path.basename(relativePath);
+		const bareSlug = path.basename(relativePath, ".svg");
+
+		let svg = await getSvg(filename);
+
+		if (!svg) {
+			svg = await getSvg(bareSlug);
+		}
 
 		if (!svg) {
 			throw error(404, "SVG not found");
