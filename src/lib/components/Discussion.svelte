@@ -1,6 +1,5 @@
 <script>
-	import apiFetch from "$lib/utils/fetch";
-
+	import { send } from "$lib/send";
 	let { librarySlug } = $props();
 
 	let loaded = $state(false);
@@ -20,10 +19,7 @@
 		loading = true;
 
 		try {
-			discussions = await apiFetch(
-				"GET",
-				`/public/library/${librarySlug}/discussion`
-			);
+		discussions = await send("communication", "listPublic", { librarySlug });
 			loaded = true;
 		}
 		catch (err) {

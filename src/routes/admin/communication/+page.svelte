@@ -1,20 +1,21 @@
-
 <script>
-	import { onMount } from "svelte";
-	import apiFetch from "$lib/utils/fetch";
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/communication/+page.svelte
+	import { page } from "$app/state";
+	import { send } from "$lib/send";
 
 	let communications = $state([]);
 	let loading = $state(true);
 	let error = $state("");
+	let savingId = $state(null);
 
-	onMount(load);
+	const courseSlug = page.url.searchParams.get("course");
 
 	async function load() {
 		loading = true;
 		error = "";
 
 		try {
-		communications = await apiFetch("GET", "/user/me");
+			communications = await send("adminCommunication", "listForCourse", { courseSlug });
 		}
 		catch (err) {
 			console.error(err);
@@ -25,48 +26,73 @@
 		}
 	}
 
+	async function respond(c, authorResponse, isPublic) {
+		savingId = c.id;
+
+		try {
+			const updated = await send("adminCommunication", "respond", {
+				id: c.id,
+				authorResponse,
+				isPublic
+			});
+
+			communications = communications.map(item =>
+				item.id === c.id ? updated : item
+			);
+		}
+		catch (err) {
+			console.error(err);
+			alert(err.message);
+		}
+		finally {
+			savingId = null;
+		}
+	}
+
 	function formatDate(date) {
 		return new Date(date).toLocaleString();
 	}
+
+	$effect(() => {
+		if (courseSlug) load();
+	});
 </script>
-{#if loading}
+
+{#if !courseSlug}
 
 	<main class="feed">
+		<h1>Communications</h1>
+		<p>Course is required in the URL, e.g. ?course=fbise9math</p>
+	</main>
 
-		<h1>My Hub</h1>
+{:else if loading}
 
+	<main class="feed">
+		<h1>Communications</h1>
 		<p>Loading...</p>
-
 	</main>
 
 {:else if error}
 
 	<main class="feed">
-
-		<h1>My Hub</h1>
-
+		<h1>Communications</h1>
 		<p>{error}</p>
-
 	</main>
 
 {:else}
 
 <main class="feed">
 
-	<h1>💬 My Hub</h1>
+	<h1>💬 Communications</h1>
 
 	<p class="subtitle">
-
-		All of your questions, comments and author replies.
-
+		All questions and comments for <strong>{courseSlug}</strong>.
 	</p>
 
 	{#if communications.length === 0}
 
 		<article class="card">
-
-			You haven't sent any messages yet.
-
+			No messages yet for this course.
 		</article>
 
 	{:else}
@@ -78,52 +104,52 @@
 				<div class="header">
 
 					<div>
-
 						<div class="lesson">
-
-							📘 {c.referenceId}
-
+							📘 {c.librarySlug}
 						</div>
-
+						<div class="user">
+							👤 {c.user?.email ?? c.userId}
+						</div>
 					</div>
 
 					<div class="time">
-
 						{formatDate(c.createdAt)}
-
 					</div>
 
 				</div>
 
 				<div class="message">
-
 					{c.message}
-
 				</div>
 
-				{#if c.authorResponse}
+				<label class="reply-label">
+					Reply
+					<textarea
+						class="reply-input"
+						value={c.authorResponse ?? ""}
+						oninput={(e) => c.authorResponse = e.currentTarget.value}
+					></textarea>
+				</label>
 
-					<div class="reply">
+				<div class="actions">
 
-						<div class="reply-title">
+					<label class="check">
+						<input
+							type="checkbox"
+							checked={c.isPublic}
+							onchange={(e) => c.isPublic = e.currentTarget.checked}
+						>
+						Make public
+					</label>
 
-							✅ Author Reply
+					<button
+						disabled={savingId === c.id}
+						onclick={() => respond(c, c.authorResponse, c.isPublic)}
+					>
+						{savingId === c.id ? "Saving..." : "Save Reply"}
+					</button>
 
-						</div>
-
-						{c.authorResponse}
-
-					</div>
-
-				{:else}
-
-					<div class="waiting">
-
-						🟡 Waiting for a reply
-
-					</div>
-
-				{/if}
+				</div>
 
 			</article>
 
@@ -137,7 +163,7 @@
 
 <style>
 	.feed {
-		width: min(95vw, 800px);
+		width: min(95vw, 900px);
 		min-height: 100vh;
 		margin: 0 auto;
 		padding: 2rem 1rem;
@@ -179,6 +205,12 @@
 		word-break: break-word;
 	}
 
+	.user {
+		font-size: .85rem;
+		opacity: .75;
+		margin-top: .2rem;
+	}
+
 	.time {
 		font-size: .85rem;
 		opacity: .7;
@@ -191,28 +223,55 @@
 		white-space: pre-wrap;
 	}
 
-	.reply {
-		padding: 1rem;
-		border-left: 4px solid var(--theme-accent);
-		border-radius: 8px;
-		background: rgba(96, 165, 250, .08);
+	.reply-label {
+		display: grid;
+		gap: .4rem;
+		font-weight: 600;
+		font-size: .85rem;
+		margin-bottom: .75rem;
 	}
 
-	.reply-title {
-		margin-bottom: .5rem;
-		font-weight: 700;
-		color: var(--theme-accent);
-	}
-
-	.waiting {
-		display: inline-block;
-		padding: .35rem .8rem;
-		border-radius: 999px;
-		font-size: .9rem;
-		background: rgba(96, 165, 250, .08);
+	.reply-input {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 90px;
+		padding: .6rem .75rem;
 		border: 1px solid var(--theme-border);
+		border-radius: 8px;
+		background: var(--theme-panel);
 		color: var(--theme-text);
+		font: inherit;
+		resize: vertical;
 	}
+
+	.actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.check {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
+		font-size: .9rem;
+		font-weight: 400;
+	}
+
+	.check input { width: auto; }
+
+	button {
+		padding: .5rem 1rem;
+		border: 0;
+		border-radius: 6px;
+		background: var(--theme-accent);
+		color: var(--theme-text);
+		font: inherit;
+		cursor: pointer;
+	}
+
+	button:disabled { opacity: .5; cursor: default; }
 
 	@media (max-width: 600px) {
 		.feed {
@@ -224,8 +283,9 @@
 			gap: .4rem;
 		}
 
-		.time {
-			font-size: .8rem;
+		.actions {
+			flex-direction: column;
+			align-items: stretch;
 		}
 	}
 </style>

@@ -37,11 +37,14 @@ export async function listUnanswered(courseSlug, token) {
 	return kernel.communication.listUnanswered(courseSlug);
 }
 
-export async function respondToCommunication(id, authorResponse, token) {
+export async function respondToCommunication(id, data, token) {
 	await requireAdmin(token);
+
+	const { authorResponse, isPublic } = data;
 
 	return kernel.communication.update(id, {
 		authorResponse,
+		isPublic,
 		readAt: new Date()
 	});
 }
@@ -50,4 +53,14 @@ export async function deleteCommunication(id, token) {
 	await requireAdmin(token);
 
 	return kernel.communication.delete(id);
+}
+export async function listPublicForLibrary(librarySlug) {
+	const items = await kernel.communication.list({ librarySlug });
+
+	return items.filter(item => item.isPublic);
+}
+export async function listForCourse(courseSlug, token) {
+	await requireAdmin(token);
+
+	return kernel.communication.list({ courseSlug });
 }

@@ -1,7 +1,7 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.help/src/lib/components/Communication.svelte
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/components/Communication.svelte
 
-	import apiFetch from "$lib/utils/fetch";
+	import { send } from "$lib/send";
 
 	let { librarySlug, type } = $props();
 
@@ -18,9 +18,7 @@
 
 		try {
 
-			await apiFetch("POST", "/user/communication", {
-			librarySlug, type, message
-			});
+			await send("communication", "create", { librarySlug, type, message }, "user");
 
 			message = "";
 			status = "✓ Thank you. Your message has been sent.";
