@@ -1,4 +1,4 @@
-<!-- src/lib/editor/AudioPlayer.svelte -->
+<!-- /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/editor/AudioPlayer.svelte-->
 
 <script>
 
@@ -29,7 +29,7 @@
 player = new Howl({
 
 	src: [
-		`${config.apiUrl}/content/audio/${filename}`
+		`/content/audio/${filename}`
 	],
 
 	onload() {

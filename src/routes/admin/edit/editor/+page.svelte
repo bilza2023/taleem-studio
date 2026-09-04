@@ -22,7 +22,7 @@ import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 				throw new Error("Course, group and slug are required");
 			}
 
-			const data = await send("library", "get", { slug });
+			const data = await send("adminLibrary", "get", { slug });
 
 			if (!data) {
 				throw new Error(`"${slug}" not found`);
@@ -48,7 +48,7 @@ import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 	}
 
 	async function handleExport(presentation) {
-		const data = await send("library", "update", {
+				const data = await send("adminLibrary", "update", {
 			slug: item.slug,
 			data: {
 				title: item.title,

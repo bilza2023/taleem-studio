@@ -280,7 +280,7 @@ const eq = baseSlide.extend({
 
 export const zodDeckV2 = z.object({
 
-	version: z.literal(DeckVersion.V2),
+	// version: z.literal(DeckVersion.V2),
 
 	name: z.string().optional(),
 	

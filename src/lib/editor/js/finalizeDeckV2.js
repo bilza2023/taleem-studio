@@ -8,7 +8,7 @@ import { validateTimelineV2 } from "$lib/taleem-specs/validation/validateTimelin
 export function finalizeDeckV2(presentation) {
 //  debugger;
 	const patched = patchDeckV2(presentation);
-console.log(JSON.stringify(patched, null, 2));
+// console.log(JSON.stringify(patched, null, 2));
 	const schema = validateDeckV2(patched);
 
 	if (!schema.ok) {
