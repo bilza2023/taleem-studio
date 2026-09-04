@@ -1,7 +1,6 @@
-
 <script>
 	import { onMount } from "svelte";
-	import apiFetch from "$lib/utils/fetch";
+	import { send } from "$lib/send";
 
 	let communications = $state([]);
 	let loading = $state(true);
@@ -14,7 +13,7 @@
 		error = "";
 
 		try {
-		communications = await apiFetch("GET", "/user/me");
+			communications = await send("communication", "listMine", {}, "user");
 		}
 		catch (err) {
 			console.error(err);

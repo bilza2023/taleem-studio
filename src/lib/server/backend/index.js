@@ -2,6 +2,7 @@
 import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
+import { createCommunication, listForUser, listForLibrary, listUnanswered, respondToCommunication, deleteCommunication } from "./communication.js";
 import { createAudio, getAudio, listAudio, updateAudio, deleteAudio } from "./audio.js";
 import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse } from "./course.js";
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup } from "./group.js";
@@ -21,6 +22,16 @@ export const backend = {
 		delete: (data, token) => deleteAdmin(data.email, token),
 		assignCourse: (data, token) => assignCourseToAdmin(data.email, data.courseSlug, token),
 		unassignCourse: (data, token) => unassignCourseFromAdmin(data.email, data.courseSlug, token)
+	},
+	communication: {
+		create: (data, token) => createCommunication(data, token),
+		listMine: (data, token) => listForUser(token)
+	},
+	adminCommunication: {
+		listForLibrary: (data, token) => listForLibrary(data.librarySlug, token),
+		listUnanswered: (data, token) => listUnanswered(data.courseSlug, token),
+		respond: (data, token) => respondToCommunication(data.id, data.authorResponse, token),
+		delete: (data, token) => deleteCommunication(data.id, token)
 	},
 	user: {
 		register: (data) => registerUser(data),

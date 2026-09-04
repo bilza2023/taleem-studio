@@ -4,12 +4,16 @@ import { config } from "$lib/config.js";
 
 const ENDPOINT = `${config.basePath}/api/server`;
 
-function getToken() {
+function getToken(tokenType) {
+	if (tokenType === "user") {
+		return localStorage.getItem("taleem-token");
+	}
+
 	return localStorage.getItem("taleem-admin-token");
 }
 
-export async function send(module, method, data = {}) {
-	const token = getToken();
+export async function send(module, method, data = {}, tokenType = "admin") {
+	const token = getToken(tokenType);
 
 	const options = {
 		method: "POST",

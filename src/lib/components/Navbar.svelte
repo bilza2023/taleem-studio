@@ -1,5 +1,6 @@
 <script>
-	import { onMount } from "svelte";
+
+import { onMount } from "svelte";
 import { config } from "$lib/config.js";
 	let email = $state("");
 
@@ -35,15 +36,10 @@ import { config } from "$lib/config.js";
 	<div class="right">
 
 		{#if email}
+		<a class="auth-button" title="Hub" href={`${config.basePath}/hub`}>📢</a>
 			<span class="email">👤 {email}</span>
 
-			<button
-				class="auth-button"
-				title="Logout"
-				onclick={logout}
-			>
-				🚪
-			</button>
+			<button class="auth-button" title="Logout" onclick={logout}>🚪</button>
 		{:else}
 			<a class="auth-button" title="Sign in" href={`${config.basePath}/signin`}>🔑</a>
 			<a class="auth-button" title="Sign in" href={`${config.basePath}/signup`}>🔒</a>
