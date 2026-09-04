@@ -21,7 +21,17 @@
 	);
 	let isSignin = $derived(page.url.pathname === SIGNIN_PATH);
 
-	let active = "home";
+		let active = $derived.by(() => {
+		const path = page.url.pathname;
+
+		if (path.startsWith(`${config.basePath}/admin/assets`)) return "assets";
+		if (path.startsWith(`${config.basePath}/admin/create/svg`)) return "add-svg";
+		if (path.startsWith(`${config.basePath}/admin/create/image`)) return "add-image";
+		if (path.startsWith(`${config.basePath}/admin/create/audio`)) return "add-audio";
+		if (path === `${config.basePath}/admin`) return "home";
+
+		return "";
+	});
 	let { children } = $props();
 
 	let checking = $state(true);
@@ -55,8 +65,8 @@
 
 <TaleemTheme theme={blueTheme}>
 	{#if !isPlayer && !isSignin && !isEditor}
-		<Navbar />
-		<SubNav active={active} />
+		<Navbar active={active} />
+		<!-- <SubNav active={active} /> -->
 	{/if}
 
 	<main>

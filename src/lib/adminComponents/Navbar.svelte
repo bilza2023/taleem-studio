@@ -1,6 +1,11 @@
 <script>
 	import { onMount } from "svelte";
-import { config } from "$lib/config.js";
+	import { config } from "$lib/config.js";
+
+	let { active = "" } = $props();
+
+	const basePath = config.basePath;
+
 	let email = $state("");
 
 	function refresh() {
@@ -26,10 +31,28 @@ import { config } from "$lib/config.js";
 </script>
 
 <nav class="navbar">
-<a class="home" href={config.basePath || "/admin"}>
+	<a class="home" href={config.basePath || "/admin"}>
 		<span class="icon">📘</span>
 		<span style="color:orange">Taleem.Admin</span>
 	</a>
+
+	<div class="pills">
+		<a class="pill {active === 'home' ? 'active' : ''}" href={`${basePath}/admin`} data-sveltekit-preload-data>
+			Home
+		</a>
+		<a class="pill {active === 'assets' ? 'active' : ''}" href={`${basePath}/admin/assets`} data-sveltekit-preload-data>
+			Assets
+		</a>
+		<a class="pill {active === 'add-svg' ? 'active' : ''}" href={`${basePath}/admin/create/svg`} data-sveltekit-preload-data>
+			＋ SVG
+		</a>
+		<a class="pill {active === 'add-image' ? 'active' : ''}" href={`${basePath}/admin/create/image`} data-sveltekit-preload-data>
+			＋ Image
+		</a>
+		<a class="pill {active === 'add-audio' ? 'active' : ''}" href={`${basePath}/admin/create/audio`} data-sveltekit-preload-data>
+			＋ Audio
+		</a>
+	</div>
 
 	<div class="right">
 
@@ -44,17 +67,16 @@ import { config } from "$lib/config.js";
 				🚪
 			</button>
 		{:else}
-			<a
+			
 				class="auth-button"
 				title="Sign in"
 				href={`${config.basePath}/admin/signin`}
-			>
+			<a>
 				🔑
 			</a>
 		{/if}
 
 	</div>
-
 </nav>
 
 <style>
@@ -66,6 +88,7 @@ import { config } from "$lib/config.js";
 		z-index: 100;
 		display: flex;
 		align-items: center;
+		gap: 1.25rem;
 		background: var(--theme-panel);
 		color: var(--theme-text);
 		backdrop-filter: blur(10px);
@@ -76,6 +99,7 @@ import { config } from "$lib/config.js";
 		display: inline-flex;
 		align-items: center;
 		gap: 0.55rem;
+		flex-shrink: 0;
 		text-decoration: none;
 		font-size: 1.25rem;
 		font-weight: 600;
@@ -92,8 +116,67 @@ import { config } from "$lib/config.js";
 		line-height: 1;
 	}
 
+	.pills {
+		display: flex;
+		align-items: center;
+		gap: .55rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		white-space: nowrap;
+	}
+
+	.pills::-webkit-scrollbar { display: none; }
+
+	.pill {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: .4rem .8rem;
+		border-radius: 10px;
+		font-size: .85rem;
+		font-weight: 500;
+		border: 1px solid var(--theme-border);
+		cursor: pointer;
+		background: var(--theme-panel);
+		color: var(--theme-text);
+		text-decoration: none;
+		transition: background-color .15s, transform .15s;
+	}
+
+	.pill:hover {
+		background: var(--theme-accent);
+		color: var(--theme-text);
+		transform: translateY(-1px);
+	}
+
+	.pill:visited { color: var(--theme-text); }
+
+	.pill.active {
+		background: var(--theme-accent);
+		color: var(--theme-text);
+	}
+
+	.pill.active::after {
+		content: "";
+		position: absolute;
+		left: 8px;
+		right: 8px;
+		bottom: -6px;
+		height: 3px;
+		border-radius: 3px;
+		background: var(--theme-accent);
+	}
+
+	.pill:focus,
+	.pill:focus-visible {
+		outline: none;
+		box-shadow: none;
+	}
+
 	.right {
 		margin-left: auto;
+		flex-shrink: 0;
 		display: flex;
 		align-items: center;
 		gap: 1rem;

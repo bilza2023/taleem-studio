@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/assets/+page.svelte
 	import { onMount } from "svelte";
 	import { config } from "$lib/config";
 	import { send } from "$lib/send";

@@ -1,8 +1,8 @@
 
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/api/upload/+server.js
+// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/api/upload/+server.js
 
 import { json } from "@sveltejs/kit";
-import { uploadAsset } from "$lib/server/assets.js";
+import { uploadAsset } from "$lib/server/backend/assets.js";
 
 function getBearerToken(request) {
 	const header = request.headers.get("authorization") || "";
