@@ -88,7 +88,13 @@ import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 				class="back"
 				href={`${config.basePath}/admin/edit/content?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
 			>
-				Edit as raw content
+				Edit
+			</a>
+			<a
+				class="back"
+			href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(item.slug)}`}
+			>
+				Play
 			</a>
 		</div>
 
@@ -116,9 +122,29 @@ import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
 		font-size: .9rem;
 	}
 
-	.back {
-		margin-left: auto;
+	.identity a.back {
+		margin-left: 0;
+		display: inline-flex;
+		align-items: center;
+		padding: 6px 14px;
+		border-radius: 6px;
+		border: 1px solid #3a5a4a;
+		background: #0d3d1c;
 		color: #5fa8ff;
+		text-decoration: none;
+		font-size: .85rem;
+		font-weight: 600;
+		line-height: 1;
+		transition: background .15s ease, transform .1s ease;
+	}
+
+	.identity a.back:first-of-type {
+		margin-left: auto;
+	}
+
+	.identity a.back:hover {
+		background: #145229;
+		transform: translateY(-1px);
 	}
 
 	.message {
