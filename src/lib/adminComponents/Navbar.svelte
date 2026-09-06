@@ -67,11 +67,11 @@
 				🚪
 			</button>
 		{:else}
-			
+			<a
 				class="auth-button"
 				title="Sign in"
 				href={`${config.basePath}/admin/signin`}
-			<a>
+			>
 				🔑
 			</a>
 		{/if}

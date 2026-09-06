@@ -58,7 +58,7 @@
 		</select>
 	</label>
 
-	<button onclick={useImage}>
+	<button type="button" onclick={useImage}>
 		Use
 	</button>
 
