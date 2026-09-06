@@ -1,8 +1,5 @@
 
 
-4: admin/lessons --different colors for player and article.
-
-9: svg display on the slide in the editor.
 
 done
 1: edit and play buttons on editor 
@@ -13,7 +10,8 @@ done
 10:editor showAt move up and down by .5 and not by .1
 5: in create content page first time use move to another page and destroy what we typed.
 9: svg display on the slide in the editor.
-
+9: svg display on the slide in the editor.
+4: admin/lessons --different colors for player and article.
 
 
 later

@@ -3,6 +3,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { send } from "$lib/send/index.js";
+	import { config } from "$lib/config.js";
 
 	export let value = "";
 	export let onUse = () => {};
@@ -29,27 +30,25 @@
 		}
 	}
 
-	function useImage() {
+	function handleChange() {
 		onUse(selected);
 	}
+
+	$: previewSrc = selected
+		? `${config.basePath}/content/images/${selected}`
+		: "";
 </script>
 
 <div class="image-picker">
 
-	<label>
-		<span>Current</span>
-
-		<input
-			class="current"
-			value={value || ""}
-			readonly
-		/>
-	</label>
+	{#if previewSrc}
+		<img class="preview" src={previewSrc} alt={selected} />
+	{/if}
 
 	<label>
 		<span>Library</span>
 
-		<select bind:value={selected}>
+		<select bind:value={selected} on:change={handleChange}>
 			{#each files as file}
 				<option value={file.slug}>
 					{file.slug}
@@ -57,10 +56,6 @@
 			{/each}
 		</select>
 	</label>
-
-	<button type="button" onclick={useImage}>
-		Use
-	</button>
 
 </div>
 
@@ -70,6 +65,15 @@
 		align-items: center;
 		gap: 7px;
 		flex-wrap: wrap;
+	}
+
+	.preview {
+		width: 44px;
+		height: 44px;
+		object-fit: cover;
+		border: 1px solid var(--theme-border);
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--theme-panel) 90%, black);
 	}
 
 	label {
@@ -85,8 +89,6 @@
 		font-size: 12px;
 	}
 
-	input[type="text"],
-	.current,
 	select {
 		height: 30px;
 		padding: 4px 8px;
@@ -96,30 +98,6 @@
 		background: color-mix(in srgb, var(--theme-panel) 90%, black);
 		color: var(--theme-text);
 		font-size: 12px;
-	}
-
-	.current {
-		width: 150px;
-	}
-
-	select {
 		width: 190px;
-	}
-
-	button {
-		height: 30px;
-		padding: 0 14px;
-		border: 1px solid var(--theme-border);
-		border-radius: 5px;
-		background: color-mix(in srgb, var(--theme-panel) 85%, white);
-		color: var(--theme-text);
-		font-size: 12px;
-		font-weight: 600;
-		cursor: pointer;
-		white-space: nowrap;
-	}
-
-	button:hover {
-		background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
 	}
 </style>

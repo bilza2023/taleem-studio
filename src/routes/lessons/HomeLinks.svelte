@@ -84,20 +84,23 @@
 	}
 
 	.field {
-		margin-bottom: 8px;
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		margin-bottom: 6px;
+		font-size: .85rem;
 	}
 
 	.label {
-		display: block;
-		margin-bottom: 2px;
 		font-size: .7rem;
 		font-weight: 600;
 		opacity: .65;
 		text-transform: uppercase;
 		letter-spacing: .04em;
+		white-space: nowrap;
 	}
 
-	.content h2 {
+	.field h2 {
 		margin: 0;
 		font-size: 1rem;
 		font-weight: 700;
@@ -105,7 +108,7 @@
 		color: white;
 	}
 
-	.content p {
+	.field p {
 		margin: 0;
 		font-size: .85rem;
 		color: white;

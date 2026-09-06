@@ -3,6 +3,12 @@
 
 	let { homeLinks = [] } = $props();
 
+	const accessIcons = {
+		open: "🔓",
+		members: "👥",
+		subscription: "💳"
+	};
+
 	function getPlayHref(card) {
 		switch (card.type) {
 			case "ARTICLE":
@@ -28,6 +34,7 @@
 	}
 
 	.card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		color: inherit;
@@ -44,9 +51,8 @@
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 	}
 
-	.card.open { background: #9db6a4; }
-	.card.members { background: #737c8b; }
-	.card.subscription { background: #b4a78f; }
+	.card.article { background: #265f6d; }
+	.card.player  { background: #2f4e36; }
 
 	.card img {
 		display: block;
@@ -63,20 +69,23 @@
 	}
 
 	.field {
-		margin-bottom: 8px;
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		margin-bottom: 6px;
+		font-size: .85rem;
 	}
 
 	.label {
-		display: block;
-		margin-bottom: 2px;
 		font-size: .7rem;
 		font-weight: 600;
 		opacity: .65;
 		text-transform: uppercase;
 		letter-spacing: .04em;
+		white-space: nowrap;
 	}
 
-	.content h2 {
+	.field h2 {
 		margin: 0;
 		font-size: 1rem;
 		font-weight: 700;
@@ -84,11 +93,16 @@
 		color: white;
 	}
 
-	.content p {
+	.field p {
 		margin: 0;
 		font-size: .85rem;
 		color: white;
 		font-weight: 500;
+	}
+
+	.access-icon {
+		font-size: .95rem;
+		line-height: 1;
 	}
 
 	.actions {
@@ -127,7 +141,7 @@
 
 <div class="grid">
 	{#each homeLinks as card}
-		<div class={`card ${card.access?.toLowerCase()}`}>
+		<div class={`card ${card.type?.toLowerCase()}`}>
 			{#if card.image}
 <img src={`${config.basePath}/content/images/${card.image}`} alt={card.title} />
 			{/if}
@@ -142,6 +156,15 @@
 					<span class="label">Group</span>
 					<p>{card.groupSlug}</p>
 				</div>
+
+				{#if accessIcons[card.access?.toLowerCase()]}
+					<div class="field">
+						<span class="label">Access</span>
+						<span class="access-icon" title={card.access}>
+							{accessIcons[card.access.toLowerCase()]}
+						</span>
+					</div>
+				{/if}
 			</div>
 
 			<div class="actions">
