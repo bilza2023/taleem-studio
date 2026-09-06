@@ -53,15 +53,15 @@
 	function editUrl(asset) {
 
 		if (asset.type === "IMAGE") {
-			return `${config.basePath}/edit/image?slug=${encodeURIComponent(asset.slug)}`;
+			return `${config.basePath}/admin/edit/image?slug=${encodeURIComponent(asset.slug)}`;
 		}
 
 		if (asset.type === "SVG") {
-			return `${config.basePath}/edit/svg?slug=${encodeURIComponent(asset.slug)}`;
+			return `${config.basePath}/admin/edit/svg?slug=${encodeURIComponent(asset.slug)}`;
 		}
 
 		if (asset.type === "AUDIO") {
-			return `${config.basePath}/edit/audio?slug=${encodeURIComponent(asset.slug)}`;
+			return `${config.basePath}/admin/edit/audio?slug=${encodeURIComponent(asset.slug)}`;
 		}
 
 		return "#";
