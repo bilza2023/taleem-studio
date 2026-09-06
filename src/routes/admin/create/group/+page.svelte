@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/create/group/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/create/group/+page.svelte
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";

@@ -1,7 +1,7 @@
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/svg.js
 import kernel from 'taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
-
+import { requireSuperAdmin } from './utils/requireSuperAdmin.js';
 
 export async function createSvg(data, token) {
 	await requireAdmin(token);
@@ -27,6 +27,6 @@ export async function updateSvg(slug, data, token) {
 }
 
 export async function deleteSvg(slug, token) {
-	await requireAdmin(token);
+	await requireSuperAdmin(token);
 	return kernel.svg.delete(slug);
 }

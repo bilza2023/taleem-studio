@@ -1,8 +1,9 @@
-
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/image.js
 import kernel from 'taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 import { deleteAssetFile } from './utils/deleteAssetFile.js';
 import {config} from "$lib/config.js";
+import { requireSuperAdmin } from './utils/requireSuperAdmin.js';
 
 export async function createImage(data, token) {
 	await requireAdmin(token);
@@ -23,7 +24,7 @@ export async function updateImage(slug, data, token) {
 }
 
 export async function deleteImage(slug, token) {
-	await requireAdmin(token);
+	await requireSuperAdmin(token);
 	await deleteAssetFile(config.imageDir, slug);
 	return kernel.image.delete(slug);
 }

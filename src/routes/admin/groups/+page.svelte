@@ -22,7 +22,7 @@
 <div class="page">
 	<h1>Groups</h1>
 
-	<a class="button" href={`${config.basePath}/edit/group?course=${encodeURIComponent(courseSlug)}`}>
+	<a class="button" href={`${config.basePath}/admin/edit/group?course=${encodeURIComponent(courseSlug)}`}>
 		+ New Group
 	</a>
 
@@ -35,7 +35,7 @@
 			<li>
 				<span class="title">{group.title}</span>
 				<span class="slug">{group.slug}</span>
-				<a class="button" href={`${config.basePath}/edit/group?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(group.slug)}`}>Edit</a>
+				<a class="button" href={`${config.basePath}/admin/edit/group?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(group.slug)}`}>Edit</a>
 			</li>
 		{/each}
 	</ul>
