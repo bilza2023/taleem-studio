@@ -23,8 +23,17 @@
 
   $: slides = deck?.deck || [];
   export let runningTime;
-
  export let collapsed = {};
+
+export let currentSlideIndex;
+
+$: if (slides.length && (currentSlideIndex === undefined || currentSlideIndex === null || currentSlideIndex > slides.length - 1)) {
+  currentSlideIndex = slides.length - 1;
+}
+
+function selectSlide(i) {
+  currentSlideIndex = i;
+}
 
   function setStart(i) {
 
@@ -65,9 +74,12 @@ function startChanged(i, value) {
 
     deck.deck = [...arr];
 
+    if (currentSlideIndex === i) currentSlideIndex = i - 1;
+    else if (currentSlideIndex === i - 1) currentSlideIndex = i;
+
   }
 
-  function moveDown(i) {
+   function moveDown(i) {
 
     const arr = deck.deck;
 
@@ -76,6 +88,9 @@ function startChanged(i, value) {
     [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
 
     deck.deck = [...arr];
+
+    if (currentSlideIndex === i) currentSlideIndex = i + 1;
+    else if (currentSlideIndex === i + 1) currentSlideIndex = i;
 
   }
 
@@ -97,6 +112,9 @@ function startChanged(i, value) {
 
     collapsed = map;
 
+    if (currentSlideIndex > i) currentSlideIndex -= 1;
+    currentSlideIndex = Math.min(currentSlideIndex, Math.max(arr.length - 1, 0));
+
   }
 
   
@@ -110,7 +128,11 @@ function startChanged(i, value) {
 
   {#each slides as slide, i}
 
-    <div class="slide">
+    <div
+      class="slide"
+      class:selected={i === currentSlideIndex}
+      on:click|capture={() => selectSlide(i)}
+    >
 
       <!-- Header -->
 
@@ -242,5 +264,9 @@ function startChanged(i, value) {
 		color: var(--theme-text);
 		opacity: 0.5;
 		font-size: 13px;
+	}
+  	.slide.selected {
+		border-color: #ef4444;
+		border-width: 2px;
 	}
 </style>

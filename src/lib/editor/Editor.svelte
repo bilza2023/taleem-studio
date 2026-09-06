@@ -14,7 +14,8 @@
     let showTools = true;
 
     let collapsed = {};
-let allCollapsed = false;
+    let currentSlideIndex;
+    let allCollapsed = false;
 
 function toggleCollapseAll() {
 	allCollapsed = !allCollapsed;
@@ -24,16 +25,28 @@ function toggleCollapseAll() {
         const fn = slideFactory[type];
         if (!fn) return;
 
-        const last = deck.deck.at(-1);
+        const insertAt = deck.deck.length ? currentSlideIndex + 1 : 0;
+        const prev = deck.deck[insertAt - 1];
 
-        deck.deck = [
-            ...deck.deck,
-            {
-                ...fn(),
-                start: last ? last.end : 0,
-                end: (last ? last.end : 0) + 10
-            }
-        ];
+        const newSlide = {
+            ...fn(),
+            start: prev ? prev.end : 0,
+            end: prev ? prev.end : 0
+        };
+
+        const arr = [...deck.deck];
+        arr.splice(insertAt, 0, newSlide);
+        deck.deck = arr;
+
+        const map = {};
+        arr.forEach((_, idx) => {
+            if (idx < insertAt) map[idx] = collapsed[idx] || false;
+            else if (idx === insertAt) map[idx] = false;
+            else map[idx] = collapsed[idx - 1] || false;
+        });
+        collapsed = map;
+
+        currentSlideIndex = insertAt;
     }
 
     function preparePresentation() {
@@ -140,7 +153,8 @@ function toggleCollapseAll() {
     {/if}
 
     <!-- SLIDES -->
-  <Slides {deck} {runningTime} bind:collapsed />
+  <!-- <Slides {deck} {runningTime} bind:collapsed /> -->
+    <Slides {deck} {runningTime} bind:collapsed bind:currentSlideIndex />
 
 </div>
 <style>
