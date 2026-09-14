@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/player/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import { send } from "$lib/send";
@@ -21,21 +22,26 @@
 
 	let deckEndTime = 0;
 	let ticker = null;
+	let isPlaying = false;
 
 	function play() {
+		if (isPlaying) return;
+
 		timer?.play();
+		isPlaying = true;
 	}
 
 	function pause() {
-		timer?.pause();
-	}
+	timer?.pause();
+	isPlaying = false;
+}
 
-	function stop() {
-		timer?.pause();
-		timer?.seek(0);
-		currentTime = 0;
-	}
-
+function stop() {
+	timer?.pause();
+	timer?.seek(0);
+	currentTime = 0;
+	isPlaying = false;
+}
 	function seek(time) {
 		timer?.seek(time);
 		currentTime = time;
@@ -63,7 +69,22 @@
 			await document.exitFullscreen();
 		}
 	}
+function togglePlay() {
+	if (isPlaying) {
+		pause();
+	} else {
+		play();
+	}
+}
+function handleKeydown(e) {
+	if (e.code !== "Space") return;
 
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+	e.preventDefault();
+	togglePlay();
+}
 	function resizePlayer() {
 		const toolbarHeight = 54;
 		const maxWidth = window.innerWidth;
@@ -78,11 +99,11 @@
 
 	onMount(async () => {
 		try {
-			const item = await send("library", "get", { slug: lessonSlug });
+				const item = await send("library", "get", { slug: lessonSlug });
 
 			presentation = JSON.parse(item.body);
 
-			console.log("presentation", presentation);
+			// console.log("presentation", presentation);
 
 			resolveAssetPaths(
 				presentation,
@@ -104,6 +125,7 @@
 			PLAYER_HEIGHT = playerSize.height;
 
 			window.addEventListener("resize", resizePlayer);
+			window.addEventListener("keydown", handleKeydown);
 
 		} catch (error) {
 			console.error(error);
@@ -111,7 +133,7 @@
 
 		return () => {
 			window.removeEventListener("resize", resizePlayer);
-
+window.removeEventListener("keydown", handleKeydown);
 			if (ticker) {
 				clearInterval(ticker);
 				ticker = null;
@@ -125,7 +147,9 @@
 
 <div class="player" style={`width:${PLAYER_WIDTH}px`} >
 
-	<div class="viewer">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="viewer" onclick={togglePlay}>
 
 	{#key `${PLAYER_WIDTH}x${PLAYER_HEIGHT}`}
     <TaleemUI

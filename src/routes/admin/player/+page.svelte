@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/player/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/player/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import { send } from "$lib/send";
@@ -69,7 +69,22 @@ function stop() {
 			await document.exitFullscreen();
 		}
 	}
+function togglePlay() {
+	if (isPlaying) {
+		pause();
+	} else {
+		play();
+	}
+}
+function handleKeydown(e) {
+	if (e.code !== "Space") return;
 
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+	e.preventDefault();
+	togglePlay();
+}
 	function resizePlayer() {
 		const toolbarHeight = 54;
 		const maxWidth = window.innerWidth;
@@ -110,6 +125,7 @@ function stop() {
 			PLAYER_HEIGHT = playerSize.height;
 
 			window.addEventListener("resize", resizePlayer);
+			window.addEventListener("keydown", handleKeydown);
 
 		} catch (error) {
 			console.error(error);
@@ -117,7 +133,7 @@ function stop() {
 
 		return () => {
 			window.removeEventListener("resize", resizePlayer);
-
+window.removeEventListener("keydown", handleKeydown);
 			if (ticker) {
 				clearInterval(ticker);
 				ticker = null;
@@ -131,7 +147,9 @@ function stop() {
 
 <div class="player" style={`width:${PLAYER_WIDTH}px`} >
 
-	<div class="viewer">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="viewer" onclick={togglePlay}>
 
 	{#key `${PLAYER_WIDTH}x${PLAYER_HEIGHT}`}
     <TaleemUI
