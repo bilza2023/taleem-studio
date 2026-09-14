@@ -1,6 +1,6 @@
-<!-- /home/bilal-tariq/00--TALEEM/taleem.help/src/lib/editor/slides/Slides.svelte-->
 
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/slides/Slides.svelte
   import TitleAndSubtitle from "./templates/TitleAndSubtitle.svelte";
   import TitleAndParaEditor from "./templates/TitleAndParaEditor.svelte";
   import BulletListEditor from "./templates/BulletListEditor.svelte";
@@ -116,7 +116,15 @@ function startChanged(i, value) {
     currentSlideIndex = Math.min(currentSlideIndex, Math.max(arr.length - 1, 0));
 
   }
+const idMap = new WeakMap();
+let idCounter = 0;
 
+function getSlideId(slide) {
+  if (!idMap.has(slide)) {
+    idMap.set(slide, `slide-${idCounter++}`);
+  }
+  return idMap.get(slide);
+}
   
 </script>
 
@@ -126,7 +134,7 @@ function startChanged(i, value) {
     <p class="empty">No slides</p>
   {/if}
 
-  {#each slides as slide, i}
+  {#each slides as slide, i (getSlideId(slide))}
 
     <div
       class="slide"

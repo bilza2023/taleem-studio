@@ -7,6 +7,8 @@
 
 	export let value = "";
 	export let onUse = () => {};
+	export let svgEditRoute = "/admin/edit/svg";
+	export let imageEditRoute = "/admin/edit/image";
 
 	let files = [];
 	let selected = "";
@@ -20,9 +22,7 @@
 
 			files = assets.filter(a => a.type === "IMAGE" || a.type === "SVG");
 
-			if (value) {
-				selected = value;
-			} else if (files.length) {
+			if (!value && files.length) {
 				selected = files[0].slug;
 			}
 		}
@@ -30,6 +30,8 @@
 			console.error(err);
 		}
 	}
+
+	$: if (value) selected = value;
 
 	function sortFiles(list, mode) {
 		const sorted = [...list];
@@ -56,6 +58,14 @@
 
 	$: previewSrc = selected
 		? `${config.basePath}/content/images/${selected}`
+		: "";
+
+	$: selectedFile = files.find(f => f.slug === selected);
+
+	$: editHref = selectedFile
+		? selectedFile.type === "SVG"
+			? `${svgEditRoute}?slug=${encodeURIComponent(selectedFile.slug)}`
+			: `${imageEditRoute}?slug=${encodeURIComponent(selectedFile.slug)}`
 		: "";
 </script>
 
@@ -96,6 +106,12 @@
 		{sortMode === "recent" ? "🕓" : "🔤"}
 	</button>
 
+	{#if editHref}
+		<a class="edit-link" href={editHref} target="_blank" rel="noopener" title="Edit this asset">
+			✎
+		</a>
+	{/if}
+
 </div>
 
 <style>
@@ -107,8 +123,8 @@
 	}
 
 	.preview {
-		width: 44px;
-		height: 44px;
+		width: 72px;
+		height: 72px;
 		object-fit: cover;
 		border: 1px solid var(--theme-border);
 		border-radius: 5px;
@@ -162,6 +178,25 @@
 	}
 
 	.sort-toggle:hover {
+		background: color-mix(in srgb, var(--theme-panel) 80%, black);
+	}
+
+	.edit-link {
+		height: 30px;
+		width: 34px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--theme-border);
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--theme-panel) 90%, black);
+		color: var(--theme-accent);
+		font-size: 16px;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.edit-link:hover {
 		background: color-mix(in srgb, var(--theme-panel) 80%, black);
 	}
 </style>

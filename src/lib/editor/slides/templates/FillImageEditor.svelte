@@ -20,11 +20,7 @@
 		slide.data[0].content = slug;
 		slide.data = [...slide.data];
 	}
-	$: editHref = slide.data[0].content
-		? slide.data[0].content.toLowerCase().endsWith(".svg")
-			? `/admin/edit/svg?slug=${encodeURIComponent(slide.data[0].content)}`
-			: `/admin/edit/image?slug=${encodeURIComponent(slide.data[0].content)}`
-		: "";
+
 </script>
 
 <div class="field-editor">
@@ -32,11 +28,7 @@
 	<div class="toolbar">
 
 		<strong>Background Image</strong>
-		{#if editHref}
-			<a class="edit-link" href={editHref} target="_blank" rel="noopener" title="Edit this SVG">
-				✎ Edit
-			</a>
-		{/if}
+		
 		<div class="showat">
 
 			<span>Show</span>

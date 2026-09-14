@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/Editor.svelte
     import Nav from "./Nav.svelte";
     import AudioPlayer from "./AudioPlayer.svelte";
 	import Slides from "./slides/Slides.svelte";
