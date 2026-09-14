@@ -22,21 +22,26 @@
 
 	let deckEndTime = 0;
 	let ticker = null;
+	let isPlaying = false;
 
 	function play() {
+		if (isPlaying) return;
+
 		timer?.play();
+		isPlaying = true;
 	}
 
 	function pause() {
-		timer?.pause();
-	}
+	timer?.pause();
+	isPlaying = false;
+}
 
-	function stop() {
-		timer?.pause();
-		timer?.seek(0);
-		currentTime = 0;
-	}
-
+function stop() {
+	timer?.pause();
+	timer?.seek(0);
+	currentTime = 0;
+	isPlaying = false;
+}
 	function seek(time) {
 		timer?.seek(time);
 		currentTime = time;
