@@ -3,6 +3,14 @@ import kernel from 'taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 import { requireSuperAdmin } from './utils/requireSuperAdmin.js';
 
+function isValidSvgSlug(slug) {
+	return typeof slug === "string" && slug.trim().endsWith(".svg") && slug.trim().length > 4;
+}
+
+function slugToTitle(slug) {
+	return slug.replace(/\.svg$/, "").replace(/-/g, " ");
+}
+
 export async function createSvg(data, token) {
 	await requireAdmin(token);
 
@@ -29,4 +37,45 @@ export async function updateSvg(slug, data, token) {
 export async function deleteSvg(slug, token) {
 	await requireSuperAdmin(token);
 	return kernel.svg.delete(slug);
+}
+export async function bulkCreateSvgs(slugs, token) {
+	await requireAdmin(token);
+
+	const trimmed = (slugs || []).map(s => s.trim()).filter(Boolean);
+
+	const invalid = trimmed.filter(s => !isValidSvgSlug(s));
+
+	if (invalid.length) {
+		const err = new Error(`Invalid slug(s) — must end with ".svg": ${invalid.join(", ")}`);
+		err.status = 400;
+		throw err;
+	}
+
+	const existing = [];
+
+	for (const slug of trimmed) {
+		const found = await kernel.svg.get(slug);
+		if (found) existing.push(slug);
+	}
+
+	if (existing.length) {
+		const err = new Error(`Slug(s) already exist, no records created: ${existing.join(", ")}`);
+		err.status = 409;
+		throw err;
+	}
+
+	const created = [];
+
+	for (const slug of trimmed) {
+		const svg = await createSvg({
+			slug,
+			title: slugToTitle(slug),
+			body: "",
+			tags: "[]"
+		}, token);
+
+		created.push(svg);
+	}
+
+	return created;
 }

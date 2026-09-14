@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/svg/+page.svelte
 	import { onMount } from "svelte";
 	import { send } from "$lib/send";
 
@@ -11,7 +12,7 @@
 
 	let message = "";
 	let slug = "";
-
+// add-svg-bulk
 	onMount(async () => {
 
 		slug = new URLSearchParams(location.search).get("slug");

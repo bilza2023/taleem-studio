@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/assets.js
+// /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/assets.js
 import kernel from 'taleem-kernel';
 import { mkdir, writeFile, access, unlink } from 'node:fs/promises';
 import path from 'node:path';
@@ -7,8 +7,6 @@ import { createImage } from './image.js';
 import { createAudio } from './audio.js';
 import { config } from '$lib/config.js';
 import { readFile } from 'node:fs/promises';
-
-const CONTENT_DIR = path.resolve(config.basePath + "/content");
 
 const MIME_TYPES = {
 	".png": "image/png",
@@ -22,6 +20,7 @@ const MIME_TYPES = {
 	".opus": "audio/ogg",
 	".ogg": "audio/ogg"
 };
+
 export async function listAssets(token) {
 	await requireAdmin(token);
 

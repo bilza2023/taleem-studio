@@ -46,6 +46,9 @@
 		<a class="pill {active === 'add-svg' ? 'active' : ''}" href={`${basePath}/admin/create/svg`} data-sveltekit-preload-data>
 			＋ SVG
 		</a>
+		<a class="pill {active === 'add-svg-bulk' ? 'active' : ''}" href={`${basePath}/admin/edit/svgBulk`} data-sveltekit-preload-data>
+			＋ SVG Bulk
+		</a>
 		<a class="pill {active === 'add-image' ? 'active' : ''}" href={`${basePath}/admin/create/image`} data-sveltekit-preload-data>
 			＋ Image
 		</a>

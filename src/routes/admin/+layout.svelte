@@ -5,7 +5,7 @@
 	import { config } from "$lib/config.js";
 	import { send } from "$lib/send";
 	import Navbar from "$lib/adminComponents/Navbar.svelte";
-	import SubNav from "$lib/adminComponents/SubNav.svelte";
+	// import SubNav from "$lib/adminComponents/SubNav.svelte";
 	import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
 	import { blueTheme } from "$lib/taleem-themes/index.js";
 
@@ -26,6 +26,7 @@
 
 		if (path.startsWith(`${config.basePath}/admin/assets`)) return "assets";
 		if (path.startsWith(`${config.basePath}/admin/create/svg`)) return "add-svg";
+		if (path.startsWith(`${config.basePath}/admin/edit/svgBulk`)) return "add-svg-bulk";
 		if (path.startsWith(`${config.basePath}/admin/create/image`)) return "add-image";
 		if (path.startsWith(`${config.basePath}/admin/create/audio`)) return "add-audio";
 		if (path === `${config.basePath}/admin`) return "home";

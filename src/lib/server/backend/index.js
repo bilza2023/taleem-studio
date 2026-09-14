@@ -8,7 +8,7 @@ import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, autho
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
 import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup } from "./library.js";
-import { createSvg, getSvg, listSvg, updateSvg, deleteSvg } from "./svg.js";
+import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs} from "./svg.js";
 
 export const backend = {
 	admin: {
@@ -86,12 +86,13 @@ export const backend = {
 		create: (data, token) => createLibrary(data, token),
 		update: (data, token) => updateLibrary(data.slug, data.data, token),
 		delete: (data, token) => deleteLibrary(data.slug, token)
-	},
+	},	
 	svg: {
 		get: (data) => getSvg(data.slug),
 		list: (data) => listSvg(data.slug),
 		create: (data, token) => createSvg(data, token),
 		update: (data, token) => updateSvg(data.slug, data.data, token),
-		delete: (data, token) => deleteSvg(data.slug, token)
+		delete: (data, token) => deleteSvg(data.slug, token),
+		bulkCreate: (data, token) => bulkCreateSvgs(data.slugs, token)
 	}
 };

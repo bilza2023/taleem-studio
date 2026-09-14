@@ -1,60 +1,55 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/create/svg/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/svgBulk/+page.svelte
 	import { send } from "$lib/send";
 
-	let form = {
-		slug: "",
-		title: "",
-		body: "",
-		tags: "[]"
-	};
-
+	let raw = "";
 	let message = "";
 
 	async function submit() {
-		message = "Saving...";
+
+		const slugs = raw
+			.split(/[,\n]+/)
+			.map(s => s.trim())
+			.filter(Boolean);
+
+		if (!slugs.length) {
+			message = "Enter at least one slug";
+			return;
+		}
+
+		message = "Creating...";
 
 		try {
-			const data = await send("svg", "create", form);
+			const data = await send("svg", "bulkCreate", { slugs });
 
-			message = `Created: ${data.slug}`;
+			message = `Created: ${data.map(s => s.slug).join(", ")}`;
+			raw = "";
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
 		}
 	}
 </script>
+
 <div class="page">
-  <h1>Create SVG</h1>
+  <h1>Bulk Create SVGs</h1>
 
   <form on:submit|preventDefault={submit}>
-    <label>
-      Slug
-      <input bind:value={form.slug} required>
-    </label>
 
     <label>
-      Title
-      <input bind:value={form.title} required>
+      Slugs (comma or newline separated)
+      <textarea class="body" bind:value={raw} placeholder="triangle-abc.svg, right-triangle.svg" required></textarea>
     </label>
 
-    <label>
-      Tags
-      <input bind:value={form.tags} placeholder='["number-line","math"]'>
-    </label>
+    <button type="submit">Bulk Create</button>
 
-    <label>
-      SVG
-      <textarea class="body" bind:value={form.body} required></textarea>
-    </label>
-
-    <button type="submit">Create SVG</button>
   </form>
 
   {#if message}
     <p class="message">{message}</p>
   {/if}
 </div>
+
 
 <style>
   .page {
@@ -78,7 +73,7 @@
     font-weight: 600;
   }
 
-  input, textarea {
+  textarea {
     box-sizing: border-box;
     width: 100%;
     padding: 10px 12px;
@@ -89,14 +84,10 @@
     background: white;
   }
 
-  textarea {
-    min-height: 90px;
-    resize: vertical;
-  }
-
   textarea.body {
-    min-height: 400px;
+    min-height: 200px;
     font-family: monospace;
+    resize: vertical;
   }
 
   button {
