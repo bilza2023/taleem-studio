@@ -1,6 +1,6 @@
-<!-- src/lib/editor/slides/templates/EqEditor.svelte -->
 
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/slides/templates/EqEditor.svelte
 import {ContentType,EqLineType,EqSidePanelType} from "$lib/taleem-specs/enums";
 	export let slide;
 	export let runningTime;

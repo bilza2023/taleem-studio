@@ -1,5 +1,5 @@
 import { z } from "zod";
-import {DeckVersion,SlideType,ContentType,EqLineType,EqSidePanelType,TaleemPlayerThemes} from "$lib/taleem-specs/enums";
+import {SlideType,ContentType,EqLineType,EqSidePanelType,TaleemPlayerThemes} from "$lib/taleem-specs/enums";
 
 /* ───────────── Shared Literals ───────────── */
 
@@ -316,3 +316,5 @@ export const zodDeckV2 = z.object({
 	)
 
 });
+
+export const eqLineArraySchema = eq.shape.data;
