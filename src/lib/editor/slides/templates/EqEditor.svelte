@@ -2,6 +2,7 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/slides/templates/EqEditor.svelte
 import {ContentType,EqLineType,EqSidePanelType} from "$lib/taleem-specs/enums";
+import EqJsonPaste from "../components/EqJsonPaste.svelte";
 	export let slide;
 	export let runningTime;
 
@@ -74,6 +75,7 @@ function setShowAt(line) {
 
 </script>
 
+<EqJsonPaste {slide} />
 
 {#each slide.data as line, i}
 
