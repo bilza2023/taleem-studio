@@ -57,10 +57,11 @@ function stop() {
 
 			if (currentTime >= deckEndTime) {
 				timer.pause();
-				currentTime = deckEndTime;
+				currentTime = deckEndTime - 0.001;
 			}
 		}, 50);
 	}
+
 
 	async function toggleFullscreen() {
 		if (!document.fullscreenElement) {

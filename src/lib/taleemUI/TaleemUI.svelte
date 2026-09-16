@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.help/src/lib/taleem-UI/TaleemUI.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleemUI/TaleemUI.svelte
     import Scene from "./Scene.svelte";
     import Background from "./Background.svelte";
     import TaleemSlide from "../taleem-slides/TaleemSlide.svelte";

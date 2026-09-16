@@ -57,7 +57,7 @@ function stop() {
 
 			if (currentTime >= deckEndTime) {
 				timer.pause();
-				currentTime = deckEndTime;
+				currentTime = deckEndTime - 0.001;
 			}
 		}, 50);
 	}

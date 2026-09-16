@@ -1,0 +1,124 @@
+[
+  {
+    "name": "line",
+    "type": "heading",
+    "content": "Introduction to Quadratic Equations",
+    "showAt": 0,
+    "spItems": []
+  },
+  {
+    "name": "line",
+    "type": "text",
+    "content": "A quadratic equation has the general form shown below.",
+    "showAt": 5,
+    "spItems": [
+      {
+        "type": "text",
+        "content": "Standard form"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "math",
+    "content": "ax^2 + bx + c = 0",
+    "showAt": 10,
+    "spItems": [
+      {
+        "type": "math",
+        "content": "a \\neq 0"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "text",
+    "content": "Let's look at a worked example with real coefficients.",
+    "showAt": 15,
+    "spItems": [
+      {
+        "type": "image",
+        "content": "box.webp"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "math",
+    "content": "x^2 - 5x + 6 = 0",
+    "showAt": 20,
+    "spItems": [
+      {
+        "type": "text",
+        "content": "a=1, b=-5, c=6"
+      },
+      {
+        "type": "math",
+        "content": "x^2 - 5x + 6 = 0"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "heading",
+    "content": "Applying the Quadratic Formula",
+    "showAt": 25,
+    "spItems": []
+  },
+  {
+    "name": "line",
+    "type": "math",
+    "content": "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}",
+    "showAt": 30,
+    "spItems": [
+      {
+        "type": "image",
+        "content": "box.webp"
+      },
+      {
+        "type": "text",
+        "content": "This works for any quadratic"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "math",
+    "content": "x = \\frac{5 \\pm \\sqrt{25-24}}{2}",
+    "showAt": 35,
+    "spItems": [
+      {
+        "type": "math",
+        "content": "\\sqrt{25-24} = 1"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "text",
+    "content": "So the two solutions are x = 2 and x = 3.",
+    "showAt": 40,
+    "spItems": [
+      {
+        "type": "image",
+        "content": "box.webp"
+      },
+      {
+        "type": "math",
+        "content": "x_1 = 2, \\quad x_2 = 3"
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "type": "heading",
+    "content": "Summary",
+    "showAt": 45,
+    "spItems": [
+      {
+        "type": "text",
+        "content": "Factor, complete the square, or use the formula"
+      }
+    ]
+  }
+]
