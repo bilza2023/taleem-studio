@@ -64,7 +64,7 @@
 				meta: form.meta
 			});
 
-			goto(`${config.basePath}/lessons?course=${encodeURIComponent(courseSlug)}`);
+			goto(`${config.basePath}/admin/lessons?course=${encodeURIComponent(courseSlug)}`);
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
