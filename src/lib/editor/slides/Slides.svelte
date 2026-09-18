@@ -35,13 +35,15 @@ function selectSlide(i) {
   currentSlideIndex = i;
 }
 
-  function setStart(i) {
+function setStart(i) {
 
-	deck.deck[i].start = runningTime;
+	const rounded = Math.round(runningTime);
+
+	deck.deck[i].start = rounded;
 
 	if (i > 0) {
 
-		deck.deck[i - 1].end = runningTime;
+		deck.deck[i - 1].end = rounded;
 
 	}
 
@@ -159,7 +161,7 @@ function getSlideId(slide) {
 
 	onSetStart={() => setStart(i)}
   onStartChange={(value) => startChanged(i, value)}
-	onSetEnd={() => slide.end = runningTime}
+	onSetEnd={() => slide.end = Math.round(runningTime)}
 
 />
 

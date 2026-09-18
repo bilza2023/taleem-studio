@@ -52,12 +52,12 @@
 		</label>
 
 <button
-	class="icon"
-	on:click={() => { onSetStart(); slide.start = Math.round(slide.start); }}
-	disabled={index === 0}
-	title="Set Start From Audio"
+class="icon"
+on:click={onSetStart}
+disabled={index === 0}
+title="Set Start From Audio"
 >
-	⏱
+⏱
 </button>
 
 		<!-- END -->
