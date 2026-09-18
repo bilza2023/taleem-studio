@@ -1,5 +1,5 @@
 
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/api/upload/+server.js
+// /home/bilal-tariq/00--TALEEM/taleem/src/routes/api/upload/+server.js
 
 import { json } from "@sveltejs/kit";
 import { uploadAsset } from "$lib/server/backend/assets.js";

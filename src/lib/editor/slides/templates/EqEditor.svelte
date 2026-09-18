@@ -11,11 +11,16 @@ import EqJsonPaste from "../components/EqJsonPaste.svelte";
 	const lineTypes = Object.values(EqLineType);
 	const spTypes = Object.values(EqSidePanelType);
 
+function toggleLine(i) {
+
+	active = active === i ? -1 : i;
+
+}
+
 function setShowAt(line) {
 
-	line.showAt = runningTime;
+	line.showAt = Math.round(runningTime * 10) / 10;
 
-	// Force Svelte to notice the nested mutation
 	slide.data = [...slide.data];
 
 }
@@ -81,10 +86,29 @@ function setShowAt(line) {
 
 	<fieldset style="margin-bottom:20px;">
 
-		<legend>
+		<legend style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
 
-			<button on:click={() => active = i}>
+			<button on:click={() => toggleLine(i)}>
 				{active === i ? "▼" : "▶"} Line {i + 1}
+			</button>
+
+			<span style="font-size:12px;">Show</span>
+
+			<input
+				type="number"
+				min="0"
+				step="0.1"
+				style="width:100px;text-align:right;"
+				value={line.showAt ?? 0}
+				on:input={(e)=>line.showAt=Number(e.target.value)}
+			/>
+
+			<button
+				type="button"
+				title="Use Current Time"
+				on:click={() => setShowAt(line)}
+			>
+				⏱
 			</button>
 
 		</legend>
@@ -100,25 +124,6 @@ function setShowAt(line) {
 					{/each}
 
 				</select>
-
-				<span style="font-size:12px;">Show</span>
-
-				<input
-					type="number"
-					min="0"
-					step="0.1"
-					style="width:120px;text-align:right;"
-					value={line.showAt ?? 0}
-					on:input={(e)=>line.showAt=Number(e.target.value)}
-				/>
-
-				<button
-					type="button"
-					title="Use Current Time"
-					on:click={() => setShowAt(line)}
-				>
-					⏱
-				</button>
 
 			</div>
 
