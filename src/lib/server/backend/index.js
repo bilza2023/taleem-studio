@@ -1,4 +1,4 @@
-// src/lib/server/backend.js
+// /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/index.js
 import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
@@ -8,7 +8,7 @@ import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, autho
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
 import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup } from "./library.js";
-import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs} from "./svg.js";
+import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
 
 export const backend = {
 	admin: {
@@ -93,6 +93,7 @@ export const backend = {
 		create: (data, token) => createSvg(data, token),
 		update: (data, token) => updateSvg(data.slug, data.data, token),
 		delete: (data, token) => deleteSvg(data.slug, token),
-		bulkCreate: (data, token) => bulkCreateSvgs(data.slugs, token)
+		bulkCreate: (data, token) => bulkCreateSvgs(data.slugs, token),
+		listPaginated: (data) => listSvgPaginated(data.page, data.pageSize)
 	}
 };

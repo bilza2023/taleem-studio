@@ -79,3 +79,24 @@ export async function bulkCreateSvgs(slugs, token) {
 
 	return created;
 }
+
+export async function listSvgPaginated(page = 1, pageSize = 50) {
+	const all = await kernel.svg.list();
+
+	const sorted = [...all].sort(
+		(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+	);
+
+	const total = sorted.length;
+	const totalPages = Math.max(1, Math.ceil(total / pageSize));
+	const safePage = Math.min(Math.max(1, page), totalPages);
+	const start = (safePage - 1) * pageSize;
+
+	return {
+		items: sorted.slice(start, start + pageSize),
+		total,
+		page: safePage,
+		pageSize,
+		totalPages
+	};
+}

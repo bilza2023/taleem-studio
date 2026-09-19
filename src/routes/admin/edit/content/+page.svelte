@@ -110,7 +110,8 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 		try {
 			const course = page.url.searchParams.get("course");
 
-			await send("library", "delete", { slug: form.slug });
+			// in deleteContent()
+await send("adminLibrary", "delete", { slug: form.slug });
 
 			goto(`${config.basePath}/lessons?course=${encodeURIComponent(course)}`);
 		} catch (error) {
