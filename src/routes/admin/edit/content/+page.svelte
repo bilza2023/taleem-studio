@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/edit/content/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/+page.svelte
 
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
@@ -145,10 +145,24 @@ await send("adminLibrary", "delete", { slug: form.slug });
 		class="editor-link"
 		href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}
 	>
-		Slide Editor 🚧 🚜 🏗️ 
+		Slide Editor 🚧  
 	</a>
+
 {/if}
-		<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
+	<a
+		class="editor-link"
+		href={`${config.basePath}/admin/edit/move?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
+	>
+		Move 🚜 
+	</a>
+	<a
+		class="editor-link"
+		href={`${config.basePath}/admin/edit/copy?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
+	>
+		Copy 🏗️ 
+	</a>
+
+<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
 			<label>
 				Type

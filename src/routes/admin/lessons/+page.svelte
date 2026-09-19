@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/lessons/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/lessons/+page.svelte
 import HomeLinks from "$lib/adminComponents/HomeLinks.svelte";
 import CourseHero from "$lib/components/CourseHero.svelte";
 import Footer from "$lib/components/Footer.svelte";
