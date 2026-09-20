@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleemUI/Scene.svelte
 	export let width;
 	export let height;
 </script>

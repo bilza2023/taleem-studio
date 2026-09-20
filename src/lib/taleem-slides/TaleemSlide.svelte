@@ -1,5 +1,5 @@
 <script>
-    ///home/bilal-tariq/00--TALEEM/taleem.help/src/lib/taleem-slides/TaleemSlide.svelte
+    ///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleem-slides/TaleemSlide.svelte
 
     import { SlideType } from "$lib/taleem-specs/enums/SlideType.js";
     import { TaleemPlayerThemes } from "./themes/index.js";  

@@ -32,21 +32,23 @@
         </div>
     </div>
 {/if}
-
 <style>
 .sidePanel{
     width:100%;
     box-sizing:border-box;
     margin:0 0 14px;
-    padding:14px 24px 16px 58px;
+    padding:
+        max(4px, calc(var(--base-font)*.35))
+        max(8px, calc(var(--base-font)*.6))
+        max(5px, calc(var(--base-font)*.4))
+        max(16px, calc(var(--base-font)*1.45));
     display:grid;
     grid-template-columns:minmax(0,58%) minmax(0,42%);
-    gap:20px;
+    gap:max(4px, calc(var(--base-font)*.5));
     background:color-mix(in srgb,var(--player-surface) 85%,var(--player-text) 15%);
-    /* border:2px solid var(--player-border); */
-     border-bottom:3px solid #ef4444;
+    border-bottom:3px solid #ef4444;
     border-top:0;
-    border-left:8px solid var(--player-primary);
+    border-left:max(3px, calc(var(--base-font)*.2)) solid var(--player-primary);
     border-radius:0 0 12px 12px;
     box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 8px 18px rgba(0,0,0,.12);
     backdrop-filter:blur(6px);
@@ -73,7 +75,9 @@
 .spCard{
     box-sizing:border-box;
     width:100%;
-    padding:12px 16px;
+    padding:
+        max(5px, calc(var(--base-font)*.3))
+        max(7px, calc(var(--base-font)*.4));
     border-radius:9px;
     background:var(--player-surface);
     border:1px solid var(--player-border);
@@ -82,13 +86,13 @@
 }
 
 .spText{
-    font-size:1.25rem;
-    line-height:1.45;
+    font-size:max(11px, calc(var(--base-font)*.5));
+    line-height:1.3;
     font-weight:500;
 }
 
 .spMath{
-    min-height:64px;
+    min-height:max(28px, calc(var(--base-font)*1.6));
     display:flex;
     align-items:center;
     justify-content:center;
@@ -100,7 +104,7 @@
 }
 
 .spMath :global(.katex){
-    font-size:1.25em;
+    font-size:max(11px, calc(var(--base-font)*.5));
     color:var(--player-text);
 }
 
@@ -114,38 +118,10 @@
     border-radius:10px;
 }
 
-
-
-/* Mobile */
+/* Mobile: layout shape only, sizing is now handled by --base-font above */
 @media(max-width:700px){
     .sidePanel{
-        padding:6px 8px 7px 24px;
         grid-template-columns:1fr;
-        gap:6px;
-        border-left-width:4px;
-        border-radius:0 0 8px 8px;
-    }
-
-    .left{
-        gap:5px;
-    }
-
-    .spCard{
-        padding:6px 8px;
-        border-radius:7px;
-    }
-
-    .spText{
-        font-size:.7rem;
-        line-height:1.15;
-    }
-
-    .spMath{
-        min-height:38px;
-    }
-
-    .spMath :global(.katex){
-        font-size:.7em;
     }
 
     .right{
@@ -158,43 +134,4 @@
         max-width:100%;
     }
 }
-
-
-/* Very short mobile screens */
-@media(max-width:700px) and (max-height:600px){
-    .sidePanel{
-        padding:4px 7px 5px 22px;
-        gap:4px;
-    }
-
-    .left{
-        gap:4px;
-    }
-
-    .spCard{
-        padding:5px 7px;
-    }
-
-    .spText{
-        font-size:.65rem;
-        line-height:1.1;
-    }
-
-    .spMath{
-        min-height:32px;
-    }
-
-    .spMath :global(.katex){
-        font-size:.65em;
-    }
-
-    .right{
-        max-height:80px;
-    }
-
-    .spImage{
-        max-height:76px;
-    }
-}
-
 </style>
