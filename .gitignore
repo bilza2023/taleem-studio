@@ -26,5 +26,4 @@ vite.config.ts.timestamp-*
 /content
 
 # Prisma local database
-/prisma/*.db
-/prisma/*.db-journal
+/prisma
