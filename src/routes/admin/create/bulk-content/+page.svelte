@@ -16,14 +16,9 @@
 
 	let form = $state({
 		slugsRaw: "",
-		title: "",
 		type: "ARTICLE",
 		groupSlug: "",
-		description: "",
-		thumbnail: "",
-		body: "",
-		allowCommunication: true,
-		meta: ""
+		thumbnail: ""
 	});
 
 	async function loadGroups() {
@@ -50,6 +45,12 @@
 			.split(",")
 			.map((s) => s.trim())
 			.filter(Boolean);
+	}
+
+	function titleFromSlug(slug) {
+		return slug
+			.replace(/[-_]+/g, " ")
+			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	async function submit() {
@@ -89,13 +90,13 @@
 					courseSlug,
 					groupSlug: form.groupSlug,
 					type: form.type,
-					title: form.title,
-					description: form.description,
+					title: titleFromSlug(slug),
+					description: "",
 					thumbnail: form.thumbnail,
-					body: form.body,
+					body: "",
 					sortOrder: nextSortOrder,
-					allowCommunication: form.allowCommunication,
-					meta: form.meta
+					allowCommunication: true,
+					meta: ""
 				});
 
 				results = [...results, { slug, ok: true }];
@@ -166,34 +167,11 @@
 			</label>
 
 			<label>
-				Title
-				<input bind:value={form.title} placeholder="Applied to every item — edit individually after" required>
-			</label>
-
-			<label>
-				Description
-				<textarea bind:value={form.description}></textarea>
-			</label>
-
-			<label>
 				Thumbnail
 				<ImagePicker
 					value={form.thumbnail}
 					onUse={useThumbnail}
 				/>
-			</label>
-
-			<label class="check">
-				<input
-					type="checkbox"
-					bind:checked={form.allowCommunication}
-				>
-				Allow Communication
-			</label>
-
-			<label>
-				Meta
-				<textarea bind:value={form.meta}></textarea>
 			</label>
 
 			<button type="submit" disabled={saving}>
@@ -274,18 +252,9 @@
 	}
 
 	textarea.body {
-		min-height: 120px;
+		min-height: 140px;
 		font-family: monospace;
 	}
-
-	.check {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-weight: 400;
-	}
-
-	.check input { width: auto; }
 
 	button {
 		width: fit-content;

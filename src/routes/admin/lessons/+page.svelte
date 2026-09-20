@@ -91,6 +91,10 @@ $effect(() => {
 	New
 </a>
 
+<a class="pending-link" href={`${config.basePath}/admin/create/bulk-content?course=${encodeURIComponent(course.slug)}`}>
+	Bulk Create
+</a>
+
 <a class="pending-link" href={`${config.basePath}/admin/create/group?course=${encodeURIComponent(course.slug)}`}>
 	Add Group
 </a>
