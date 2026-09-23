@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem/scripts/set-group-thumbnails.js
+///home/bilal-tariq/00--TALEEM/taleem/scripts/set-group-thumbnails.js
 
 import kernel from 'taleem-kernel';
 

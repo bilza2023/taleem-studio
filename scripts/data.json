@@ -1,1 +1,250 @@
 
+[
+  {
+    "slug": "fbise9math-misc5-q01-xi",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xi)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 40, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xi)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Which one is the solution of } \\frac{4}{x} - \\frac{2}{x} = 5\\text{?}", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } -1 \\qquad \\text{(b) } \\frac{2}{5} \\qquad \\text{(c) } \\frac{5}{2} \\qquad \\text{(d) zero}", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{2}{x} = 5", "showAt": 15, "spItems": [ { "type": "text", "content": "Same denominator: subtract the numerators" } ] },
+          { "name": "line", "type": "math", "content": "2 = 5x \\quad \\Rightarrow \\quad x = \\frac{2}{5}", "showAt": 20, "spItems": [ { "type": "text", "content": "Multiply both sides by x, then divide by 5" } ] },
+          { "name": "line", "type": "text", "content": "Correct option: (b) 2/5", "showAt": 25, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q01-xii",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xii)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 35, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xii)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "text", "content": "Which one is a strict inequality?", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } x + 3 \\neq 0 \\qquad \\text{(b) } 12x > 5 \\qquad \\text{(c) } 2y - 3 \\le 0 \\qquad \\text{(d) } 4x + 5 \\ge 0", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "text", "content": "A strict inequality uses only the symbol < or >. The symbols ≤ and ≥ also allow equality, and ≠ is not a strict inequality.", "showAt": 15, "spItems": [] },
+          { "name": "line", "type": "text", "content": "Correct option: (b) 12x > 5", "showAt": 20, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q01-xiii",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xiii)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 40, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xiii)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{What should be the value of } k \\text{ if } x < y \\text{ shows } kx > ky\\text{?}", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } k = 0 \\qquad \\text{(b) } k > 0 \\qquad \\text{(c) } k < 0 \\qquad \\text{(d) } k \\ge 0", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "text", "content": "The symbol changed from < to >. The inequality symbol is reversed only when both sides are multiplied by a negative number.", "showAt": 15, "spItems": [ { "type": "math", "content": "-2 < 5 \\Rightarrow (-3)(-2) > (-3)(5)" } ] },
+          { "name": "line", "type": "text", "content": "Correct option: (c) k < 0", "showAt": 20, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q01-xiv",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xiv)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 40, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xiv)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "text", "content": "Which one is the compound relation?", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } 1 + 2x < 4 + x \\qquad \\text{(b) } 4x + 3 > 5\\frac{3}{5}", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(c) } x + y > 5\\frac{1}{2} \\qquad \\text{(d) } x \\le 0", "showAt": 15, "spItems": [] },
+          { "name": "line", "type": "math", "content": "x \\le 0 \\quad \\text{means} \\quad x < 0 \\ \\text{or}\\ x = 0", "showAt": 20, "spItems": [ { "type": "text", "content": "Two relations joined by 'or' make a compound relation" } ] },
+          { "name": "line", "type": "text", "content": "Options (a), (b) and (c) each use a single relation (< or >).", "showAt": 25, "spItems": [] },
+          { "name": "line", "type": "text", "content": "Correct option: (d) x ≤ 0", "showAt": 30, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q01-xv",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xv)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 40, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xv)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Which one is the solution of } 3 - \\frac{1}{2}x \\ge 0\\text{?}", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } x \\ge -6 \\qquad \\text{(b) } x \\le 6 \\qquad \\text{(c) } x \\ge 6 \\qquad \\text{(d) } x \\le -6", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "math", "content": "-\\frac{1}{2}x \\ge -3", "showAt": 15, "spItems": [ { "type": "text", "content": "Subtract 3 from both sides" } ] },
+          { "name": "line", "type": "math", "content": "x \\le 6", "showAt": 20, "spItems": [ { "type": "text", "content": "Multiply by −2 and reverse the symbol" } ] },
+          { "name": "line", "type": "text", "content": "Correct option: (b) x ≤ 6", "showAt": 25, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q01-xvi",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Q1(xvi)",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 40, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Q1(xvi)", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Which one is the solution of } 2(x + 6) \\le 3(x + 4)\\text{?}", "showAt": 5, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{(a) } x \\le 0 \\qquad \\text{(b) } x \\ge 0 \\qquad \\text{(c) } x \\le 24 \\qquad \\text{(d) } x \\ge 24", "showAt": 10, "spItems": [] },
+          { "name": "line", "type": "math", "content": "2x + 12 \\le 3x + 12", "showAt": 15, "spItems": [ { "type": "text", "content": "Expand both brackets" } ] },
+          { "name": "line", "type": "math", "content": "12 - 12 \\le 3x - 2x \\quad \\Rightarrow \\quad 0 \\le x", "showAt": 20, "spItems": [ { "type": "text", "content": "Move x-terms to the right and constants to the left" } ] },
+          { "name": "line", "type": "text", "content": "Correct option: (b) x ≥ 0", "showAt": 25, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q02",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 2",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 70, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 2", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{2x - 11}{12} = \\frac{2x + 10}{12} - \\left(\\frac{28 - 2x}{4} - \\frac{1}{4}\\right)", "showAt": 5, "spItems": [ { "type": "text", "content": "Solve the linear equation for x" } ] },
+          { "name": "line", "type": "math", "content": "\\frac{2x - 11}{12} = \\frac{2x + 10}{12} - \\frac{27 - 2x}{4}", "showAt": 10, "spItems": [ { "type": "text", "content": "Simplify the bracket first" }, { "type": "math", "content": "\\frac{28 - 2x - 1}{4} = \\frac{27 - 2x}{4}" } ] },
+          { "name": "line", "type": "math", "content": "2x - 11 = 2x + 10 - 3(27 - 2x)", "showAt": 15, "spItems": [ { "type": "text", "content": "Multiply every term by the LCM, 12" } ] },
+          { "name": "line", "type": "math", "content": "2x - 11 = 2x + 10 - 81 + 6x", "showAt": 20, "spItems": [ { "type": "text", "content": "Expand the bracket" } ] },
+          { "name": "line", "type": "math", "content": "2x - 11 = 8x - 71", "showAt": 25, "spItems": [ { "type": "text", "content": "Combine like terms" } ] },
+          { "name": "line", "type": "math", "content": "-11 + 71 = 8x - 2x", "showAt": 30, "spItems": [ { "type": "text", "content": "Move x-terms to the right and constants to the left" } ] },
+          { "name": "line", "type": "math", "content": "60 = 6x \\quad \\Rightarrow \\quad x = 10", "showAt": 35, "spItems": [ { "type": "text", "content": "Divide both sides by 6" } ] },
+          { "name": "line", "type": "heading", "content": "Check", "showAt": 40, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{9}{12} \\stackrel{?}{=} \\frac{30}{12} - \\left(\\frac{8}{4} - \\frac{1}{4}\\right)", "showAt": 45, "spItems": [ { "type": "text", "content": "Replace x by 10 in the original equation" } ] },
+          { "name": "line", "type": "math", "content": "\\frac{3}{4} \\stackrel{?}{=} \\frac{10}{4} - \\frac{7}{4} \\quad \\Rightarrow \\quad \\frac{3}{4} = \\frac{3}{4}", "showAt": 50, "spItems": [ { "type": "text", "content": "Both sides are equal, so the solution is checked" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\{10\\}", "showAt": 55, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q03",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 3",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 60, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 3", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\sqrt{a - \\frac{1}{2}} = \\sqrt{\\frac{2a}{5} + \\frac{2}{5}}", "showAt": 5, "spItems": [ { "type": "text", "content": "There is a radical on each side" } ] },
+          { "name": "line", "type": "math", "content": "a - \\frac{1}{2} = \\frac{2a}{5} + \\frac{2}{5}", "showAt": 10, "spItems": [ { "type": "text", "content": "Square both sides to remove both radicals" } ] },
+          { "name": "line", "type": "math", "content": "10a - 5 = 4a + 4", "showAt": 15, "spItems": [ { "type": "text", "content": "Multiply every term by the LCM, 10" } ] },
+          { "name": "line", "type": "math", "content": "10a - 4a = 4 + 5", "showAt": 20, "spItems": [ { "type": "text", "content": "Move a-terms to the left and constants to the right" } ] },
+          { "name": "line", "type": "math", "content": "6a = 9 \\quad \\Rightarrow \\quad a = \\frac{3}{2}", "showAt": 25, "spItems": [ { "type": "text", "content": "Divide by 6 and simplify" } ] },
+          { "name": "line", "type": "heading", "content": "Check", "showAt": 30, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\sqrt{\\frac{3}{2} - \\frac{1}{2}} \\stackrel{?}{=} \\sqrt{\\frac{3}{5} + \\frac{2}{5}}", "showAt": 35, "spItems": [ { "type": "text", "content": "Replace a by 3/2 in the original equation" }, { "type": "math", "content": "\\frac{2}{5} \\cdot \\frac{3}{2} = \\frac{3}{5}" } ] },
+          { "name": "line", "type": "math", "content": "\\sqrt{1} = \\sqrt{1}", "showAt": 40, "spItems": [ { "type": "text", "content": "Both sides are equal, so the solution is checked" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\left\\{\\frac{3}{2}\\right\\}", "showAt": 45, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q04",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 4",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 70, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 4", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{\\sqrt{5x - 4} - 4}{10} = -1", "showAt": 5, "spItems": [ { "type": "text", "content": "First get the radical alone on one side" } ] },
+          { "name": "line", "type": "math", "content": "\\sqrt{5x - 4} - 4 = -10", "showAt": 10, "spItems": [ { "type": "text", "content": "Multiply both sides by 10" } ] },
+          { "name": "line", "type": "math", "content": "\\sqrt{5x - 4} = -6", "showAt": 15, "spItems": [ { "type": "text", "content": "Add 4 to both sides" } ] },
+          { "name": "line", "type": "text", "content": "A square root can never be negative, so this equation has no real solution.", "showAt": 20, "spItems": [ { "type": "text", "content": "Key fact: if the isolated radical equals a negative number, there is no solution" } ] },
+          { "name": "line", "type": "heading", "content": "What if we square anyway?", "showAt": 25, "spItems": [] },
+          { "name": "line", "type": "math", "content": "5x - 4 = 36 \\quad \\Rightarrow \\quad x = 8", "showAt": 30, "spItems": [ { "type": "text", "content": "Squaring hides the negative sign" } ] },
+          { "name": "line", "type": "heading", "content": "Check", "showAt": 35, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{\\sqrt{5(8) - 4} - 4}{10} = \\frac{6 - 4}{10} = \\frac{1}{5} \\neq -1", "showAt": 40, "spItems": [ { "type": "text", "content": "Does not satisfy the original equation" } ] },
+          { "name": "line", "type": "text", "content": "So x = 8 is an extraneous root.", "showAt": 45, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\phi", "showAt": 50, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q05",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 5",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 60, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 5", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "5 - |5y + 1| = -9", "showAt": 5, "spItems": [ { "type": "text", "content": "First isolate the absolute value" } ] },
+          { "name": "line", "type": "math", "content": "-|5y + 1| = -14", "showAt": 10, "spItems": [ { "type": "text", "content": "Subtract 5 from both sides" } ] },
+          { "name": "line", "type": "math", "content": "|5y + 1| = 14", "showAt": 15, "spItems": [ { "type": "text", "content": "Multiply both sides by −1" } ] },
+          { "name": "line", "type": "math", "content": "5y + 1 = 14 \\quad \\text{or} \\quad 5y + 1 = -14", "showAt": 20, "spItems": [ { "type": "text", "content": "Remove the bars and write two equations" } ] },
+          { "name": "line", "type": "math", "content": "5y = 13 \\quad \\text{or} \\quad 5y = -15", "showAt": 25, "spItems": [ { "type": "text", "content": "Subtract 1 in each equation" } ] },
+          { "name": "line", "type": "math", "content": "y = \\frac{13}{5} \\quad \\text{or} \\quad y = -3", "showAt": 30, "spItems": [ { "type": "text", "content": "Divide by 5 in each equation" } ] },
+          { "name": "line", "type": "heading", "content": "Check", "showAt": 35, "spItems": [] },
+          { "name": "line", "type": "math", "content": "5 - |13 + 1| = 5 - 14 = -9, \\quad 5 - |-15 + 1| = 5 - 14 = -9", "showAt": 40, "spItems": [ { "type": "text", "content": "Both roots satisfy the equation" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\left\\{-3, \\frac{13}{5}\\right\\}", "showAt": 45, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q06",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 6",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 55, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 6", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{3}{4}x - 1 \\ge x + 1, \\quad x \\in \\mathbb{R}", "showAt": 5, "spItems": [ { "type": "text", "content": "Solve the inequality for x" } ] },
+          { "name": "line", "type": "math", "content": "3x - 4 \\ge 4x + 4", "showAt": 10, "spItems": [ { "type": "text", "content": "Multiply every term by 4 (positive, symbol stays the same)" } ] },
+          { "name": "line", "type": "math", "content": "-4 - 4 \\ge 4x - 3x", "showAt": 15, "spItems": [ { "type": "text", "content": "Move x-terms to the right and constants to the left" } ] },
+          { "name": "line", "type": "math", "content": "-8 \\ge x \\quad \\text{i.e.} \\quad x \\le -8", "showAt": 20, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Check: } x = -8 \\Rightarrow -6 - 1 \\ge -8 + 1 \\Rightarrow -7 \\ge -7", "showAt": 25, "spItems": [ { "type": "text", "content": "A true statement" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\{x \\mid x \\in \\mathbb{R} \\land x \\le -8\\}", "showAt": 30, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q07",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 7",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 55, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 7", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "4(2y + 3) - (6y - 1) > 10, \\quad y \\in \\mathbb{R}", "showAt": 5, "spItems": [ { "type": "text", "content": "Solve the inequality for y" } ] },
+          { "name": "line", "type": "math", "content": "8y + 12 - 6y + 1 > 10", "showAt": 10, "spItems": [ { "type": "text", "content": "Expand both brackets; the minus sign changes both signs in the second" } ] },
+          { "name": "line", "type": "math", "content": "2y + 13 > 10", "showAt": 15, "spItems": [ { "type": "text", "content": "Combine like terms" } ] },
+          { "name": "line", "type": "math", "content": "2y > -3", "showAt": 20, "spItems": [ { "type": "text", "content": "Subtract 13 from both sides" } ] },
+          { "name": "line", "type": "math", "content": "y > -\\frac{3}{2}", "showAt": 25, "spItems": [ { "type": "text", "content": "Divide by 2; it is positive, so the symbol stays the same" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Check: } y = 0 \\Rightarrow 12 + 1 = 13 > 10", "showAt": 30, "spItems": [ { "type": "text", "content": "A true statement" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\left\\{y \\mid y \\in \\mathbb{R} \\land y > -\\frac{3}{2}\\right\\}", "showAt": 35, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q08",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 8",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 45, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 8", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\frac{3}{2}x \\le -3 \\quad \\text{or} \\quad \\frac{2}{3}x \\ge 4, \\quad x \\in \\mathbb{R}", "showAt": 5, "spItems": [ { "type": "text", "content": "A compound inequality joined by 'or': solve each part separately" } ] },
+          { "name": "line", "type": "math", "content": "x \\le -3 \\times \\frac{2}{3} \\quad \\text{or} \\quad x \\ge 4 \\times \\frac{3}{2}", "showAt": 10, "spItems": [ { "type": "text", "content": "Multiply by the reciprocal; both are positive, so the symbols stay the same" } ] },
+          { "name": "line", "type": "math", "content": "x \\le -2 \\quad \\text{or} \\quad x \\ge 6", "showAt": 15, "spItems": [] },
+          { "name": "line", "type": "text", "content": "For 'or', the solution set is the union of both solution sets.", "showAt": 20, "spItems": [] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\{x \\mid x \\in \\mathbb{R} \\land x \\le -2 \\ \\text{or}\\ x \\ge 6\\}", "showAt": 25, "spItems": [] }
+        ]}
+      ]
+    }
+  },
+  {
+    "slug": "fbise9math-misc5-q09",
+    "body": {
+      "name": "Miscellaneous Exercise 5 — Question 9",
+      "deck": [
+        { "type": "eq", "start": 0, "end": 50, "data": [
+          { "name": "line", "type": "heading", "content": "Miscellaneous Exercise 5 — Question 9", "showAt": 0, "spItems": [] },
+          { "name": "line", "type": "text", "content": "The difference between three times a number y and 18 is less than 12 or greater than 39.", "showAt": 5, "spItems": [ { "type": "text", "content": "Translate the words into an inequality" } ] },
+          { "name": "line", "type": "math", "content": "3y - 18", "showAt": 10, "spItems": [ { "type": "text", "content": "The difference between three times y and 18" } ] },
+          { "name": "line", "type": "math", "content": "3y - 18 < 12 \\quad \\text{or} \\quad 3y - 18 > 39", "showAt": 15, "spItems": [ { "type": "text", "content": "A compound inequality joined by 'or'" } ] },
+          { "name": "line", "type": "math", "content": "3y < 30 \\quad \\text{or} \\quad 3y > 57", "showAt": 20, "spItems": [ { "type": "text", "content": "Add 18 in each part" } ] },
+          { "name": "line", "type": "math", "content": "y < 10 \\quad \\text{or} \\quad y > 19", "showAt": 25, "spItems": [ { "type": "text", "content": "Divide by 3 in each part" } ] },
+          { "name": "line", "type": "math", "content": "\\text{Solution set} = \\{y \\mid y \\in \\mathbb{R} \\land y < 10 \\ \\text{or}\\ y > 19\\}", "showAt": 30, "spItems": [] },
+          { "name": "line", "type": "text", "content": "So y is any real number less than 10 or greater than 19.", "showAt": 35, "spItems": [] }
+        ]}
+      ]
+    }
+  }
+]
