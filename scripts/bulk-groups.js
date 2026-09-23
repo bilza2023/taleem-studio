@@ -11,11 +11,13 @@ import kernel from 'taleem-kernel';
 const COURSE_SLUG = 'fbise9math';
 
 const GROUPS = [
-	{ slug: "5.2",       title: "Exercise 5.2" },
-	{ slug: "5.3",       title: "Exercise 5.3" },
-	{ slug: "5.4",       title: "Exercise 5.4" },
-	{ slug: "ch5-misc",  title: "Miscellaneous Exercise 5" },
-	{ slug: "ch5-intro", title: "Chapter 5 Introduction" },
+	{ slug: "6.2",       title: "Exercise 6.2" },
+	{ slug: "6.3",       title: "Exercise 6.3" },
+	{ slug: "6.4",       title: "Exercise 6.4" },
+	{ slug: "6.5",       title: "Exercise 6.5" },
+	{ slug: "6.6",       title: "Exercise 6.6" },
+	{ slug: "ch6-misc",  title: "Miscellaneous Exercise 6" },
+	{ slug: "ch6-intro", title: "Chapter 6 Introduction" },
 ];
 
 // ════════════════════════════════════════════════
