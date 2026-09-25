@@ -1,5 +1,6 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/create/bulk-content/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/create/bulk-content/+page.svelte
+
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";

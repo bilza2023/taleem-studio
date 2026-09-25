@@ -1,0 +1,93 @@
+
+[
+  {"slug":"fbise9math-ex6.6-q01-i","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 1(i)","showAt":0},{"name":"subtitle","content":"Measure the three-figure bearing of B from A","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q1-i-bearing.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":26,"data":[
+      {"name":"line","type":"text","content":"Place the protractor at A with 0° on the north line, and measure clockwise to the line AB.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q1-i-bearing.svg"},{"type":"text","content":"Bearings are always measured clockwise from north"}]},
+      {"name":"line","type":"text","content":"The angle from north to AB measures 55°.","showAt":14,"spItems":[{"type":"text","content":"B lies between north and east, so the bearing is less than 090°"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of B from A} = 055^\\circ","showAt":18,"spItems":[{"type":"text","content":"Write it with three figures: 055°, not 55°"}]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q01-ii","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 1(ii)","showAt":0},{"name":"subtitle","content":"Measure the three-figure bearing of B from A","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q1-ii-bearing.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":30,"data":[
+      {"name":"line","type":"text","content":"B lies to the south-west of A, so the clockwise angle from north is more than 180° (a reflex angle).","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q1-ii-bearing.svg"}]},
+      {"name":"line","type":"text","content":"Measure the anticlockwise angle from north to AB instead: it is 120°.","showAt":14,"spItems":[{"type":"text","content":"A protractor measures at most 180°, so measure the smaller angle"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing} = 360^\\circ - 120^\\circ = 240^\\circ","showAt":18,"spItems":[{"type":"text","content":"Subtract from 360° to get the clockwise angle"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of B from A} = 240^\\circ","showAt":22,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q01-iii","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 1(iii)","showAt":0},{"name":"subtitle","content":"Measure the three-figure bearing of B from A","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q1-iii-bearing.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":30,"data":[
+      {"name":"line","type":"text","content":"B lies to the north-west of A, so the clockwise angle from north is a reflex angle.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q1-iii-bearing.svg"}]},
+      {"name":"line","type":"text","content":"The anticlockwise angle from north to AB measures 50°.","showAt":14,"spItems":[]},
+      {"name":"line","type":"math","content":"\\text{Bearing} = 360^\\circ - 50^\\circ = 310^\\circ","showAt":18,"spItems":[{"type":"text","content":"Subtract from 360° to get the clockwise angle"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of B from A} = 310^\\circ","showAt":22,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q02","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 2","showAt":0},{"name":"subtitle","content":"Find the bearing of school A from school B","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q2-schools.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":30,"data":[
+      {"name":"line","type":"text","content":"Join A and B. At B, use B's own north line: the bearing is measured from there.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q2-schools.svg"}]},
+      {"name":"line","type":"text","content":"Measuring at A first, the bearing of B from A is 050°.","showAt":14,"spItems":[{"type":"text","content":"The two north lines are parallel"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of A from B} = 050^\\circ + 180^\\circ","showAt":18,"spItems":[{"type":"math","content":"\\text{back bearing} = \\text{bearing} + 180^\\circ \\ (\\text{if bearing} < 180^\\circ)"}]},
+      {"name":"line","type":"math","content":"= 230^\\circ","showAt":22,"spItems":[{"type":"text","content":"Check with the protractor: the reflex angle at B is 230°"}]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q03","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 3","showAt":0},{"name":"subtitle","content":"Boats A and B are 5 km apart; the bearing of B from A is 250°. Find the bearing of A from B.","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q3-two-boats.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":26,"data":[
+      {"name":"line","type":"text","content":"B is at 250° from A, so B lies to the south-west of A. The north lines at A and B are parallel.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q3-two-boats.svg"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of A from B} = 250^\\circ - 180^\\circ","showAt":14,"spItems":[{"type":"math","content":"\\text{back bearing} = \\text{bearing} - 180^\\circ \\ (\\text{if bearing} > 180^\\circ)"}]},
+      {"name":"line","type":"math","content":"= 070^\\circ","showAt":18,"spItems":[{"type":"text","content":"The 5 km distance does not affect the bearing"}]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q04","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 4","showAt":0},{"name":"subtitle","content":"B is at 045° from A, AB = 10 km, C is east of A and at 180° from B. Find the bearing of A from C and distance AC.","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q4-three-ships.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":34,"data":[
+      {"name":"line","type":"text","content":"C is due east of A and due south of B, so the angle at C is 90°. The angle at A between east and AB is 90° − 45° = 45°.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q4-three-ships.svg"}]},
+      {"name":"line","type":"math","content":"\\cos 45^\\circ = \\frac{AC}{AB} \\quad \\Rightarrow \\quad AC = 10 \\times \\frac{1}{\\sqrt{2}}","showAt":14,"spItems":[{"type":"math","content":"\\cos\\theta = \\frac{\\text{base}}{\\text{hypotenuse}}"}]},
+      {"name":"line","type":"math","content":"AC = 5\\sqrt{2} \\approx 7.07 \\text{ km}","showAt":18,"spItems":[]},
+      {"name":"line","type":"text","content":"C is due east of A, so A is due west of C.","showAt":22,"spItems":[{"type":"text","content":"West has bearing 270°"}]},
+      {"name":"line","type":"math","content":"\\text{Bearing of A from C} = 270^\\circ","showAt":26,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q05","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 5","showAt":0},{"name":"subtitle","content":"P→Q at 050° for 3 km, then Q→R at 140°; PR = 5 km. Find QR and the bearing of R from P.","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q5-walk-pqr.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":38,"data":[
+      {"name":"line","type":"math","content":"\\text{Bearing of P from Q} = 050^\\circ + 180^\\circ = 230^\\circ","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q5-walk-pqr.svg"},{"type":"text","content":"Back bearing at Q"}]},
+      {"name":"line","type":"math","content":"\\angle PQR = 230^\\circ - 140^\\circ = 90^\\circ","showAt":14,"spItems":[{"type":"text","content":"The angle between QP and QR"}]},
+      {"name":"line","type":"math","content":"QR^2 = PR^2 - PQ^2 = 25 - 9 = 16 \\quad \\Rightarrow \\quad QR = 4 \\text{ km}","showAt":18,"spItems":[{"type":"text","content":"Pythagoras theorem; PR is the hypotenuse"}]},
+      {"name":"line","type":"math","content":"\\tan\\angle QPR = \\frac{QR}{PQ} = \\frac{4}{3} \\quad \\Rightarrow \\quad \\angle QPR \\approx 53.13^\\circ","showAt":22,"spItems":[]},
+      {"name":"line","type":"math","content":"\\text{Bearing of R from P} = 050^\\circ + 53.13^\\circ \\approx 103.13^\\circ","showAt":26,"spItems":[{"type":"text","content":"R is clockwise beyond Q as seen from P"}]},
+      {"name":"line","type":"text","content":"So QR = 4 km and the bearing of R from P ≈ 103°.","showAt":30,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q06","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 6","showAt":0},{"name":"subtitle","content":"Snake due north of Rayyan; Sarim 25 m east of Rayyan; bearing of Sarim from snake is 122°. How far is Rayyan from the snake?","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q6-snake.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":30,"data":[
+      {"name":"line","type":"text","content":"Rayyan (R), the snake (S) and Sarim (M) form a right triangle with the right angle at R.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q6-snake.svg"}]},
+      {"name":"line","type":"math","content":"\\angle RSM = 180^\\circ - 122^\\circ = 58^\\circ","showAt":14,"spItems":[{"type":"text","content":"R is due south of S (bearing 180°); M is at 122°"}]},
+      {"name":"line","type":"math","content":"\\tan 58^\\circ = \\frac{RM}{RS} \\quad \\Rightarrow \\quad RS = \\frac{25}{\\tan 58^\\circ}","showAt":18,"spItems":[{"type":"math","content":"\\tan 58^\\circ \\approx 1.6003"}]},
+      {"name":"line","type":"math","content":"RS \\approx \\frac{25}{1.6003} \\approx 15.62 \\text{ m}","showAt":22,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q07","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 7","showAt":0},{"name":"subtitle","content":"Home→school 12 km at 060°, school→ground 5 km at 150°. Find the distance from the ground back home.","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q7-bilal-bike.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":30,"data":[
+      {"name":"line","type":"math","content":"\\text{Bearing of home from school} = 060^\\circ + 180^\\circ = 240^\\circ","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q7-bilal-bike.svg"},{"type":"text","content":"Back bearing at the school"}]},
+      {"name":"line","type":"math","content":"\\text{Angle at school} = 240^\\circ - 150^\\circ = 90^\\circ","showAt":14,"spItems":[{"type":"text","content":"The triangle is right-angled at the school"}]},
+      {"name":"line","type":"math","content":"d^2 = 12^2 + 5^2 = 144 + 25 = 169","showAt":18,"spItems":[{"type":"text","content":"Pythagoras theorem"}]},
+      {"name":"line","type":"math","content":"d = 13 \\text{ km}","showAt":22,"spItems":[]}
+    ]}]}},
+  {"slug":"fbise9math-ex6.6-q08","body":{"version":"deck-v2","background":{"backgroundColor":"#05070c","backgroundImage":"space.webp","backgroundImageOpacity":0.4},"audio":"music.mp3","deck":[
+    {"type":"titleAndSubtitle","start":0,"end":5,"data":[{"name":"title","content":"Exercise 6.6 — Question 8","showAt":0},{"name":"subtitle","content":"A car travels 13 km at a bearing of 040°. How far north and how far east has it gone?","showAt":0}]},
+    {"type":"imageSlide","start":5,"end":10,"data":[{"name":"image","content":"ex6-6-q8-car-garage.svg","showAt":5}]},
+    {"type":"eq","start":10,"end":26,"data":[
+      {"name":"line","type":"text","content":"The path (13 km) is the hypotenuse. The angle between the path and north is 40°.","showAt":10,"spItems":[{"type":"image","content":"ex6-6-q8-car-garage.svg"}]},
+      {"name":"line","type":"math","content":"\\text{North} = 13\\cos 40^\\circ \\approx 13 \\times 0.7660 \\approx 9.96 \\text{ km}","showAt":14,"spItems":[{"type":"text","content":"The north side is adjacent to the 40° angle"}]},
+      {"name":"line","type":"math","content":"\\text{East} = 13\\sin 40^\\circ \\approx 13 \\times 0.6428 \\approx 8.36 \\text{ km}","showAt":18,"spItems":[{"type":"text","content":"The east side is opposite the 40° angle"}]}
+    ]}]}}
+]
