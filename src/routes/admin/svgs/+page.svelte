@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/svg/+page.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/svgs/+page.svelte
 
 	import { config } from "$lib/config";
 	import { send } from "$lib/send";

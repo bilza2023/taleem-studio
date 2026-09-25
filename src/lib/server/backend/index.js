@@ -1,4 +1,4 @@
-// /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/index.js
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/index.js
 import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
