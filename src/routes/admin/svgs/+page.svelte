@@ -14,9 +14,17 @@
 	let error = $state("");
 	let active = $state("svgs");
 
+	// ── quick edit: one card open at a time ──
+	let quickSlug = $state(null);
+	let quickText = $state("");
+	let quickMsg = $state("");
+	let quickOk = $state(false);
+	let quickSaving = $state(false);
+
 	async function load() {
 		loading = true;
 		error = "";
+		quickSlug = null;
 
 		try {
 			const data = await send("svg", "listPaginated", {
@@ -54,6 +62,46 @@
 		}
 	}
 
+	function toggleQuick(slug) {
+		if (quickSlug === slug) {
+			quickSlug = null;
+			return;
+		}
+		quickSlug = slug;
+		quickText = "";
+		quickMsg = "";
+	}
+
+	async function saveQuick(svg) {
+		const body = quickText.trim();
+
+		if (!body.includes("<svg") || !body.endsWith("</svg>")) {
+			quickOk = false;
+			quickMsg = "Not a complete <svg>…</svg>";
+			return;
+		}
+
+		if (svg.body?.trim() && !confirm(`Replace existing SVG in ${svg.slug}?`)) return;
+
+		quickSaving = true;
+		quickMsg = "";
+
+		try {
+			await send("svg", "update", { slug: svg.slug, data: { body } });
+			svg.body = body; // card preview re-renders = visual check
+			quickText = "";
+			quickOk = true;
+			quickMsg = "Saved ✓";
+
+		} catch (e) {
+			quickOk = false;
+			quickMsg = e.message;
+
+		} finally {
+			quickSaving = false;
+		}
+	}
+
 	function prevPage() {
 		if (page > 1) {
 			page -= 1;
@@ -71,6 +119,9 @@
 	$effect(() => {
 		load();
 	});
+		function viewUrl(slug) {
+		return `${config.basePath}/content/images/${encodeURIComponent(slug)}`;
+	}
 </script>
 
 <div class="page">
@@ -96,17 +147,21 @@
 
 		<div class="grid">
 
-			{#each items as svg}
+			{#each items as svg (svg.slug)}
 
 				<article class="card">
 
-<div class="preview">
-	<object
-		type="image/svg+xml"
-		data={`data:image/svg+xml;utf8,${encodeURIComponent(svg.body)}`}
-		aria-label={svg.title || svg.slug}
-	></object>
-</div>
+					<div class="preview">
+						<a href={viewUrl(svg.slug)} target="_blank" rel="noopener noreferrer" title="Open full size">
+							{#key svg.body}
+								<object
+									type="image/svg+xml"
+									data={`data:image/svg+xml;utf8,${encodeURIComponent(svg.body)}`}
+									aria-label={svg.title || svg.slug}
+								></object>
+							{/key}
+						</a>
+					</div>
 
 					<div class="info">
 						<strong>{svg.slug}</strong>
@@ -125,10 +180,39 @@
 							<button>Edit</button>
 						</a>
 
+						<button onclick={() => toggleQuick(svg.slug)}>
+							{quickSlug === svg.slug ? "Close" : "Q-Edit"}
+						</button>
+
 						<button onclick={() => deleteSvg(svg.slug)}>
 							Delete
 						</button>
 					</div>
+
+					{#if quickSlug === svg.slug}
+						<form
+							class="quick"
+							onsubmit={(e) => {
+								e.preventDefault();
+								saveQuick(svg);
+							}}
+						>
+							<textarea
+								bind:value={quickText}
+								rows="4"
+								placeholder="Paste <svg>…</svg> here"
+								spellcheck="false"
+							></textarea>
+
+							<button type="submit" disabled={quickSaving || !quickText.trim()}>
+								{quickSaving ? "Saving..." : "Save"}
+							</button>
+
+							{#if quickMsg}
+								<small class={quickOk ? "ok" : "error"}>{quickMsg}</small>
+							{/if}
+						</form>
+					{/if}
 
 				</article>
 
@@ -151,7 +235,6 @@
 	{/if}
 
 </div>
-
 <style>
 .page {
 	max-width: 1200px;
@@ -177,6 +260,7 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 	gap: 18px;
+	align-items: start;
 }
 
 .card {
@@ -186,25 +270,23 @@
 	background: #181818;
 }
 
+/* ── preview: SVG gets the whole box ── */
 .preview {
-	height: 160px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 15px;
-	background: white;
-	color: #111;
+	aspect-ratio: 16 / 10;
+	background: #0f1629; /* matches the slides, hides the SVG's own transparent margin */
 }
 
-.preview img {
-	max-width: 100%;
-	max-height: 140px;
-	object-fit: contain;
+.preview a {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
-.preview :global(svg) {
-	max-width: 100%;
-	max-height: 140px;
+.preview object {
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none; /* let the click reach the link */
 }
 
 .info {
@@ -229,6 +311,28 @@
 
 .actions a {
 	text-decoration: none;
+}
+
+.quick {
+	display: grid;
+	gap: 8px;
+	padding: 0 12px 12px;
+}
+
+.quick textarea {
+	width: 100%;
+	box-sizing: border-box;
+	resize: vertical;
+	padding: 6px;
+	font: 12px/1.4 ui-monospace, monospace;
+	color: aliceblue;
+	background: #111;
+	border: 1px solid #444;
+	border-radius: 4px;
+}
+
+.ok {
+	color: #7ddc8a;
 }
 
 button {
