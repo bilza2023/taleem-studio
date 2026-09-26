@@ -1,6 +1,6 @@
 // /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/utils/requireSuperAdmin.js
 
-import kernel from "taleem-kernel";
+import kernel from "../../../taleem-kernel";
 import { requireAdmin } from "./requireAdmin.js";
 
 export async function requireSuperAdmin(token) {

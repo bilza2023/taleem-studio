@@ -1,6 +1,6 @@
 // src/lib/server/backend/communication.js
 
-import kernel from "taleem-kernel";
+import kernel from "../../taleem-kernel";
 import { requireAdmin } from "./utils/requireAdmin.js";
 import { requireUser } from "./utils/requireUser.js";
 

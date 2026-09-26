@@ -1,6 +1,6 @@
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/utils/requireAdmin.js
 
-import kernel from "taleem-kernel";
+import kernel from "../../../taleem-kernel";
 
 export async function requireAdmin(token) {
 	if (!token) {

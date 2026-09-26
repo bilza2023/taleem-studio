@@ -5,15 +5,22 @@
 
 	let groups = [];
 
+	function bySortOrder(a, b) {
+		return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+			|| (a.id ?? 0) - (b.id ?? 0);
+	}
+
 	$: {
+		let list;
 		try {
-			groups = Array.isArray(groupings)
+			list = Array.isArray(groupings)
 				? groupings
 				: JSON.parse(groupings || "[]");
 		}
 		catch {
-			groups = [];
+			list = [];
 		}
+		groups = [...list].sort(bySortOrder);
 	}
 
 	function selectGrouping(event) {

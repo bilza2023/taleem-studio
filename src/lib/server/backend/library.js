@@ -1,6 +1,6 @@
 // /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/library.js
 
-import kernel from "taleem-kernel";
+import kernel from "../../taleem-kernel";
 
 const VALID_TYPES = ["ARTICLE", "PLAYER"];
 

@@ -53,6 +53,7 @@ model Group {
   courseSlug String
   slug       String
   title      String
+  sortOrder   Int       @default(0)
   thumbnail  String?
  description   String?
   course     Course  @relation(fields: [courseSlug], references: [slug], onDelete: Restrict)
@@ -66,6 +67,7 @@ model Library {
   slug               String        @id
   title              String
   description        String?
+  narration          String?
   thumbnail          String?
   type               ContentType
   status             LibraryStatus @default(DRAFT)

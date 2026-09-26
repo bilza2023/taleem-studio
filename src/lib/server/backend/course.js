@@ -1,6 +1,6 @@
 // src/lib/server/course.js
 
-import kernel from "taleem-kernel";
+import kernel from "../../taleem-kernel";
 import { requireSuperAdmin } from "./utils/requireSuperAdmin.js";
 
 export async function listCourses(filters) {

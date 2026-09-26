@@ -1,5 +1,5 @@
 // src/lib/server/user.js
-import kernel from "taleem-kernel";
+import kernel from "../../taleem-kernel";
 
 export async function registerUser(data) {
 	const { email, password, name } = data;
