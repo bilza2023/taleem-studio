@@ -1,6 +1,6 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/player/+page.svelte
-	import { onMount } from "svelte";
+	import { onMount,onDestroy } from "svelte";
 	import { page } from "$app/stores";
 	import { send } from "$lib/send";
 	import { get } from "svelte/store";
@@ -62,6 +62,17 @@ function stop() {
 	// 	}, 50);
 	// }
 
+onDestroy(() => {
+	window.removeEventListener("resize", resizePlayer);
+	window.removeEventListener("keydown", handleKeydown);
+
+	if (ticker) {
+		clearInterval(ticker);
+		ticker = null;
+	}
+
+	timer?.pause();
+});
 function startTicker() {
 	if (ticker) return;
 
