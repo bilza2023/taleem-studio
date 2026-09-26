@@ -47,20 +47,35 @@ function stop() {
 		currentTime = time;
 	}
 
-	function startTicker() {
-		if (ticker) return;
+	// function startTicker() {
+	// 	if (ticker) return;
 
-		ticker = setInterval(() => {
-			if (!timer) return;
+	// 	ticker = setInterval(() => {
+	// 		if (!timer) return;
 
-			currentTime = timer.now();
+	// 		currentTime = timer.now();
 
-			if (currentTime >= deckEndTime) {
-				timer.pause();
-				currentTime = deckEndTime - 0.001;
-			}
-		}, 50);
-	}
+	// 		if (currentTime >= deckEndTime) {
+	// 			timer.pause();
+	// 			currentTime = deckEndTime - 0.001;
+	// 		}
+	// 	}, 50);
+	// }
+
+function startTicker() {
+	if (ticker) return;
+
+	ticker = setInterval(() => {
+		if (!timer || !isPlaying) return;
+
+		currentTime = timer.now();
+
+		if (currentTime >= deckEndTime) {
+			pause();
+			currentTime = deckEndTime - 0.001;
+		}
+	}, 50);
+}
 
 	async function toggleFullscreen() {
 		if (!document.fullscreenElement) {
