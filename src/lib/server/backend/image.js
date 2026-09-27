@@ -1,5 +1,5 @@
 ///home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/image.js
-import kernel from 'taleem-kernel';
+import kernel from '../../taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 import { deleteAssetFile } from './utils/deleteAssetFile.js';
 import {config} from "$lib/config.js";

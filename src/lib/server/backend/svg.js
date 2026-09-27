@@ -1,5 +1,5 @@
 ///home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/backend/svg.js
-import kernel from 'taleem-kernel';
+import kernel from '../../taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 import { requireSuperAdmin } from './utils/requireSuperAdmin.js';
 

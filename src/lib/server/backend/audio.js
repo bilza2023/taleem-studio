@@ -1,4 +1,4 @@
-import kernel from 'taleem-kernel';
+import kernel from '../../taleem-kernel';
 import { requireAdmin } from './utils/requireAdmin.js';
 import { deleteAudioFile } from './utils/deleteAudioFile.js';
 import { requireSuperAdmin } from './utils/requireSuperAdmin.js';

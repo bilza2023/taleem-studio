@@ -1,5 +1,5 @@
 // /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/assets.js
-import kernel from 'taleem-kernel';
+import kernel from '../../taleem-kernel';
 import { mkdir, writeFile, access, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { requireAdmin } from './utils/requireAdmin.js';
