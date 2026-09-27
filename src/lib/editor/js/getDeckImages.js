@@ -1,4 +1,4 @@
-// getDeckImages.js
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/js/getDeckImages.js
 
 export function getDeckImages(deck) {
     const images = new Set();

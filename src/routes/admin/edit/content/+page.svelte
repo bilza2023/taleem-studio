@@ -1,6 +1,6 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/+page.svelte
-
+import { bundleDeck, downloadJSON } from "./js/bundleDeck.js";
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
@@ -127,6 +127,31 @@ await send("adminLibrary", "delete", { slug: form.slug });
 	$effect(() => {
 		load();
 	});
+	let bundling = $state(false);
+
+async function downloadBundle() {
+	let deck;
+	try {
+		deck = JSON.parse(form.body);
+	} catch {
+		alert("Deck JSON is invalid — fix it before bundling.");
+		return;
+	}
+
+	bundling = true;
+	try {
+		const bundle = await bundleDeck(deck);
+		if (bundle.missing.length) {
+			alert(`Missing SVGs:\n${bundle.missing.join("\n")}`);
+		}
+		downloadJSON(bundle, `${form.slug}.bundle.json`);
+	} catch (error) {
+		console.error(error);
+		alert(`Bundle failed: ${error.message}`);
+	} finally {
+		bundling = false;
+	}
+}
 </script>
 
 <div class="page">
@@ -150,7 +175,14 @@ await send("adminLibrary", "delete", { slug: form.slug });
 	>
 		Slide Editor 🚧  
 	</a>
-
+<button
+		type="button"
+		class="editor-link"
+		onclick={downloadBundle}
+		disabled={bundling}
+	>
+		{bundling ? "Bundling…" : "Bundle 🎒"}
+	</button>
 {/if}
 	<a
 		class="editor-link"
@@ -170,6 +202,7 @@ await send("adminLibrary", "delete", { slug: form.slug });
 	>
 		Narration 📢 
 	</a>
+
 
 <form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
