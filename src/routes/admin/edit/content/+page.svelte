@@ -19,6 +19,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 		description: "",
 		thumbnail: "",
 		body: "",
+		narration: "",
 		courseSlug: "",
 		groupSlug: "",
 		type: "ARTICLE",
@@ -54,6 +55,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 				description: data.description ?? "",
 				thumbnail: data.thumbnail ?? "",
 				body: data.body ?? "",
+				narration: data.narration ?? "",
 				courseSlug: data.courseSlug ?? course,
 				groupSlug: data.groupSlug ?? group,
 				type: data.type ?? "ARTICLE",
@@ -84,6 +86,7 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 					description: form.description,
 					thumbnail: form.thumbnail,
 					body: form.body,
+					narration: form.narration,
 					type: form.type,
 					status: form.status,
 					sortOrder: form.sortOrder,
@@ -161,6 +164,12 @@ await send("adminLibrary", "delete", { slug: form.slug });
 	>
 		Copy 🏗️ 
 	</a>
+	<a
+		class="editor-link"
+		href={`${config.basePath}/admin/narration?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
+	>
+		Narration 📢 
+	</a>
 
 <form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
@@ -207,6 +216,17 @@ await send("adminLibrary", "delete", { slug: form.slug });
 					bind:value={form.body}
 				></textarea>
 			</label>
+
+			{#if form.type === "PLAYER"}
+				<label>
+					Narration
+					<textarea
+						class="narration"
+						bind:value={form.narration}
+						placeholder="What to say — the final script to be recorded as audio"
+					></textarea>
+				</label>
+			{/if}
 
 			<label>
 				Sort Order
@@ -323,6 +343,11 @@ await send("adminLibrary", "delete", { slug: form.slug });
 	textarea.body {
 		min-height: 300px;
 		font-family: monospace;
+	}
+
+	textarea.narration {
+		min-height: 300px;
+		line-height: 1.6;
 	}
 
 	.check {
