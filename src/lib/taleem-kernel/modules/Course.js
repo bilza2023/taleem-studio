@@ -5,7 +5,10 @@ export default class Course {
 		const where = {};
 		if (filters.access) where.access = filters.access;
 		if (filters.isActive !== undefined) where.isActive = filters.isActive;
-		return this.kernel.db.course.findMany({ where });
+		return this.kernel.db.course.findMany({
+			where,
+			orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
+		});
 	}
 
 	async get(slug) {
