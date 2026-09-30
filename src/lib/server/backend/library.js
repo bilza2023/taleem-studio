@@ -20,10 +20,40 @@ export async function getLibrary(slug, options = {}) {
 	return kernel.library.get(slug, { includeUnpublished });
 }
 
+const PLACEHOLDER_AUDIO = ["music.mp3", "music.opus"];
+
+function withFlags(item) {
+	const { body, narration, ...rest } = item;
+
+	let hasDeck = false;
+	let hasAudio = false;
+
+	if (body?.trim()) {
+		try {
+			const p = JSON.parse(body);
+			hasDeck = Array.isArray(p?.deck) && p.deck.length > 0;
+			hasAudio = !!p?.audio && !PLACEHOLDER_AUDIO.includes(p.audio);
+		} catch {}
+	}
+
+	return {
+		...rest,
+		hasDeck,
+		hasAudio,
+		hasNarration: !!narration?.trim()
+	};
+}
+
 export async function listLibrary(filters, options = {}) {
 	const { includeUnpublished = false } = options;
 
-	return kernel.library.list(filters, { includeUnpublished });
+	if (!includeUnpublished) {
+		return kernel.library.list(filters, { includeUnpublished });
+	}
+
+	// admin list: fetch content, send only flags
+	const items = await kernel.library.list(filters, { includeUnpublished, includeContent: true });
+	return items.map(withFlags);
 }
 
 export async function updateLibrary(slug, data) {

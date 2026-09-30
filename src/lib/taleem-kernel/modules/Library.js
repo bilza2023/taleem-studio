@@ -4,7 +4,7 @@ const PUBLIC_STATUS = "PUBLISHED";
 export default class Library {
 	constructor(kernel) { this.kernel = kernel; }
 
-	async list(filters = {}, { includeUnpublished = false } = {}) {
+	async list(filters = {}, { includeUnpublished = false, includeContent = false } = {}) {
 		const where = {};
 		if (filters.type) where.type = filters.type;
 		if (filters.courseSlug) where.courseSlug = filters.courseSlug;
@@ -27,7 +27,8 @@ export default class Library {
 				sortOrder: true,
 				allowCommunication: true,
 				createdAt: true,
-				updatedAt: true
+				updatedAt: true,
+				...(includeContent ? { body: true, narration: true } : {})
 			},
 			orderBy: { sortOrder: "asc" }
 		});

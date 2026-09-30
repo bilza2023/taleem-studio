@@ -9,6 +9,20 @@
 		subscription: "💳"
 	};
 
+	const statusIcons = {
+		DRAFT: "📝",
+		PUBLISHED: "✅",
+		ARCHIVED: "🗄️"
+	};
+
+	function getFlags(card) {
+		return {
+			hasNarration: !!card.hasNarration,
+			hasDeck: !!card.hasDeck,
+			hasAudio: !!card.hasAudio
+		};
+	}
+
 	function getPlayHref(card) {
 		switch (card.type) {
 			case "ARTICLE":
@@ -21,9 +35,74 @@
 	}
 
 	function getEditHref(card) {
-	return `${config.basePath}/admin/edit/content?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}&role=${encodeURIComponent(card.type)}`;
-}
+		return `${config.basePath}/admin/edit/content?course=${encodeURIComponent(card.courseSlug)}&group=${encodeURIComponent(card.groupSlug)}&slug=${encodeURIComponent(card.slug)}&role=${encodeURIComponent(card.type)}`;
+	}
 </script>
+
+<div class="grid">
+	{#each homeLinks as card}
+		<div class={`card ${card.type?.toLowerCase()}`}>
+			{#if card.image}
+<img src={`${config.basePath}/content/images/${card.image}`} alt={card.title} />
+			{/if}
+
+			<div class="content">
+
+				{#if card.type === "PLAYER"}
+					{@const f = getFlags(card)}
+					<div class="status-row">
+						<span class:off={!f.hasNarration} title={f.hasNarration ? "Narration ✓" : "No narration"}>📄</span>
+						<span class:off={!f.hasDeck} title={f.hasDeck ? "Deck ✓" : "No deck"}>🎞️</span>
+						<span class:off={!f.hasAudio} title={f.hasAudio ? "Real audio ✓" : "No real audio"}>
+							{f.hasAudio ? "🔊" : "🔇"}
+						</span>
+						<span class="status" title={card.status}>
+							{statusIcons[card.status] ?? card.status}
+						</span>
+					</div>
+				{/if}
+
+								<div class="field">
+					<span class="label">Slug</span>
+					<code
+						class="slug"
+						title="Click to copy"
+						onclick={() => navigator.clipboard?.writeText(card.slug)}
+					>{card.slug}</code>
+				</div>
+
+				<div class="field">
+					<span class="label">Title</span>
+					<h2>{card.title}</h2>
+				</div>
+
+				<div class="field">
+					<span class="label">Group</span>
+					<p>{card.groupSlug}</p>
+				</div>
+
+				{#if accessIcons[card.access?.toLowerCase()]}
+					<div class="field">
+						<span class="label">Access</span>
+						<span class="access-icon" title={card.access}>
+							{accessIcons[card.access.toLowerCase()]}
+						</span>
+					</div>
+				{/if}
+			</div>
+
+			<div class="actions">
+				<a class="action play" href={getPlayHref(card)}>
+					▶ Play
+				</a>
+
+				<a class="action edit" href={getEditHref(card)}>
+					✎ Edit
+				</a>
+			</div>
+		</div>
+	{/each}
+</div>
 
 <style>
 	.grid {
@@ -67,6 +146,40 @@
 		padding: 8px 12px 10px;
 		color: white;
 	}
+
+		.status-row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 8px;
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	.status-row span {
+		cursor: default;
+	}
+
+	/* present = lit chip */
+	.status-row span:not(.status) {
+		padding: 3px 5px;
+		border-radius: 6px;
+		background: rgba(125, 220, 138, .28);
+		border: 1px solid rgba(125, 220, 138, .75);
+	}
+
+	/* absent = no chip, faded */
+	.status-row span.off {
+		background: transparent;
+		border-color: transparent;
+		opacity: .2;
+		filter: grayscale(1);
+	}
+
+	.status-row .status {
+		margin-left: auto;
+	}
+
 
 	.field {
 		display: flex;
@@ -137,45 +250,18 @@
 	.edit {
 		min-width: 55px;
 	}
+		.slug {
+		font-family: ui-monospace, monospace;
+		font-size: .78rem;
+		color: #d9f99d;
+		background: rgba(0, 0, 0, .25);
+		padding: 2px 6px;
+		border-radius: 4px;
+		overflow-wrap: anywhere;
+		cursor: copy;
+	}
+
+	.slug:hover {
+		background: rgba(0, 0, 0, .45);
+	}
 </style>
-
-<div class="grid">
-	{#each homeLinks as card}
-		<div class={`card ${card.type?.toLowerCase()}`}>
-			{#if card.image}
-<img src={`${config.basePath}/content/images/${card.image}`} alt={card.title} />
-			{/if}
-
-			<div class="content">
-				<div class="field">
-					<span class="label">Title</span>
-					<h2>{card.title}</h2>
-				</div>
-
-				<div class="field">
-					<span class="label">Group</span>
-					<p>{card.groupSlug}</p>
-				</div>
-
-				{#if accessIcons[card.access?.toLowerCase()]}
-					<div class="field">
-						<span class="label">Access</span>
-						<span class="access-icon" title={card.access}>
-							{accessIcons[card.access.toLowerCase()]}
-						</span>
-					</div>
-				{/if}
-			</div>
-
-			<div class="actions">
-				<a class="action play" href={getPlayHref(card)}>
-					▶ Play
-				</a>
-
-				<a class="action edit" href={getEditHref(card)}>
-					✎ Edit
-				</a>
-			</div>
-		</div>
-	{/each}
-</div>
