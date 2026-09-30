@@ -4,6 +4,7 @@ import HomeLinks from "$lib/adminComponents/HomeLinks.svelte";
 import CourseHero from "$lib/components/CourseHero.svelte";
 import Footer from "$lib/components/Footer.svelte";
 import { page } from "$app/state";
+import { goto } from "$app/navigation";
 import { send } from "$lib/send";
 import GroupingNav from "$lib/components/GroupingNav.svelte";
 import { config } from "$lib/config.js";
@@ -12,7 +13,15 @@ let home = $state(null);
 let course = $state(null);
 let groupings = $state([]);
 let error = $state("");
-let selectedGrouping = $state("");
+
+// URL is the source of truth
+let courseSlug = $derived(page.url.searchParams.get("course"));
+
+let selectedGrouping = $derived.by(() => {
+	const g = page.url.searchParams.get("group") ?? "";
+	// unknown / stale group in URL → fall back to "All"
+	return groupings.some(x => x.slug === g) ? g : "";
+});
 
 let visibleItems = $derived(
 	!selectedGrouping
@@ -23,7 +32,12 @@ let visibleItems = $derived(
 );
 
 function handleGroupingChange(id) {
-	selectedGrouping = id;
+	const url = new URL(page.url);
+
+	if (id) url.searchParams.set("group", id);
+	else url.searchParams.delete("group");
+
+	goto(url, { replaceState: true, noScroll: true, keepFocus: true });
 }
 
 async function loadLibrary(courseSlug) {
@@ -57,8 +71,6 @@ async function loadLibrary(courseSlug) {
 }
 
 $effect(() => {
-	const courseSlug = page.url.searchParams.get("course");
-
 	if (courseSlug) {
 		loadLibrary(courseSlug);
 	}

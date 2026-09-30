@@ -21,6 +21,53 @@
 	let quickOk = $state(false);
 	let quickSaving = $state(false);
 
+	// ── search: fetch all once, filter locally ──
+	let query = $state("");
+	let allItems = $state(null);
+	let searching = $state(false);
+
+	let isSearch = $derived(query.trim().length > 0);
+
+	let results = $derived.by(() => {
+		if (!isSearch || !allItems) return [];
+		const words = query.toLowerCase().trim().split(/\s+/);
+		return allItems.filter((svg) => {
+			const hay = `${svg.slug} ${svg.title ?? ""} ${svg.tags ?? ""}`.toLowerCase();
+			return words.every((w) => hay.includes(w));
+		});
+	});
+
+	let shown = $derived(isSearch ? results : items);
+
+	async function ensureAll() {
+		if (allItems || searching) return;
+		searching = true;
+
+		try {
+			const data = await send("svg", "listPaginated", {
+				page: 1,
+				pageSize: Math.max(total, 10000)
+			});
+			allItems = data.items;
+
+		} catch (e) {
+			error = e.message;
+
+		} finally {
+			searching = false;
+		}
+	}
+
+	function onSearchInput() {
+		quickSlug = null;
+		if (query.trim()) ensureAll();
+	}
+
+	function clearSearch() {
+		query = "";
+		quickSlug = null;
+	}
+
 	async function load() {
 		loading = true;
 		error = "";
@@ -56,6 +103,9 @@
 			await send("svg", "delete", { slug });
 			await load();
 
+			allItems = null; // search cache is stale now
+			if (query.trim()) await ensureAll();
+
 		} catch (e) {
 			console.error(e);
 			alert(e.message);
@@ -89,6 +139,13 @@
 		try {
 			await send("svg", "update", { slug: svg.slug, data: { body } });
 			svg.body = body; // card preview re-renders = visual check
+
+			// keep the other list (paged / search cache) in sync
+			const a = items.find((x) => x.slug === svg.slug);
+			if (a) a.body = body;
+			const b = allItems?.find((x) => x.slug === svg.slug);
+			if (b) b.body = body;
+
 			quickText = "";
 			quickOk = true;
 			quickMsg = "Saved ✓";
@@ -128,10 +185,30 @@
 
 	<div class="header">
 		<h1>SVGs</h1>
-		<div class="count">{total} total</div>
+
+		<div class="search">
+			<input
+				type="search"
+				placeholder="Search slug, title, tags…"
+				bind:value={query}
+				oninput={onSearchInput}
+				onkeydown={(e) => e.key === "Escape" && clearSearch()}
+			/>
+			{#if isSearch}
+				<button onclick={clearSearch} title="Clear">✖</button>
+			{/if}
+		</div>
+
+		<div class="count">
+			{#if isSearch}
+				{searching ? "Searching…" : `${results.length} found`}
+			{:else}
+				{total} total
+			{/if}
+		</div>
 	</div>
 
-	{#if loading}
+	{#if loading && !isSearch}
 
 		<p>Loading...</p>
 
@@ -139,7 +216,11 @@
 
 		<p class="error">{error}</p>
 
-	{:else if items.length === 0}
+	{:else if isSearch && searching}
+
+		<p>Loading all SVGs for search...</p>
+
+	{:else if shown.length === 0}
 
 		<p>No SVGs found.</p>
 
@@ -147,7 +228,7 @@
 
 		<div class="grid">
 
-			{#each items as svg (svg.slug)}
+			{#each shown as svg (svg.slug)}
 
 				<article class="card">
 
@@ -220,17 +301,19 @@
 
 		</div>
 
-		<div class="pagination">
-			<button onclick={prevPage} disabled={page <= 1}>
-				← Prev
-			</button>
+		{#if !isSearch}
+			<div class="pagination">
+				<button onclick={prevPage} disabled={page <= 1}>
+					← Prev
+				</button>
 
-			<span>Page {page} of {totalPages}</span>
+				<span>Page {page} of {totalPages}</span>
 
-			<button onclick={nextPage} disabled={page >= totalPages}>
-				Next →
-			</button>
-		</div>
+				<button onclick={nextPage} disabled={page >= totalPages}>
+					Next →
+				</button>
+			</div>
+		{/if}
 
 	{/if}
 
@@ -252,8 +335,31 @@
 	margin-bottom: 25px;
 }
 
+.search {
+	flex: 1;
+	max-width: 480px;
+	display: flex;
+	gap: 6px;
+}
+
+.search input {
+	flex: 1;
+	padding: 8px 12px;
+	font: inherit;
+	color: aliceblue;
+	background: #111;
+	border: 1px solid #444;
+	border-radius: 6px;
+}
+
+.search input:focus {
+	outline: none;
+	border-color: #5fa8ff;
+}
+
 .count {
 	opacity: .7;
+	white-space: nowrap;
 }
 
 .grid {

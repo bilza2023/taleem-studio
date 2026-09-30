@@ -1,3 +1,4 @@
+
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/slides/templates/EqEditor.svelte
 import {ContentType,EqLineType,EqSidePanelType} from "$lib/taleem-specs/enums";
@@ -7,6 +8,15 @@ import EqJsonPaste from "../components/EqJsonPaste.svelte";
 
 	const lineTypes = Object.values(EqLineType);
 	const spTypes = Object.values(EqSidePanelType);
+
+	// side panels closed by default; tracked per line object
+	let spOpen = new Set();
+
+	function toggleSp(line) {
+		if (spOpen.has(line)) spOpen.delete(line);
+		else spOpen.add(line);
+		spOpen = spOpen;
+	}
 
 function setShowAt(line) {
 
@@ -116,56 +126,77 @@ function setShowAt(line) {
 
 		<hr>
 
-		<h4>Side Panel</h4>
+		<div class="sp-head">
 
-		{#each line.spItems ?? [] as item, j}
+			<button
+				type="button"
+				class="sp-toggle"
+				title={spOpen.has(line) ? "Hide side panel" : "Show side panel"}
+				on:click={() => toggleSp(line)}
+			>
+				{spOpen.has(line) ? "▾" : "▸"}
+			</button>
 
-			<div style="display:flex;gap:8px;margin-bottom:8px;">
+			<h4>Side Panel ({line.spItems?.length ?? 0})</h4>
 
-				<select bind:value={item.type}>
+		</div>
 
-					{#each spTypes as t}
-						<option value={t}>{t}</option>
-					{/each}
+		{#if spOpen.has(line)}
 
-				</select>
+			{#each line.spItems ?? [] as item, j}
 
-				<input
-					value={item.content}
-					on:input={(e)=>item.content=e.target.value}
-					placeholder="Content"
-				/>
+				<div style="display:flex;gap:8px;margin-bottom:8px;">
 
-				<button on:click={() => deleteSpItem(line, j)}>
-					✖
-				</button>
+					<select bind:value={item.type}>
 
-			</div>
+						{#each spTypes as t}
+							<option value={t}>{t}</option>
+						{/each}
 
-		{/each}
+					</select>
+
+					<input
+						value={item.content}
+						on:input={(e)=>item.content=e.target.value}
+						placeholder="Content"
+					/>
+
+					<button on:click={() => deleteSpItem(line, j)}>
+						✖
+					</button>
+
+				</div>
+
+			{/each}
+
+		{/if}
 
 		<div style="display:flex;gap:6px;margin-top:10px;">
 
-			<button
-				style="background:#2563eb;color:white;font-size:12px;padding:4px 8px;"
-				on:click={() => addSpItem(line, EqSidePanelType.TEXT)}
-			>
-				📝 Text
-			</button>
+			{#if spOpen.has(line)}
 
-			<button
-				style="background:#059669;color:white;font-size:12px;padding:4px 8px;"
-				on:click={() => addSpItem(line, EqSidePanelType.MATH)}
-			>
-				∑ Math
-			</button>
+				<button
+					style="background:#2563eb;color:white;font-size:12px;padding:4px 8px;"
+					on:click={() => addSpItem(line, EqSidePanelType.TEXT)}
+				>
+					📝 Text
+				</button>
 
-			<button
-				style="background:#7c3aed;color:white;font-size:12px;padding:4px 8px;"
-				on:click={() => addSpItem(line, EqSidePanelType.IMAGE)}
-			>
-				🖼 Image
-			</button>
+				<button
+					style="background:#059669;color:white;font-size:12px;padding:4px 8px;"
+					on:click={() => addSpItem(line, EqSidePanelType.MATH)}
+				>
+					∑ Math
+				</button>
+
+				<button
+					style="background:#7c3aed;color:white;font-size:12px;padding:4px 8px;"
+					on:click={() => addSpItem(line, EqSidePanelType.IMAGE)}
+				>
+					🖼 Image
+				</button>
+
+			{/if}
 
 			<button
 				style="margin-left:auto;background:#b91c1c;color:white;font-size:12px;padding:4px 8px;"
@@ -246,6 +277,24 @@ function setShowAt(line) {
 	h4 {
 		color: var(--theme-text);
 		font-size: 13px;
+	}
+
+	.sp-head {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.sp-head h4 {
+		margin: 6px 0;
+	}
+
+	.sp-toggle {
+		width: 20px;
+		height: 20px;
+		padding: 0;
+		font-size: 11px;
+		line-height: 1;
 	}
 
 	button {

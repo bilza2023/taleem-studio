@@ -175,6 +175,12 @@ async function downloadBundle() {
 	>
 		Slide Editor 🚧  
 	</a>
+	<a
+		class="editor-link"
+		href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(form.slug)}&role=PLAYER`}
+	>
+		Play ▶  
+	</a>
 <button
 		type="button"
 		class="editor-link"
