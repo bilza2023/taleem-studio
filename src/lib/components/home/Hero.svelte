@@ -43,7 +43,7 @@
 
 	background:
 		radial-gradient(ellipse at center, rgba(9, 13, 31, 0.88) 0%, rgba(9, 13, 31, 0.6) 75%),
-		url("images/hero.webp") center / cover no-repeat,
+		url("/images/hero.webp") center / cover no-repeat,
 		var(--navy);
 
 	color: #fff;
