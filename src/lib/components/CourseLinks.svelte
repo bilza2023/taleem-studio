@@ -1,5 +1,5 @@
 <script>
-
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/components/CourseLinks.svelte
 	let { homeLinks = [] } = $props();
 import { config } from "$lib/config.js";
 </script>

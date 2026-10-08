@@ -1,56 +1,24 @@
+
 <script>
-	import { onMount } from "svelte";
-	import CourseLinks from "$lib/components/CourseLinks.svelte";
-	import Footer from "$lib/components/Footer.svelte";
-	import { send } from "$lib/send";
-
-	let active = $state("courses");
-	let home = $state(null);
-	let error = $state("");
-
-	async function loadCourses(id = "courses") {
-		active = id;
-
-		try {
-			error = "";
-
-			const items = await send("course", "list", {});
-
-			home = {
-				items: items.map(item => ({
-					...item,
-					image: item.thumbnail
-				}))
-			};
-		} catch (err) {
-			error = err.message;
-		}
-	}
-
-	onMount(() => {
-		loadCourses();
-	});
+	import Hero from "$lib/components/home/Hero.svelte";
+	import ClassesSection from "$lib/components/home/ClassesSection.svelte";
+	import DemosSection from "$lib/components/home/DemosSection.svelte";
+	import WhyTaleemSection from "$lib/components/home/WhyTaleemSection.svelte";
+	// import FeesSection from "$lib/components/home/FeesSection.svelte";
+	// import FaqSection from "$lib/components/home/FaqSection.svelte";
+		import SiteFooter from "$lib/components/home/SiteFooter.svelte";
 </script>
 
-{#if error}
-	<p>{error}</p>
-{:else if !home}
-	<p>Loading...</p>
-{:else}
-	<div class="container">
-		<CourseLinks homeLinks={home.items} />
-	</div>
+<svelte:head>
+	<title>Taleem.help — Pakistan's Online Academy</title>
+	<meta name="description" content="Online FBISE classes 8, 9 and 10 with step-by-step lessons and teacher support." />
+</svelte:head>
 
-	<br />
-	<br />
+<Hero />
+<ClassesSection />
+<DemosSection />
+<WhyTaleemSection />
+<!-- <FeesSection /> -->
+<!-- <FaqSection /> -->
 
-	<Footer />
-{/if}
-
-<style>
-	.container {
-		padding: 10px;
-		margin: 10px;
-		min-height: 100vh;
-	}
-</style>
+<SiteFooter />
