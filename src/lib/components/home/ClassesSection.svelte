@@ -1,7 +1,7 @@
 <!-- src/lib/components/home/ClassesSection.svelte -->
 <script>
 	import Section from "./Section.svelte";
-	import CourseLinks from "$lib/components/CourseLinks.svelte";
+	import CourseLinks from "$lib/components/home/CourseLinks.svelte";
 
 	// slug  → from the card's link on /courses   (…/lessons?course=<slug>)
 	// image → from the card's image on /courses  (…/content/images/<image>)

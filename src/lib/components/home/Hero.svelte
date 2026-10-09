@@ -1,9 +1,9 @@
 <!-- src/lib/components/home/Hero.svelte -->
 <script>
 	const classes = [
-		{ name: "FBISE Class 8 Math", note: "", href: "/courses" },
-		{ name: "FBISE Class 9 Math", note: "", href: "/courses" },
-		{ name: "FBISE Class 10 Math", note: "", href: "/courses" }
+		{ name: "FBISE Class 8 Math", note: "", href: "/course?course=fbise8math" },
+		{ name: "FBISE Class 9 Math", note: "", href:  "/course?course=fbise9math" },
+		{ name: "FBISE Class 10 Math", note: "", href: "/course?course=fbise10math" }
 	];
 
 	const trust = ["Online, anywhere in Pakistan", "Complete FBISE syllabus", "Indepth course coverage"];
@@ -42,7 +42,7 @@
 	--amber: #f5b82e;
 
 	background:
-		radial-gradient(ellipse at center, rgba(9, 13, 31, 0.88) 0%, rgba(9, 13, 31, 0.6) 75%),
+		radial-gradient(ellipse at center, rgba(9, 13, 31, 0.75) 0%, rgba(9, 13, 31, 0.1) 75%),
 		url("/images/hero.webp") center / cover no-repeat,
 		var(--navy);
 
