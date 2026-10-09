@@ -58,6 +58,9 @@
 		<a class="pill {active === 'add-audio' ? 'active' : ''}" href={`${basePath}/admin/create/audio`} data-sveltekit-preload-data>
 			＋ Audio
 		</a>
+		<a class="pill {active === 'summary' ? 'active' : ''}" href={`${basePath}/admin/summary`} data-sveltekit-preload-data>
+			Summary
+		</a>
 	</div>
 
 	<div class="right">

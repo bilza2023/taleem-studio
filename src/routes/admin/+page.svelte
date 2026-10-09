@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import CourseLinks from "$lib/adminComponents/CourseLinks.svelte";
+	import CourseLinks from "$lib/components/home/CourseLinks.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import { send } from "$lib/send";
 

@@ -10,7 +10,8 @@ const categories = [
 	{ id: "assets", title: "Assets", href: `${basePath}/admin/assets` },
 	{ id: "add-svg", title: "＋ SVG", href: `${basePath}/admin/create/svg` },
 	{ id: "add-image", title: "＋ Image", href: `${basePath}/admin/create/image` },
-	{ id: "add-audio", title: "＋ Audio", href: `${basePath}/admin/create/audio` }
+	{ id: "add-audio", title: "＋ Audio", href: `${basePath}/admin/create/audio` },
+	{ id: "summary", title: "Summary", href: `${basePath}/admin/summary` }
 ];
 </script>
 
