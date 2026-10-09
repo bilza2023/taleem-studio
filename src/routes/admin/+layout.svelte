@@ -29,6 +29,8 @@
 		if (path.startsWith(`${config.basePath}/admin/edit/svgBulk`)) return "add-svg-bulk";
 		if (path.startsWith(`${config.basePath}/admin/create/image`)) return "add-image";
 		if (path.startsWith(`${config.basePath}/admin/create/audio`)) return "add-audio";
+		if (path.startsWith(`${config.basePath}/admin/courses`)) return "courses";
+		if (path.startsWith(`${config.basePath}/admin/svgs`)) return "svgs";
 		if (path === `${config.basePath}/admin`) return "home";
 
 		return "";

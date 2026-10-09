@@ -40,6 +40,9 @@
 		<a class="pill {active === 'home' ? 'active' : ''}" href={`${basePath}/admin`} data-sveltekit-preload-data>
 			Home
 		</a>
+		<a class="pill {active === 'courses' ? 'active' : ''}"  href={`${basePath}/admin/courses`} data-sveltekit-preload-data>
+			Courses
+		</a>
 		<a class="pill {active === 'svgs' ? 'active' : ''}" href={`${basePath}/admin/svgs`} data-sveltekit-preload-data>
 			Svgs
 		</a>
