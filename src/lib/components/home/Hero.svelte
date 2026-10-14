@@ -1,31 +1,31 @@
 <!-- src/lib/components/home/Hero.svelte -->
 <script>
-	const classes = [
-		{ name: "FBISE Class 8 Math", note: "", href: "/course?course=fbise8math" },
-		{ name: "FBISE Class 9 Math", note: "", href:  "/course?course=fbise9math" },
-		{ name: "FBISE Class 10 Math", note: "", href: "/course?course=fbise10math" }
-	];
+	const samplesHref = "#samples";
+	const admissionsHref = "/admissions"; // swap to "/admissions" once that page exists
 
-	const trust = ["Online, anywhere in Pakistan", "Complete FBISE syllabus", "Indepth course coverage"];
+	const trust = [
+		"Federal Board syllabus",
+		"Step-by-step solutions",
+		"Campus: Bahria Town Phase 8, Rawalpindi"
+	];
 </script>
 
 <section class="hero">
 	<div class="inner">
-		<p class="tagline">Taleem.help - Pakistan's Online Academy</p>
+		<p class="tagline">Taleem.help — Pakistan's Online Academy</p>
 
-		<h1>Animated lessons for Pakistani students.</h1>
+		<h1>Video courses for Federal Board students.</h1>
 
-		<p class="detail">Classes 8–10 · Federal Board course</p>
+		<p class="sub">
+			One course for each book, question by question. Every exercise explained
+			step by step, and your own questions answered.
+		</p>
 
-		<p class="ask">Which class are you in?</p>
+		<p class="detail">Class 8 · 9 · 10 Math · New curriculum</p>
 
-		<div class="classes">
-			{#each classes as c}
-				<a class="class-btn" href={c.href}>
-					<strong>{c.name}</strong>
-					<span>{c.note}</span>
-				</a>
-			{/each}
+		<div class="actions">
+			<a class="btn primary" href={samplesHref}>▶ Watch sample lessons</a>
+			<a class="btn secondary" href={admissionsHref} target="_blank" rel="noopener">Admissions</a>
 		</div>
 
 		<ul class="trust">
@@ -37,20 +37,20 @@
 </section>
 
 <style>
-.hero {
-	--navy: #090d1f;
-	--amber: #f5b82e;
+	.hero {
+		--navy: #090d1f;
+		--amber: #f5b82e;
 
-	background:
-		radial-gradient(ellipse at center, rgba(9, 13, 31, 0.75) 0%, rgba(9, 13, 31, 0.1) 75%),
-		url("/images/hero.webp") center / cover no-repeat,
-		var(--navy);
+		background:
+			radial-gradient(ellipse at center, rgba(9, 13, 31, 0.75) 0%, rgba(9, 13, 31, 0.1) 75%),
+			url("/images/hero.webp") center / cover no-repeat,
+			var(--navy);
 
-	color: #fff;
-	padding: 6rem 1rem 5rem;
-	text-align: center;
-	font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
+		color: #fff;
+		padding: 6rem 1rem 5rem;
+		text-align: center;
+		font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	}
 
 	.inner {
 		width: min(100%, 900px);
@@ -65,58 +65,71 @@
 	}
 
 	h1 {
-		margin: 0 0 0.75rem;
+		margin: 0 0 1rem;
 		font-size: clamp(2rem, 4.5vw, 3.2rem);
 		line-height: 1.15;
 		color: #fff;
 	}
 
+	.sub {
+		max-width: 680px;
+		margin: 0 auto 1rem;
+		font-size: 1.2rem;
+		line-height: 1.55;
+		opacity: 0.9;
+	}
+
 	.detail {
-		margin: 0 0 2.5rem;
+		margin: 0 0 2.25rem;
 		font-size: 1.05rem;
 		letter-spacing: 0.03em;
 		opacity: 0.7;
 	}
 
-	.ask {
-		margin: 0 0 1rem;
-		font-size: 1.1rem;
-		opacity: 0.85;
-	}
-
-	.classes {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 		gap: 1rem;
 		margin-bottom: 2.5rem;
 	}
 
-	.class-btn {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		padding: 1.25rem 1rem;
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 230px;
+		padding: 1rem 1.75rem;
 		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.06);
-		border: 2px solid rgba(255, 255, 255, 0.15);
-		color: #fff;
+		font-size: 1.15rem;
+		font-weight: 600;
 		text-decoration: none;
-		transition: border-color 0.15s, background 0.15s, transform 0.15s;
+		transition: transform 0.15s, background 0.15s, border-color 0.15s;
 	}
 
-	.class-btn:hover {
-		border-color: var(--amber);
-		background: rgba(245, 184, 46, 0.1);
+	.btn:hover {
 		transform: translateY(-2px);
 	}
 
-	.class-btn strong {
-		font-size: 1.4rem;
+	.btn.primary {
+		background: var(--amber);
+		color: var(--navy);
+		border: 2px solid var(--amber);
 	}
 
-	.class-btn span {
-		font-size: 0.9rem;
-		opacity: 0.75;
+	.btn.primary:hover {
+		background: #ffc94d;
+	}
+
+	.btn.secondary {
+		background: rgba(255, 255, 255, 0.06);
+		color: #fff;
+		border: 2px solid rgba(255, 255, 255, 0.35);
+	}
+
+	.btn.secondary:hover {
+		border-color: var(--amber);
+		background: rgba(245, 184, 46, 0.1);
 	}
 
 	.trust {
@@ -140,8 +153,12 @@
 			padding: 4rem 1rem 3.5rem;
 		}
 
-		.classes {
-			grid-template-columns: 1fr;
+		.sub {
+			font-size: 1.05rem;
+		}
+
+		.btn {
+			width: 100%;
 		}
 	}
 </style>
