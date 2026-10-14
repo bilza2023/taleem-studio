@@ -25,9 +25,6 @@
 
 <main class="admission">
 
-
-
-
 	<PaymentMethods methods={paymentMethods} />
 
 	<section class="courses">
@@ -35,9 +32,6 @@
 			<CourseCard {course} />
 		{/each}
 	</section>
-
-	<!-- <OnCampusOffer offer={onCampus} {courses} /> -->
-
 
 	<FaqList items={faqs} />
 

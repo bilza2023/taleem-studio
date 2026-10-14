@@ -4,9 +4,8 @@
 	import ClassesSection from "$lib/components/home/ClassesSection.svelte";
 	import DemosSection from "$lib/components/home/DemosSection.svelte";
 	import WhyTaleemSection from "$lib/components/home/WhyTaleemSection.svelte";
-	// import FeesSection from "$lib/components/home/FeesSection.svelte";
-	// import FaqSection from "$lib/components/home/FaqSection.svelte";
-		import SiteFooter from "$lib/components/home/SiteFooter.svelte";
+
+	import SiteFooter from "$lib/components/home/SiteFooter.svelte";
 </script>
 
 <svelte:head>

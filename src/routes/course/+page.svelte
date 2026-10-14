@@ -1,6 +1,6 @@
 <script>
-	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/course/+page.svelte
-	import HomeLinks from "./HomeLinks.svelte";
+	
+	import HomeLinks from "$lib/components/HomeLinks.svelte";
 	import GroupSidebar from "./GroupSidebar.svelte";
 	import CourseHero from "$lib/components/CourseHero.svelte";
 	import Footer from "$lib/components/Footer.svelte";

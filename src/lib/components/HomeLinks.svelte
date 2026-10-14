@@ -1,4 +1,5 @@
 <script>
+// /home/bilal-tariq/00--TALEEM/taleem/src/lib/components/HomeLinks.svelte
 	import { config } from "$lib/config.js";
 
 	let { homeLinks = [] } = $props();
