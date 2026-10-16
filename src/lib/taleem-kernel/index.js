@@ -1,4 +1,4 @@
-// src/serverKernel/ServerKernel.js
+// /home/bilal-tariq/00--TALEEM/taleem/src/lib/taleem-kernel/index.js
 
 import { PrismaClient } from "@prisma/client";
 import Config from "./Config.js";
