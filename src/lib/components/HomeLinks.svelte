@@ -18,7 +18,7 @@
 
 <div class="grid">
 	{#each homeLinks as card}
-		<a class={`card ${card.type?.toLowerCase()}`} href={getPlayHref(card)}>
+		<a class={`card ${card.type?.toLowerCase()}`} href={getPlayHref(card)} data-sveltekit-reload>
 			{#if card.image}
 				<img src={`${config.basePath}/content/images/${card.image}`} alt={card.title} />
 			{/if}
