@@ -5,7 +5,7 @@ import { listAssets, getAsset } from "./assets.js";
 import { createCommunication, listForUser, listForLibrary, listUnanswered, respondToCommunication, deleteCommunication , listPublicForLibrary,listForCourse } from "./communication.js";
 import { createAudio, getAudio, listAudio, updateAudio, deleteAudio } from "./audio.js";
 import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse } from "./course.js";
-import { listGroups, getGroup, createGroup, updateGroup, deleteGroup } from "./group.js";
+import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGroups } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
 import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup } from "./library.js";
 import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
@@ -65,7 +65,8 @@ export const backend = {
 		get: (data) => getGroup(data.courseSlug, data.groupSlug),
 		create: (data, token) => createGroup(data, token),
 		update: (data, token) => updateGroup(data.courseSlug, data.groupSlug, data.data, token),
-		delete: (data, token) => deleteGroup(data.courseSlug, data.groupSlug, token)
+		delete: (data, token) => deleteGroup(data.courseSlug, data.groupSlug, token),
+		reorder: (data, token) => reorderGroups(data.courseSlug, data.slugs, token)
 	},
 	image: {
 		get: (data) => getImage(data.slug),

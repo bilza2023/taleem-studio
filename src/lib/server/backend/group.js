@@ -40,3 +40,15 @@ export async function deleteGroup(courseSlug, groupSlug, token) {
 
 	return kernel.group.delete(courseSlug, groupSlug);
 }
+
+export async function reorderGroups(courseSlug, slugs, token) {
+	await requireAdminForCourse(token, courseSlug);
+
+	if (!Array.isArray(slugs) || !slugs.every((s) => typeof s === "string" && s)) {
+		const err = new Error("slugs must be an array of group slugs.");
+		err.status = 400;
+		throw err;
+	}
+
+	return kernel.group.reorder(courseSlug, slugs);
+}
