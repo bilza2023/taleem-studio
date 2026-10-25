@@ -1,5 +1,6 @@
 <script>
 	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/course/+page.svelte
+	import { onMount } from "svelte";
 	import HomeLinks from "$lib/adminComponents/HomeLinks.svelte";
 	import GroupSidebar from "./GroupSidebar.svelte";
 	import CourseHero from "$lib/components/CourseHero.svelte";
@@ -147,6 +148,50 @@ console.log(Object.keys(list[0]));
 		showInfo = false;
 		if (isMobile) sidebarOpen = false;
 	}
+		// ---------- pin current view ----------
+	// ---------- pin current view (one pin per course) ----------
+	const PIN_PREFIX = "taleem.admin.pin.";
+
+	let pinKey = $derived(PIN_PREFIX + courseSlug);
+
+	function readPin(key) {
+		try {
+			return localStorage.getItem(key) || "";
+		} catch {
+			return "";
+		}
+	}
+
+	let pinnedUrl = $state("");
+	let currentUrl = $derived(page.url.pathname + page.url.search);
+	let isPinned = $derived(pinnedUrl !== "" && pinnedUrl === currentUrl);
+
+	// re-read whenever the course changes
+	$effect(() => {
+		pinnedUrl = readPin(pinKey);
+	});
+
+	function togglePin() {
+		try {
+			if (isPinned) {
+				localStorage.removeItem(pinKey);
+				pinnedUrl = "";
+			} else {
+				localStorage.setItem(pinKey, currentUrl);
+				pinnedUrl = currentUrl;
+			}
+		} catch {
+			// localStorage unavailable
+		}
+	}
+
+	// once, on arrival: no group in URL + this course has a pin → go to it
+	onMount(() => {
+		if (!courseSlug || page.url.searchParams.get("group")) return;
+
+		const saved = readPin(pinKey);
+		if (saved) goto(saved, { replaceState: true });
+	});
 </script>
 
 <svelte:window onkeydown={onKeydown} />
@@ -157,6 +202,7 @@ console.log(Object.keys(list[0]));
 	<p class="message">Loading...</p>
 {:else}
 	<div class="course-page">
+
 		<header class="topbar">
 			<button
 				class="bar-btn"
@@ -194,10 +240,23 @@ console.log(Object.keys(list[0]));
 			{/if}
 
 			<div class="body">
-				<h2 class="group-heading">
+				<!-- <h2 class="group-heading">
 					{selectedTitle}
 					<span>· {visibleItems.length} lessons</span>
-				</h2>
+				</h2> -->
+		<h2 class="group-heading">
+					{selectedTitle}
+					<span>· {visibleItems.length} lessons</span>
+					{#if selectedGroup}
+						<button
+							class="pin"
+							class:active={isPinned}
+							onclick={togglePin}
+							title={isPinned ? "Unpin this view" : "Pin this view"}
+							aria-pressed={isPinned}
+						>📌</button>
+					{/if}
+		</h2>
 			<FilterBar
 					{search}
 					status={statusFilter}
@@ -238,6 +297,32 @@ console.log(Object.keys(list[0]));
 {/if}
 
 <style>
+	.pin {
+		all: unset;
+		cursor: pointer;
+		margin-left: .4rem;
+		padding: .15rem .35rem;
+		border-radius: 6px;
+		font-size: 1rem;
+		line-height: 1;
+		vertical-align: middle;
+		filter: grayscale(1);
+		opacity: .4;
+		transition: opacity .15s, filter .15s;
+	}
+
+	.pin:hover {
+		opacity: .8;
+	}
+
+	.pin.active {
+		filter: none;
+		opacity: 1;
+	}
+
+	.pin:focus-visible {
+		outline: 2px solid var(--theme-accent);
+	}
 	.course-page {
 		--topbar-h: 52px;
 		min-height: 100vh;
