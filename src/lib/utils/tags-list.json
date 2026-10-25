@@ -1,0 +1,4 @@
+{
+	"hasErrors": "Content has a known mistake (maths, slide or narration). Fix it before relying on it.",
+	"svgHeavy": "Lesson relies on many or complex SVGs. Check load time and visual quality."
+}

@@ -1,11 +1,13 @@
 <script>
 ///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/+page.svelte
 import { bundleDeck, downloadJSON } from "./js/bundleDeck.js";
-	import { page } from "$app/state";
-	import { goto } from "$app/navigation";
-	import { send } from "$lib/send";
-	import { config } from "$lib/config.js";
+import { page } from "$app/state";
+import { goto } from "$app/navigation";
+import { send } from "$lib/send";
+import { config } from "$lib/config.js";
+import Tags from "$lib/components/Tags.svelte";
 import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
+import tagsList from "$lib/utils/tags-list.json";
 
 	let deleting = $state(false);
 
@@ -26,8 +28,18 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 		status: "DRAFT",
 		sortOrder: 0,
 		allowCommunication: true,
-		meta: ""
+		meta: "",
+		tags: []
 	});
+
+function parseTags(raw) {
+		try {
+			const value = JSON.parse(raw ?? "[]");
+			return Array.isArray(value) ? value : [];
+		} catch {
+			return [];
+		}
+	}
 
 	let message = $state("Loading...");
 	let loading = $state(true);
@@ -62,7 +74,8 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 				status: data.status ?? "DRAFT",
 				sortOrder: data.sortOrder ?? 0,
 				allowCommunication: data.allowCommunication ?? true,
-				meta: data.meta ?? ""
+				meta: data.meta ?? "",
+				tags: parseTags(data.tags)
 			};
 
 			message = "";
@@ -91,7 +104,8 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 					status: form.status,
 					sortOrder: form.sortOrder,
 					allowCommunication: form.allowCommunication,
-					meta: form.meta
+					meta: form.meta,
+					tags: JSON.stringify(form.tags)
 				}
 			});
 
@@ -209,6 +223,11 @@ async function downloadBundle() {
 		Narration 📢 
 	</a>
 
+	<Tags
+		available={tagsList}
+		tags={form.tags}
+		onChange={(next) => (form.tags = next)}
+	/>
 
 <form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
