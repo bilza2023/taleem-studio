@@ -1,8 +1,6 @@
-
-
-
 <script>
 	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/manage-courses/+page.svelte
+	// Structure work (groups, bulk create/update) lives in taleem-cli.
 	import { onMount } from "svelte";
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
@@ -10,23 +8,6 @@
 	let courses = $state([]);
 	let loading = $state(true);
 	let error = $state("");
-
-	const VIEW = [
-		{ label: "Open", path: "/admin/course" },
-		{ label: "Lessons", path: "/admin/lessons" }
-	];
-
-	const CONTENT = [
-		{ label: "New", path: "/admin/create/content" },
-		{ label: "Bulk Create", path: "/admin/create/bulk-content" },
-		{ label: "Bulk Update", path: "/admin/create/bulk-update" }
-	];
-
-	const GROUPS = [
-		{ label: "Add Group", path: "/admin/create/group" },
-		{ label: "Bulk Groups", path: "/admin/create/bulk-group" },
-		{ label: "Edit Groups", path: "/admin/groups" }
-	];
 
 	function href(path, slug) {
 		return `${config.basePath}${path}?course=${encodeURIComponent(slug)}`;
@@ -55,36 +36,23 @@
 	{:else}
 		<div class="list">
 			{#each courses as c (c.slug)}
-				<section class="row">
+				<section class="row" class:inactive={c.isActive === false}>
 					<div class="info">
 						<div class="title">
-							<strong>{c.title ?? c.slug}</strong>
+							<a class="course-link" href={href("/admin/course", c.slug)}>
+								{c.title ?? c.slug}
+							</a>
 							{#if c.access}
 								<span class={`badge ${c.access.toLowerCase()}`}>{c.access}</span>
+							{/if}
+							{#if c.isActive === false}
+								<span class="badge off">INACTIVE</span>
 							{/if}
 						</div>
 						<code>{c.slug}</code>
 					</div>
 
-					<div class="actions">
-						<div class="set">
-							{#each VIEW as a}
-								<a class="btn view" href={href(a.path, c.slug)}>{a.label}</a>
-							{/each}
-						</div>
-
-						<div class="set">
-							{#each CONTENT as a}
-								<a class="btn" href={href(a.path, c.slug)}>{a.label}</a>
-							{/each}
-						</div>
-
-						<div class="set">
-							{#each GROUPS as a}
-								<a class="btn group" href={href(a.path, c.slug)}>{a.label}</a>
-							{/each}
-						</div>
-					</div>
+					<a class="btn" href={href("/admin/create/content", c.slug)}>+ New</a>
 				</section>
 			{/each}
 		</div>
@@ -113,24 +81,47 @@
 
 	.row {
 		display: flex;
-		flex-direction: column;
-		gap: .65rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
 		padding: .9rem 1rem;
 		border: 1px solid var(--theme-border);
 		border-radius: 10px;
+	}
+
+	.row.inactive {
+		opacity: .55;
+		border-style: dashed;
+	}
+
+	.row.inactive:hover {
+		opacity: 1;
 	}
 
 	.info {
 		display: flex;
 		flex-direction: column;
 		gap: .2rem;
+		min-width: 0;
 	}
 
 	.title {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: .6rem;
 		font-size: 1.05rem;
+	}
+
+	.course-link {
+		font-weight: 700;
+		color: var(--theme-text);
+		text-decoration: none;
+	}
+
+	.course-link:hover {
+		color: #5fa8ff;
+		text-decoration: underline;
 	}
 
 	code {
@@ -151,22 +142,12 @@
 	.badge.open         { background: #2f4e36; }
 	.badge.members      { background: #3d4452; }
 	.badge.subscription { background: #5a4e2f; }
-
-	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: .5rem 1.25rem;
-	}
-
-	.set {
-		display: flex;
-		flex-wrap: wrap;
-		gap: .4rem;
-	}
+	.badge.off          { background: #5a2f2f; }
 
 	.btn {
+		flex-shrink: 0;
 		display: inline-block;
-		padding: .4rem .75rem;
+		padding: .4rem .9rem;
 		font-size: .85rem;
 		color: #d9f99d;
 		background: #3f3a16;
@@ -178,26 +159,6 @@
 	.btn:hover {
 		background: #514d18;
 		border-color: #c4c43a;
-	}
-
-	.btn.view {
-		color: #cfe6ff;
-		background: #1d3550;
-		border-color: #3d6fa3;
-	}
-
-	.btn.view:hover {
-		background: #24456a;
-	}
-
-	.btn.group {
-		color: #e2d6ff;
-		background: #2e2550;
-		border-color: #6750a3;
-	}
-
-	.btn.group:hover {
-		background: #3a2f66;
 	}
 
 	.muted { opacity: .6; }

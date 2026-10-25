@@ -3,10 +3,14 @@
 	import HomeLinks from "$lib/adminComponents/HomeLinks.svelte";
 	import GroupSidebar from "./GroupSidebar.svelte";
 	import CourseHero from "$lib/components/CourseHero.svelte";
+	import FilterBar from "$lib/components/FilterBar.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
+	import tagsList from "$lib/utils/tags-list.json";
+	import { parseTags } from "$lib/utils/tags.js";
+	import { filterItems, countItems } from "$lib/utils/filterItems.js";
 
 	let course = $state(null);
 	let groupings = $state([]);
@@ -18,8 +22,17 @@
 	let isMobile = $state(false);
 	let showInfo = $state(false);
 
-	// URL is the source of truth for course + group
+	let search = $state("");
+
+	// URL is the source of truth for course, group, status and tag
 	let courseSlug = $derived(page.url.searchParams.get("course"));
+	let statusFilter = $derived(page.url.searchParams.get("status") ?? "");
+
+	// unknown / stale tag in URL → no tag filter
+	let tagFilter = $derived.by(() => {
+		const t = page.url.searchParams.get("tag") ?? "";
+		return Object.hasOwn(tagsList, t) ? t : "";
+	});
 
 	// unknown / stale group in URL → fall back to "All"
 	let selectedGroup = $derived.by(() => {
@@ -27,12 +40,26 @@
 		return groupings.some(x => x.slug === g) ? g : "";
 	});
 
-	let visibleItems = $derived(
+	// step 1: group (from sidebar)
+	let groupItems = $derived(
 		selectedGroup
 			? items.filter(item => item.groupSlug === selectedGroup)
 			: items
 	);
 
+	// chip counts, within the selected group
+	let filterCounts = $derived(countItems(groupItems));
+
+	// step 2: status + tag + search
+	let visibleItems = $derived(
+		filterItems(groupItems, {
+			status: statusFilter,
+			tag: tagFilter,
+			search
+		})
+	);
+
+	// sidebar counts per group (unfiltered)
 	let counts = $derived.by(() => {
 		const c = {};
 		for (const item of items) {
@@ -57,7 +84,7 @@
 				send("group", "list", { courseSlug: slug }),
 				send("adminLibrary", "list", { courseSlug: slug })
 			]);
-
+console.log(Object.keys(list[0]));
 			if (!courseData) {
 				error = `Course "${slug}" not found.`;
 				return;
@@ -65,7 +92,11 @@
 
 			course = courseData;
 			groupings = groups;
-			items = list.map(item => ({ ...item, image: item.thumbnail }));
+			items = list.map(item => ({
+				...item,
+				image: item.thumbnail,
+				tags: parseTags(item.tags)
+			}));
 			loaded = true;
 		} catch (err) {
 			error = err.message;
@@ -103,12 +134,21 @@
 		if (isMobile) sidebarOpen = false;
 	}
 
+	function setParam(name, value) {
+		const url = new URL(page.url);
+		if (value) url.searchParams.set(name, value);
+		else url.searchParams.delete(name);
+
+		goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+	}
+
 	function onKeydown(e) {
 		if (e.key !== "Escape") return;
 		showInfo = false;
 		if (isMobile) sidebarOpen = false;
 	}
 </script>
+
 <svelte:window onkeydown={onKeydown} />
 
 {#if error}
@@ -158,6 +198,17 @@
 					{selectedTitle}
 					<span>· {visibleItems.length} lessons</span>
 				</h2>
+			<FilterBar
+					{search}
+					status={statusFilter}
+					tag={tagFilter}
+					counts={filterCounts}
+					shown={visibleItems.length}
+					{tagsList}
+					onSearch={(v) => (search = v)}
+					onStatus={(v) => setParam("status", v)}
+					onTag={(v) => setParam("tag", v)}
+				/>
 
 				<HomeLinks homeLinks={visibleItems} />
 			</div>

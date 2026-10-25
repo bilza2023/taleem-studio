@@ -27,6 +27,7 @@ export default class Library {
 				sortOrder: true,
 				allowCommunication: true,
 				createdAt: true,
+				tags: true,
 				updatedAt: true,
 				...(includeContent ? { body: true, narration: true } : {})
 			},
