@@ -85,3 +85,9 @@ export async function listLibraryByGroup(courseSlug, groupSlug, options = {}) {
 
 	return kernel.library.listByGroup(courseSlug, groupSlug, { includeUnpublished });
 }
+
+export async function listLibraryByTag(tag, filters = {}, options = {}) {
+	const { includeUnpublished = false } = options;
+
+	return kernel.library.list({ ...filters, tag }, { includeUnpublished });
+}

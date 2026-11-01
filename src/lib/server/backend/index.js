@@ -7,7 +7,7 @@ import { createAudio, getAudio, listAudio, updateAudio, deleteAudio } from "./au
 import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse } from "./course.js";
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGroups } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
-import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup } from "./library.js";
+import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup,listLibraryByTag } from "./library.js";
 import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
 
 export const backend = {
@@ -78,7 +78,8 @@ export const backend = {
 	library: {
 		get: (data) => getLibrary(data.slug),
 		list: (data) => listLibrary(data),
-		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug)
+		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug),
+		listByTag: (data) => listLibraryByTag(data.tag, { courseSlug: data.courseSlug })
 	},
 	adminLibrary: {
 		get: (data, token) => getLibrary(data.slug, { includeUnpublished: true }, token),

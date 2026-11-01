@@ -10,6 +10,10 @@ export default class Library {
 		if (filters.courseSlug) where.courseSlug = filters.courseSlug;
 		if (filters.groupSlug) where.groupSlug = filters.groupSlug;
 
+		// tags is a JSON string like ["hasErrors","pinned"].
+		// Matching the quoted tag means "pinned" won't match "pinnedOld".
+		if (filters.tag) where.tags = { contains: JSON.stringify(filters.tag) };
+
 		if (!includeUnpublished) where.status = PUBLIC_STATUS;
 		else if (filters.status) where.status = filters.status;
 
@@ -33,6 +37,10 @@ export default class Library {
 			},
 			orderBy: { sortOrder: "asc" }
 		});
+	}
+
+	async listByTag(tag, opts) {
+		return this.list({ tag }, opts);
 	}
 
 	async listByCourse(courseSlug, opts) {
