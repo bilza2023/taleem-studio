@@ -1,5 +1,5 @@
 <script>
-
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleem-slides/templates/ImageSlide.svelte
     import { getBaseFont } from "../utils/layout.js";
 
     export let slide;

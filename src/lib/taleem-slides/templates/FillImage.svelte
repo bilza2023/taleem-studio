@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleem-slides/templates/FillImage.svelte
     export let slide;
     export let currentTime = 0;
 

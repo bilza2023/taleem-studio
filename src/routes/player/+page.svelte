@@ -4,39 +4,56 @@
 	import { page } from "$app/stores";
 	import { get } from "svelte/store";
 	import { send } from "$lib/send";
-	import { Howl } from "howler";
-	import { config } from "$lib/config.js";
-	import { getAudioFileName, resolveAssetPaths, getTimer } from "$lib/utils/player-utils";
+	import { loadLesson } from "$lib/utils/player-utils";
 	import PlayerShell from "$lib/components/playerShell/PlayerShell.svelte";
+	import LoadingScreen from "$lib/components/playerShell/LoadingScreen.svelte";
 	// import Communication from "$lib/components/Communication.svelte";
 	// import Discussion from "$lib/components/Discussion.svelte";
 
-	let presentation = null;
-	let timer = null;
+	let lesson = null;
+	let progress = null;
+	let error = null;
 
 	const lessonSlug = get(page).url.searchParams.get("lesson");
 
-	onMount(async () => {
-		try {
-			const item = await send("library", "get", { slug: lessonSlug });
-			const deck = JSON.parse(item.body);
+	onMount(() => {
+		const controller = new AbortController();
+		let loaded = null;
 
-			resolveAssetPaths(deck, `${config.basePath}/content/images/`);
+		(async () => {
+			try {
+				const item = await send("library", "get", { slug: lessonSlug });
 
-			timer = await getTimer(getAudioFileName(deck), Howl);
-			presentation = deck;
-		} catch (error) {
-			console.error(error);
-		}
+				loaded = await loadLesson(JSON.parse(item.body), {
+					strict: false,
+					signal: controller.signal,
+					onProgress: (p) => (progress = p)
+				});
+
+				if (controller.signal.aborted) return loaded.destroy();
+				lesson = loaded;
+			} catch (e) {
+				if (e?.name === "AbortError") return;
+				console.error(e);
+				error = e?.message ?? String(e);
+			}
+		})();
+
+		return () => {
+			controller.abort();
+			loaded?.destroy();
+		};
 	});
 </script>
 
-{#if presentation && timer}
-	<PlayerShell deck={presentation} {timer} />
+{#if lesson}
+	<PlayerShell deck={lesson.deck} timer={lesson.timer} />
+{:else}
+	<LoadingScreen {progress} {error} />
 {/if}
 
 <!--
-{#if presentation}
+{#if lesson}
 <div class="lesson-interaction">
 	<Communication librarySlug={lessonSlug} type="user-comment" />
 	<Discussion librarySlug={lessonSlug} />

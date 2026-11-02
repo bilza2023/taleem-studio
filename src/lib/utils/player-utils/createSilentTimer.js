@@ -1,26 +1,24 @@
-
-// createSilentTimer.js
-
+// /src/lib/utils/player-utils/createSilentTimer.js
 import { Timer } from "taleem-pam";
 
 export function createSilentTimer() {
-  const timer = new Timer();
+	const timer = new Timer();
 
-  return {
-    play() {
-      timer.play();
-    },
-
-    pause() {
-      timer.pause();
-    },
-
-    seek(t) {
-      timer.seek(t);
-    },
-
-    now() {
-      return timer.now();
-    }
-  };
+	return {
+		play() {
+			timer.play();
+		},
+		pause() {
+			timer.pause();
+		},
+		seek(t) {
+			timer.seek(t);
+		},
+		now() {
+			return timer.now();
+		},
+		destroy() {
+			timer.pause();
+		}
+	};
 }
