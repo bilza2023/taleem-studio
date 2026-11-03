@@ -1,89 +1,69 @@
 <!-- src/lib/components/home/Hero.svelte -->
 <script>
 	const samplesHref = "#samples";
-	const admissionsHref = "/admissions"; // swap to "/admissions" once that page exists
+	const admissionsHref = "/admissions";
 
-	const trust = [
-		"Federal Board syllabus",
-		"Step-by-step solutions",
-		"Campus: Bahria Town Phase 8, Rawalpindi"
-	];
+	// Wide banner for desktop, 16:9 banner for phones (put both in static/images/)
+	const bannerWide = "/images/hero.webp";
+	const bannerMobile = "/images/hero-mobile.webp";
 </script>
 
 <section class="hero">
-	<div class="inner">
-		<p class="tagline">Taleem.help — Pakistan's Online Academy</p>
+	<div class="frame">
+		<picture>
+			<source media="(max-width: 800px)" srcset={bannerMobile} />
+			<img
+				src={bannerWide}
+				alt="Taleem.help — Pakistan's Tuition App. Step 1: subscribe to your book. Step 2: video lessons and more, new content every day. Step 3: ask the teacher. Step 4: your record. 1 book, 1 year subscription. Federal Board Class 8, 9, 10 Math, new curriculum."
+				width="3840"
+				height="1240"
+				fetchpriority="high"
+			/>
+		</picture>
+	</div>
 
-		<h1>Video courses for Federal Board students.</h1>
-
-		<p class="sub">
-			One course for each book, question by question. Every exercise explained
-			step by step, and your own questions answered.
-		</p>
-
-		<p class="detail">Class 8 · 9 · 10 Math · New curriculum</p>
-
-		<div class="actions">
-			<a class="btn primary" href={samplesHref}>▶ Watch sample lessons</a>
-			<a class="btn secondary" href={admissionsHref} target="_blank" rel="noopener">Admissions</a>
-		</div>
-
-		<ul class="trust">
-			{#each trust as t}
-				<li>✓ {t}</li>
-			{/each}
-		</ul>
+	<div class="actions">
+		<a class="btn primary" href={samplesHref}>▶ Watch sample lessons</a>
+		<a class="btn secondary" href={admissionsHref}>Admissions</a>
 	</div>
 </section>
+
 
 <style>
 	.hero {
 		--navy: #090d1f;
 		--amber: #f5b82e;
 
-		background:
-			radial-gradient(ellipse at center, rgba(9, 13, 31, 0.75) 0%, rgba(9, 13, 31, 0.1) 75%),
-			url("/images/hero.webp") center / cover no-repeat,
-			var(--navy);
-
+		background: #0b1530;
 		color: #fff;
-		padding: 6rem 1rem 5rem;
-		text-align: center;
+		padding: 2rem clamp(1rem, 4vw, 4rem) 3rem;
 		font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 	}
 
-	.inner {
-		width: min(100%, 900px);
+	.frame {
+		width: min(100%, 1600px);
 		margin: 0 auto;
+		padding: 3px; /* border thickness */
+		border-radius: 22px;
+		background: linear-gradient(
+			135deg,
+			#f7e7b4 0%,
+			#d9b45a 22%,
+			#f4f6fa 48%,
+			#c9a24a 74%,
+			#f7e7b4 100%
+		);
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, 0.08),
+			0 0 28px rgba(245, 200, 110, 0.25),
+			0 20px 60px rgba(0, 0, 0, 0.5);
 	}
 
-	.tagline {
-		margin: 0 0 1.25rem;
-		font-size: 1.7rem;
-		color: var(--amber);
-		letter-spacing: 0.02em;
-	}
-
-	h1 {
-		margin: 0 0 1rem;
-		font-size: clamp(2rem, 4.5vw, 3.2rem);
-		line-height: 1.15;
-		color: #fff;
-	}
-
-	.sub {
-		max-width: 680px;
-		margin: 0 auto 1rem;
-		font-size: 1.2rem;
-		line-height: 1.55;
-		opacity: 0.9;
-	}
-
-	.detail {
-		margin: 0 0 2.25rem;
-		font-size: 1.05rem;
-		letter-spacing: 0.03em;
-		opacity: 0.7;
+	.frame img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 19px; /* 22px − 3px border */
 	}
 
 	.actions {
@@ -91,7 +71,7 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 1rem;
-		margin-bottom: 2.5rem;
+		margin-top: 2rem;
 	}
 
 	.btn {
@@ -132,29 +112,18 @@
 		background: rgba(245, 184, 46, 0.1);
 	}
 
-	.trust {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.5rem 2rem;
-		font-size: 0.95rem;
-		opacity: 0.85;
-	}
-
-	.trust li {
-		margin: 0;
-	}
-
 	@media (max-width: 600px) {
 		.hero {
-			padding: 4rem 1rem 3.5rem;
+			padding: 1.25rem 0.75rem 2.5rem;
 		}
 
-		.sub {
-			font-size: 1.05rem;
+		.frame {
+			padding: 2px;
+			border-radius: 16px;
+		}
+
+		.frame img {
+			border-radius: 14px;
 		}
 
 		.btn {
