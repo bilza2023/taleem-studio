@@ -41,4 +41,63 @@ export default class Analytics {
 			orderBy: { createdAt: "desc" }
 		});
 	}
+
+	// ── Reports ──────────────────────────────────────────────
+	async summary({ since = null } = {}) {
+		const where = { name: "lesson.open" };
+		if (since) where.createdAt = { gte: since };
+
+		// one query: counts per (course, lesson, role, user)
+		const rows = await this.kernel.db.analyticsEvent.groupBy({
+			by: ["courseSlug", "slug", "role", "userId"],
+			where,
+			_count: { _all: true }
+		});
+
+		const blank = () => ({ total: 0, student: 0, admin: 0, anonymous: 0 });
+		const add = (opens, role, n) => {
+			opens[role ?? "anonymous"] += n;
+			opens.total += n;
+		};
+
+		const totals = { opens: blank(), students: new Set() };
+		const courses = new Map();
+
+		for (const r of rows) {
+			const n = r._count._all;
+
+			if (!courses.has(r.courseSlug)) {
+				courses.set(r.courseSlug, { courseSlug: r.courseSlug, opens: blank(), students: new Set(), lessons: new Map() });
+			}
+			const c = courses.get(r.courseSlug);
+
+			if (!c.lessons.has(r.slug)) {
+				c.lessons.set(r.slug, { slug: r.slug, opens: blank(), students: new Set() });
+			}
+			const l = c.lessons.get(r.slug);
+
+			add(totals.opens, r.role, n);
+			add(c.opens, r.role, n);
+			add(l.opens, r.role, n);
+
+			if (r.role === "student" && r.userId != null) {
+				totals.students.add(r.userId);
+				c.students.add(r.userId);
+				l.students.add(r.userId);
+			}
+		}
+
+		return {
+			totals: { opens: totals.opens, uniqueStudents: totals.students.size },
+			courses: [...courses.values()].map((c) => ({
+				courseSlug: c.courseSlug,
+				opens: c.opens,
+				uniqueStudents: c.students.size,
+				lessons: [...c.lessons.values()]
+					.map((l) => ({ slug: l.slug, opens: l.opens, uniqueStudents: l.students.size }))
+					.sort((a, b) => b.opens.total - a.opens.total)
+			}))
+		}
+	}
+
 }

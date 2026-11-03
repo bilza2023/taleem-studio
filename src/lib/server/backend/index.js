@@ -9,7 +9,7 @@ import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGro
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
 import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup,listLibraryByTag } from "./library.js";
 import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
-import { trackEvent } from "./analytics.js";
+import { trackEvent,getSummary } from "./analytics.js";
 
 ///////////////////////////////////////////////
 export const backend = {
@@ -103,4 +103,10 @@ export const backend = {
 		analytics: {
 		track: (data, token) => trackEvent(data, token)
 	},
+	adminAnalytics: {
+		summary: (data, token) => getSummary(data, token)
+	}
 };
+
+
+	

@@ -64,6 +64,9 @@
 		<a class="pill {active === 'summary' ? 'active' : ''}" href={`${basePath}/admin/summary`} data-sveltekit-preload-data>
 			Summary
 		</a>
+		<a class="pill {active === 'analytics' ? 'active' : ''}" href={`${basePath}/admin/analytics`} data-sveltekit-preload-data>
+			Analytics
+		</a>
 	</div>
 
 	<div class="right">

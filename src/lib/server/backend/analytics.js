@@ -51,3 +51,33 @@ export async function trackEvent(data = {}, token) {
 
 	return { ok: true };
 }
+export async function getSummary(data = {}, token) {
+	await kernel.admin.authenticate(token); // admins only
+
+	const days = Number(data.days) || 0; // 0 = all time
+	const since = days ? new Date(Date.now() - days * 86400000) : null;
+
+	const [report, courses, items] = await Promise.all([
+		kernel.analytics.summary({ since }),
+		kernel.course.list(),
+		kernel.library.list({}, { includeUnpublished: true })
+	]);
+
+	const lessonTitle = new Map(items.map((i) => [i.slug, i.title]));
+	const stats = new Map(report.courses.map((c) => [c.courseSlug, c]));
+	const empty = { opens: { total: 0, student: 0, admin: 0, anonymous: 0 }, uniqueStudents: 0, lessons: [] };
+
+	// every course appears, even with zero activity
+	const rows = courses.map((course) => {
+		const s = stats.get(course.slug) ?? empty;
+		return {
+			courseSlug: course.slug,
+			title: course.title ?? course.slug,
+			opens: s.opens,
+			uniqueStudents: s.uniqueStudents,
+			lessons: s.lessons.map((l) => ({ ...l, title: lessonTitle.get(l.slug) ?? l.slug }))
+		};
+	});
+
+	return { totals: report.totals, courses: rows };
+}
