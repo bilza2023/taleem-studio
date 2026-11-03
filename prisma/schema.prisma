@@ -6,6 +6,7 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
 enum CommunicationInitiator {
   STUDENT
   TEACHER
@@ -35,30 +36,29 @@ enum AdminRole {
 }
 
 model Course {
-  slug          String         @id
-  title         String
-  description   String?
-  sortOrder          Int           @default(0)
-  thumbnail     String?
-  access        CourseAccess   @default(OPEN)
-  isActive      Boolean        @default(true)
-  price         Int            @default(0)
+  slug        String       @id
+  title       String
+  description String?
+  sortOrder   Int          @default(0)
+  thumbnail   String?
+  access      CourseAccess @default(OPEN)
+  isActive    Boolean      @default(true)
+  price       Int          @default(0)
 
   groups        Group[]
   subscriptions Subscription[]
 }
 
-
 model Group {
-  id         Int     @id @default(autoincrement())
-  courseSlug String
-  slug       String
-  title      String
+  id          Int       @id @default(autoincrement())
+  courseSlug  String
+  slug        String
+  title       String
   sortOrder   Int       @default(0)
-  thumbnail  String?
- description   String?
-  course     Course  @relation(fields: [courseSlug], references: [slug], onDelete: Restrict)
-  library    Library[]
+  thumbnail   String?
+  description String?
+  course      Course    @relation(fields: [courseSlug], references: [slug], onDelete: Restrict)
+  library     Library[]
 
   @@unique([courseSlug, slug])
   @@index([courseSlug])
@@ -78,17 +78,18 @@ model Library {
   sortOrder          Int           @default(0)
   allowCommunication Boolean       @default(true)
   meta               String?
-  tags String @default("[]")
+  tags               String        @default("[]")
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
-  group              Group         @relation(fields: [courseSlug, groupSlug], references: [courseSlug, slug], onDelete: Restrict)
+  group Group @relation(fields: [courseSlug, groupSlug], references: [courseSlug, slug], onDelete: Restrict)
 
-  communications     Communication[]
+  communications Communication[]
 
   @@index([courseSlug])
   @@index([groupSlug])
 }
+
 model User {
   id             Int             @id @default(autoincrement())
   email          String          @unique
@@ -112,7 +113,6 @@ model Admin {
   updatedAt   DateTime  @updatedAt
 }
 
-
 model Subscription {
   id          Int       @id @default(autoincrement())
   userId      Int
@@ -122,28 +122,28 @@ model Subscription {
   amount      Int?
   cancelledAt DateTime?
 
-  user        User      @relation(fields: [userId], references: [id])
-  course      Course    @relation(fields: [courseSlug], references: [slug], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseSlug], references: [slug], onDelete: Restrict)
 
   @@index([userId])
   @@index([courseSlug])
 }
 
 model Communication {
-  id             Int       @id @default(autoincrement())
+  id             Int                    @id @default(autoincrement())
   userId         Int
   librarySlug    String
   type           String
-  initiator CommunicationInitiator @default(STUDENT)
+  initiator      CommunicationInitiator @default(STUDENT)
   meta           String?
   message        String
   authorResponse String?
-  isPublic       Boolean   @default(false)
+  isPublic       Boolean                @default(false)
   readAt         DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  user           User      @relation(fields: [userId], references: [id])
-  library        Library   @relation(fields: [librarySlug], references: [slug], onDelete: Restrict)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  user           User                   @relation(fields: [userId], references: [id])
+  library        Library                @relation(fields: [librarySlug], references: [slug], onDelete: Restrict)
 
   @@index([userId])
   @@index([librarySlug])
@@ -185,4 +185,20 @@ model Audio {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+}
+
+model AnalyticsEvent {
+  id         Int      @id @default(autoincrement())
+  name       String // "lesson.open", "lesson.complete", "user.login"
+  userId     Int? // User.id or Admin.id, depending on role; null = anonymous
+  role       String? // "student" | "admin" | null (anonymous)
+  slug       String? // Library slug (or other target)
+  courseSlug String? // copied in for per-course queries
+  meta       String? // JSON text, same convention as Library.meta / Communication.meta
+  createdAt  DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([userId, role, createdAt])
+  @@index([slug])
+  @@index([courseSlug, createdAt])
 }

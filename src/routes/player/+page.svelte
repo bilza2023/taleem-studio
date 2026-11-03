@@ -1,5 +1,5 @@
 <script>
-	// /src/routes/player/+page.svelte
+	///home/bilal-tariq/00--TALEEM/taleem/src/routes/player/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import { get } from "svelte/store";

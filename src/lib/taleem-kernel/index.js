@@ -14,6 +14,7 @@ import Subscription from "./modules/Subscription.js";
 import Image from "./modules/Image.js";
 import Audio from "./modules/Audio.js";
 import Svg from "./modules/Svg.js";
+import Analytics from "./modules/Analytics.js";
 
 class ServerKernel {
 	constructor() {
@@ -31,6 +32,7 @@ class ServerKernel {
 		this.svg = new Svg(this);
 		this.communication = new Communication(this);
 		this.subscription = new Subscription(this);
+		this.analytics = new Analytics(this);
 	}
 
 	async shutdown() {
