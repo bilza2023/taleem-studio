@@ -15,7 +15,9 @@
 	let error = null;
 
 	const lessonSlug = get(page).url.searchParams.get("lesson");
-
+	function trackEvent(name) {
+		send("analytics", "track", { name, slug: lessonSlug }, "user").catch(() => {});
+	}
 	onMount(() => {
 		const controller = new AbortController();
 		let loaded = null;
@@ -32,6 +34,7 @@
 
 				if (controller.signal.aborted) return loaded.destroy();
 				lesson = loaded;
+				trackEvent("lesson.open");
 			} catch (e) {
 				if (e?.name === "AbortError") return;
 				console.error(e);
