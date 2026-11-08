@@ -1,0 +1,277 @@
+{
+  "name": "Golden MCQ — all question types",
+  "theme": "blue",
+  "background": {
+    "backgroundColor": "#010214",
+    "backgroundImage": "banner.webp",
+    "backgroundImageOpacity": 0.39
+  },
+  "settings": {
+    "mode": "practice",
+    "timeLimit": null,
+    "shuffleQuestions": false,
+    "shuffleChoices": false
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "points": 1,
+      "choices": [
+        { "id": "A", "title": "√2" },
+        { "id": "B", "title": "π" },
+        { "id": "C", "title": "0.75", "correct": true },
+        { "id": "D", "title": "√3" }
+      ],
+      "slides": {
+        "question": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Q1. Which of these is a rational number?" },
+            { "name": "bullet", "content": "A.  √2" },
+            { "name": "bullet", "content": "B.  π" },
+            { "name": "bullet", "content": "C.  0.75" },
+            { "name": "bullet", "content": "D.  √3" }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Hint" },
+            { "name": "para", "content": "A rational number can be written as p/q, where q ≠ 0." }
+          ]
+        },
+        "answer": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Answer: C" },
+            { "name": "para", "content": "0.75 = 3/4, so it is rational. √2, π and √3 cannot be written as p/q." }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q2",
+      "type": "multi",
+      "points": 2,
+      "flags": { "partial": true },
+      "choices": [
+        { "id": "A", "title": "2", "correct": true },
+        { "id": "B", "title": "9" },
+        { "id": "C", "title": "11", "correct": true },
+        { "id": "D", "title": "15" }
+      ],
+      "slides": {
+        "question": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Q2. Select ALL the prime numbers." },
+            { "name": "bullet", "content": "A.  2" },
+            { "name": "bullet", "content": "B.  9" },
+            { "name": "bullet", "content": "C.  11" },
+            { "name": "bullet", "content": "D.  15" }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Hint" },
+            { "name": "para", "content": "A prime number has exactly two factors: 1 and itself." }
+          ]
+        },
+        "answer": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Answer: A and C" },
+            { "name": "bullet", "content": "2 and 11 have only two factors." },
+            { "name": "bullet", "content": "9 = 3 × 3 and 15 = 3 × 5 are not prime." }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q3",
+      "type": "boolean",
+      "points": 1,
+      "choices": [
+        { "id": "T", "title": "True", "correct": true },
+        { "id": "F", "title": "False" }
+      ],
+      "slides": {
+        "question": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Q3. True or False?" },
+            { "name": "para", "content": "Every integer is a rational number." }
+          ]
+        },
+        "answer": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Answer: True" },
+            { "name": "para", "content": "Any integer n can be written as n/1." }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q4",
+      "type": "number",
+      "points": 1,
+      "flags": { "tolerance": 0 },
+      "choices": [
+        { "id": "a", "title": "6", "correct": true }
+      ],
+      "slides": {
+        "question": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Q4. Solve for x" },
+            { "name": "para", "content": "2x + 5 = 17" }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Hint" },
+            { "name": "para", "content": "Subtract 5 from both sides, then divide by 2." }
+          ]
+        },
+        "answer": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Answer: x = 6" },
+            { "name": "bullet", "content": "2x + 5 = 17" },
+            { "name": "bullet", "content": "2x = 12" },
+            { "name": "bullet", "content": "x = 6" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q5",
+      "type": "text",
+      "points": 1,
+      "flags": { "caseSensitive": false },
+      "choices": [
+        { "id": "a", "title": "hypotenuse", "correct": true }
+      ],
+      "slides": {
+        "question": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Q5. Fill in the blank" },
+            { "name": "para", "content": "The longest side of a right-angled triangle is called the ________." }
+          ]
+        },
+        "answer": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Answer: Hypotenuse" },
+            { "name": "para", "content": "It is the side opposite the right angle." }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q6",
+      "type": "selfCheck",
+      "points": 1,
+      "choices": [],
+      "slides": {
+        "question": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Q6. Short question" },
+            { "name": "para", "content": "Write the formula for the area of a trapezium and explain each term." }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Hint" },
+            { "name": "para", "content": "It uses the two parallel sides and the height." }
+          ]
+        },
+        "answer": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Area = ½ (a + b) × h" },
+            { "name": "bullet", "content": "a, b = lengths of the parallel sides" },
+            { "name": "bullet", "content": "h = perpendicular distance between them" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q7",
+      "type": "match",
+      "points": 3,
+      "choices": [
+        { "id": "1", "title": "Square", "pair": "b" },
+        { "id": "2", "title": "Triangle", "pair": "c" },
+        { "id": "3", "title": "Hexagon", "pair": "a" },
+        { "id": "a", "title": "6 sides" },
+        { "id": "b", "title": "4 sides" },
+        { "id": "c", "title": "3 sides" }
+      ],
+      "slides": {
+        "question": {
+          "type": "twoColumnText",
+          "data": [
+            { "name": "title", "content": "Q7. Match each shape with its number of sides" },
+            { "name": "left", "content": "1. Square" },
+            { "name": "left", "content": "2. Triangle" },
+            { "name": "left", "content": "3. Hexagon" },
+            { "name": "right", "content": "a. 6 sides" },
+            { "name": "right", "content": "b. 4 sides" },
+            { "name": "right", "content": "c. 3 sides" }
+          ]
+        },
+        "answer": {
+          "type": "bulletList",
+          "data": [
+            { "name": "heading", "content": "Answer" },
+            { "name": "bullet", "content": "1 → b" },
+            { "name": "bullet", "content": "2 → c" },
+            { "name": "bullet", "content": "3 → a" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q8",
+      "type": "order",
+      "points": 2,
+      "choices": [
+        { "id": "Q", "title": "-2" },
+        { "id": "R", "title": "1/3" },
+        { "id": "P", "title": "0.5" },
+        { "id": "S", "title": "3" }
+      ],
+      "slides": {
+        "question": {
+          "type": "table",
+          "data": [
+            ["P", "Q", "R", "S"],
+            ["0.5", "-2", "1/3", "3"]
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Hint" },
+            { "name": "para", "content": "Convert 1/3 to a decimal: 0.333…" }
+          ]
+        },
+        "answer": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "Answer: Q, R, P, S" },
+            { "name": "para", "content": "-2 < 0.333… < 0.5 < 3" }
+          ]
+        }
+      }
+    }
+  ]
+}

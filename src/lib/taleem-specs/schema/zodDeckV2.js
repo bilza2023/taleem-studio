@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/taleem-specs/schema/zodDeckV2.js
 import { z } from "zod";
 import {SlideType,ContentType,EqLineType,EqSidePanelType,TaleemPlayerThemes} from "$lib/taleem-specs/enums";
 
@@ -276,45 +277,39 @@ const eq = baseSlide.extend({
 	)
 });
 
+/* ───────────── Slide (exported for reuse) ───────────── */
+
+export const zodSlide = z.discriminatedUnion("type", [
+	titleAndSubtitle,
+	titleAndPara,
+	bulletList,
+	twoColumnText,
+	imageSlide,
+	fillImage,
+	imageWithTitle,
+	imageWithCaption,
+	imageLeftBulletsRight,
+	imageRightBulletsLeft,
+	table,
+	barChart,
+	progressbar,
+	quoteSlide,
+	keyIdeasSlide,
+	eq
+]);
+
 /* ───────────── Deck ───────────── */
 
 export const zodDeckV2 = z.object({
-
-	// version: z.literal(DeckVersion.V2),
-
 	name: z.string().optional(),
-	
 	theme: z.enum(Object.values(TaleemPlayerThemes)).optional(),
-
 	audio: z.string().regex(/^[a-zA-Z0-9-_]+\.(opus|mp3|wav)$/).nullable().optional(),
-
 	background: z.object({
 		backgroundColor: z.string().optional(),
 		backgroundImage: z.string().nullable().optional(),
 		backgroundImageOpacity: z.number().optional()
 	}).optional(),
-
-	deck: z.array(
-		z.discriminatedUnion("type", [
-			titleAndSubtitle,
-			titleAndPara,
-			bulletList,
-			twoColumnText,
-			imageSlide,
-			fillImage,
-			imageWithTitle,
-			imageWithCaption,
-			imageLeftBulletsRight,
-			imageRightBulletsLeft,
-			table,
-			barChart,
-			progressbar,
-			quoteSlide,
-			keyIdeasSlide,
-			eq
-		])
-	)
-
+	deck: z.array(zodSlide)
 });
 
 export const eqLineArraySchema = eq.shape.data;
