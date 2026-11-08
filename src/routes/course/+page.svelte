@@ -151,13 +151,33 @@
 				</aside>
 			{/if}
 
-			<div class="body">
+						<div class="body">
 				<h2 class="group-heading">
 					{selectedTitle}
-					<span>· {visibleItems.length} lessons</span>
+					{#if visibleItems.length > 0}
+						<span>· {visibleItems.length} lessons</span>
+					{/if}
 				</h2>
 
-				<HomeLinks homeLinks={visibleItems} />
+				{#if visibleItems.length > 0}
+					<HomeLinks homeLinks={visibleItems} />
+				{:else}
+					<div class="coming-soon">
+						<div class="cs-icon">⏳</div>
+						<p class="cs-tag">Coming soon</p>
+						<h3 class="cs-title">Lessons for {selectedTitle} are on their way</h3>
+						<p class="cs-text">
+							We're preparing a step-by-step presentation for every question
+							in this exercise. Each one is checked and narrated before it
+							goes live.
+						</p>
+						{#if items.length > 0}
+							<button class="cs-btn" onclick={() => selectGroup("")}>
+								▶ Watch available lessons
+							</button>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -185,6 +205,68 @@
 {/if}
 
 <style>
+	/* ---------- coming soon ---------- */
+	.coming-soon {
+		max-width: 560px;
+		margin: 2.5rem auto;
+		padding: 2rem 1.75rem;
+		text-align: center;
+		border-radius: 16px;
+		border: 1px solid rgba(245, 184, 46, 0.35);
+		background:
+			radial-gradient(circle at top, rgba(245, 184, 46, 0.18), transparent 60%),
+			linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(16, 185, 129, 0.12));
+		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+	}
+
+	.cs-icon {
+		font-size: 2.5rem;
+		line-height: 1;
+		margin-bottom: .75rem;
+	}
+
+	.cs-tag {
+		display: inline-block;
+		margin: 0 0 .75rem;
+		padding: .2rem .75rem;
+		border-radius: 999px;
+		background: #f5b82e;
+		color: #1a1a1a;
+		font-size: .75rem;
+		font-weight: 700;
+		letter-spacing: .08em;
+		text-transform: uppercase;
+	}
+
+	.cs-title {
+		margin: 0 0 .75rem;
+		font-size: 1.35rem;
+		color: #ffffff;
+	}
+
+	.cs-text {
+		margin: 0 auto 1.5rem;
+		max-width: 440px;
+		line-height: 1.6;
+		color: #dfe6f5;
+		opacity: .9;
+	}
+
+	.cs-btn {
+		width: auto;
+		margin: 0;
+		padding: .6rem 1.4rem;
+		border: none;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #10b981, #059669);
+		color: #fff;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.cs-btn:hover {
+		filter: brightness(1.1);
+	}
 	.course-page {
 		--topbar-h: 52px;
 		min-height: 100vh;
