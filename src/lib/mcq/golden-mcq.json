@@ -1,5 +1,5 @@
 {
-  "name": "Golden MCQ — all question types",
+  "name": "Taleem MCQ Tour — 8 ways to answer",
   "theme": "blue",
   "background": {
     "backgroundColor": "#010214",
@@ -9,8 +9,7 @@
   "settings": {
     "mode": "practice",
     "timeLimit": null,
-    "shuffleQuestions": false,
-    "shuffleChoices": false
+    "shuffleQuestions": false
   },
   "questions": [
     {
@@ -18,34 +17,34 @@
       "type": "single",
       "points": 1,
       "choices": [
-        { "id": "A", "title": "√2" },
-        { "id": "B", "title": "π" },
-        { "id": "C", "title": "0.75", "correct": true },
-        { "id": "D", "title": "√3" }
+        { "id": "A", "title": "4" },
+        { "id": "B", "title": "5" },
+        { "id": "C", "title": "6", "correct": true },
+        { "id": "D", "title": "8" }
       ],
       "slides": {
         "question": {
           "type": "bulletList",
           "data": [
-            { "name": "heading", "content": "Q1. Which of these is a rational number?" },
-            { "name": "bullet", "content": "A.  √2" },
-            { "name": "bullet", "content": "B.  π" },
-            { "name": "bullet", "content": "C.  0.75" },
-            { "name": "bullet", "content": "D.  √3" }
+            { "name": "heading", "content": "🎯 Single choice — pick ONE · How many legal balls are in one cricket over?" },
+            { "name": "bullet", "content": "A.  4" },
+            { "name": "bullet", "content": "B.  5" },
+            { "name": "bullet", "content": "C.  6" },
+            { "name": "bullet", "content": "D.  8" }
           ]
         },
         "hint": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Hint" },
-            { "name": "para", "content": "A rational number can be written as p/q, where q ≠ 0." }
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "Count how many times one bowler runs in before the fielders swap ends." }
           ]
         },
         "answer": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Answer: C" },
-            { "name": "para", "content": "0.75 = 3/4, so it is rational. √2, π and √3 cannot be written as p/q." }
+            { "name": "title", "content": "Answer: C — 6 balls" },
+            { "name": "para", "content": "One over = 6 legal deliveries. Wides and no-balls don't count, so an over can take longer than 6 balls!" }
           ]
         }
       }
@@ -56,35 +55,36 @@
       "points": 2,
       "flags": { "partial": true },
       "choices": [
-        { "id": "A", "title": "2", "correct": true },
-        { "id": "B", "title": "9" },
-        { "id": "C", "title": "11", "correct": true },
-        { "id": "D", "title": "15" }
+        { "id": "A", "title": "16", "correct": true },
+        { "id": "B", "title": "20" },
+        { "id": "C", "title": "25", "correct": true },
+        { "id": "D", "title": "30" }
       ],
       "slides": {
         "question": {
           "type": "bulletList",
           "data": [
-            { "name": "heading", "content": "Q2. Select ALL the prime numbers." },
-            { "name": "bullet", "content": "A.  2" },
-            { "name": "bullet", "content": "B.  9" },
-            { "name": "bullet", "content": "C.  11" },
-            { "name": "bullet", "content": "D.  15" }
+            { "name": "heading", "content": "✅ Pick ALL that fit · Which of these are perfect squares?" },
+            { "name": "bullet", "content": "A.  16" },
+            { "name": "bullet", "content": "B.  20" },
+            { "name": "bullet", "content": "C.  25" },
+            { "name": "bullet", "content": "D.  30" }
           ]
         },
         "hint": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Hint" },
-            { "name": "para", "content": "A prime number has exactly two factors: 1 and itself." }
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "A perfect square is a number times itself. Try 4 × 4 and 5 × 5. Careful: wrong picks cancel right ones!" }
           ]
         },
         "answer": {
           "type": "bulletList",
           "data": [
             { "name": "heading", "content": "Answer: A and C" },
-            { "name": "bullet", "content": "2 and 11 have only two factors." },
-            { "name": "bullet", "content": "9 = 3 × 3 and 15 = 3 × 5 are not prime." }
+            { "name": "bullet", "content": "16 = 4 × 4 ✓" },
+            { "name": "bullet", "content": "25 = 5 × 5 ✓" },
+            { "name": "bullet", "content": "20 and 30 sit between squares — no whole number works" }
           ]
         }
       }
@@ -101,15 +101,22 @@
         "question": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Q3. True or False?" },
-            { "name": "para", "content": "Every integer is a rational number." }
+            { "name": "title", "content": "⚖️ True or False?" },
+            { "name": "para", "content": "Zero is an even number." }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "A number is even if it divides by 2 with nothing left over. Try 0 ÷ 2." }
           ]
         },
         "answer": {
           "type": "titleAndPara",
           "data": [
             { "name": "title", "content": "Answer: True" },
-            { "name": "para", "content": "Any integer n can be written as n/1." }
+            { "name": "para", "content": "0 ÷ 2 = 0 with remainder 0, so zero is even. It also sits between −1 and 1, both odd — just like every even number." }
           ]
         }
       }
@@ -120,30 +127,29 @@
       "points": 1,
       "flags": { "tolerance": 0 },
       "choices": [
-        { "id": "a", "title": "6", "correct": true }
+        { "id": "a", "title": "5", "correct": true }
       ],
       "slides": {
         "question": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Q4. Solve for x" },
-            { "name": "para", "content": "2x + 5 = 17" }
+            { "name": "title", "content": "🔢 Type a number" },
+            { "name": "para", "content": "One pot of biryani feeds 8 guests. How many pots are needed for 40 guests at a wedding?" }
           ]
         },
         "hint": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Hint" },
-            { "name": "para", "content": "Subtract 5 from both sides, then divide by 2." }
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "Share the guests equally between pots: divide the guests by the guests per pot." }
           ]
         },
         "answer": {
           "type": "bulletList",
           "data": [
-            { "name": "heading", "content": "Answer: x = 6" },
-            { "name": "bullet", "content": "2x + 5 = 17" },
-            { "name": "bullet", "content": "2x = 12" },
-            { "name": "bullet", "content": "x = 6" }
+            { "name": "heading", "content": "Answer: 5 pots" },
+            { "name": "bullet", "content": "40 ÷ 8 = 5" },
+            { "name": "bullet", "content": "Check: 5 × 8 = 40 ✓" }
           ]
         }
       }
@@ -154,21 +160,28 @@
       "points": 1,
       "flags": { "caseSensitive": false },
       "choices": [
-        { "id": "a", "title": "hypotenuse", "correct": true }
+        { "id": "a", "title": "pentagon", "correct": true }
       ],
       "slides": {
         "question": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Q5. Fill in the blank" },
-            { "name": "para", "content": "The longest side of a right-angled triangle is called the ________." }
+            { "name": "title", "content": "✍️ Type a word" },
+            { "name": "para", "content": "What do we call a flat shape with exactly 5 straight sides?" }
+          ]
+        },
+        "hint": {
+          "type": "titleAndPara",
+          "data": [
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "“Penta” means five. Hexa = 6, Octa = 8 … so 5 sides is a ______gon." }
           ]
         },
         "answer": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Answer: Hypotenuse" },
-            { "name": "para", "content": "It is the side opposite the right angle." }
+            { "name": "title", "content": "Answer: Pentagon" },
+            { "name": "para", "content": "Penta (five) + gon (angle). Capital letters don't matter here — the checker ignores case." }
           ]
         }
       }
@@ -182,23 +195,24 @@
         "question": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Q6. Short question" },
-            { "name": "para", "content": "Write the formula for the area of a trapezium and explain each term." }
+            { "name": "title", "content": "🪞 Self-check — write it, then mark yourself" },
+            { "name": "para", "content": "In one or two lines: why can't we divide a number by zero?" }
           ]
         },
         "hint": {
-          "type": "titleAndPara",
+          "type": "quoteSlide",
           "data": [
-            { "name": "title", "content": "Hint" },
-            { "name": "para", "content": "It uses the two parallel sides and the height." }
+            { "name": "quote", "content": "Anything multiplied by zero is zero." },
+            { "name": "author", "content": "— the rule that breaks division" }
           ]
         },
         "answer": {
           "type": "bulletList",
           "data": [
-            { "name": "heading", "content": "Area = ½ (a + b) × h" },
-            { "name": "bullet", "content": "a, b = lengths of the parallel sides" },
-            { "name": "bullet", "content": "h = perpendicular distance between them" }
+            { "name": "heading", "content": "Model answer" },
+            { "name": "bullet", "content": "Suppose 6 ÷ 0 = x. Then x × 0 should equal 6." },
+            { "name": "bullet", "content": "But anything × 0 = 0, never 6." },
+            { "name": "bullet", "content": "No number works, so division by zero is undefined." }
           ]
         }
       }
@@ -208,33 +222,41 @@
       "type": "match",
       "points": 3,
       "choices": [
-        { "id": "1", "title": "Square", "pair": "b" },
-        { "id": "2", "title": "Triangle", "pair": "c" },
-        { "id": "3", "title": "Hexagon", "pair": "a" },
-        { "id": "a", "title": "6 sides" },
-        { "id": "b", "title": "4 sides" },
-        { "id": "c", "title": "3 sides" }
+        { "id": "1", "title": "Kilogram", "pair": "b" },
+        { "id": "2", "title": "Litre", "pair": "c" },
+        { "id": "3", "title": "Metre", "pair": "a" },
+        { "id": "a", "title": "Length" },
+        { "id": "b", "title": "Mass" },
+        { "id": "c", "title": "Volume" }
       ],
       "slides": {
         "question": {
           "type": "twoColumnText",
           "data": [
-            { "name": "title", "content": "Q7. Match each shape with its number of sides" },
-            { "name": "left", "content": "1. Square" },
-            { "name": "left", "content": "2. Triangle" },
-            { "name": "left", "content": "3. Hexagon" },
-            { "name": "right", "content": "a. 6 sides" },
-            { "name": "right", "content": "b. 4 sides" },
-            { "name": "right", "content": "c. 3 sides" }
+            { "name": "title", "content": "🔗 Match the pairs · Each unit measures what?" },
+            { "name": "left", "content": "1. Kilogram" },
+            { "name": "left", "content": "2. Litre" },
+            { "name": "left", "content": "3. Metre" },
+            { "name": "right", "content": "a. Length" },
+            { "name": "right", "content": "b. Mass" },
+            { "name": "right", "content": "c. Volume" }
+          ]
+        },
+        "hint": {
+          "type": "keyIdeasSlide",
+          "data": [
+            { "name": "card", "icon": "⚖️", "label": "Weighed on a scale" },
+            { "name": "card", "icon": "📏", "label": "Measured with a ruler" },
+            { "name": "card", "icon": "🧴", "label": "Poured into a bottle" }
           ]
         },
         "answer": {
           "type": "bulletList",
           "data": [
             { "name": "heading", "content": "Answer" },
-            { "name": "bullet", "content": "1 → b" },
-            { "name": "bullet", "content": "2 → c" },
-            { "name": "bullet", "content": "3 → a" }
+            { "name": "bullet", "content": "1 → b · Kilogram measures mass" },
+            { "name": "bullet", "content": "2 → c · Litre measures volume" },
+            { "name": "bullet", "content": "3 → a · Metre measures length" }
           ]
         }
       }
@@ -244,31 +266,34 @@
       "type": "order",
       "points": 2,
       "choices": [
-        { "id": "Q", "title": "-2" },
-        { "id": "R", "title": "1/3" },
-        { "id": "P", "title": "0.5" },
-        { "id": "S", "title": "3" }
+        { "id": "S", "title": "0.05" },
+        { "id": "Q", "title": "0.3" },
+        { "id": "P", "title": "½" },
+        { "id": "R", "title": "¾" }
       ],
       "slides": {
         "question": {
-          "type": "table",
+          "type": "bulletList",
           "data": [
-            ["P", "Q", "R", "S"],
-            ["0.5", "-2", "1/3", "3"]
+            { "name": "heading", "content": "🪜 Put in order · Smallest to largest" },
+            { "name": "bullet", "content": "P.  ½" },
+            { "name": "bullet", "content": "Q.  0.3" },
+            { "name": "bullet", "content": "R.  ¾" },
+            { "name": "bullet", "content": "S.  0.05" }
           ]
         },
         "hint": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Hint" },
-            { "name": "para", "content": "Convert 1/3 to a decimal: 0.333…" }
+            { "name": "title", "content": "💡 Hint" },
+            { "name": "para", "content": "Turn everything into decimals first: ½ = 0.5 and ¾ = 0.75. Watch out — 0.05 is smaller than it looks!" }
           ]
         },
         "answer": {
           "type": "titleAndPara",
           "data": [
-            { "name": "title", "content": "Answer: Q, R, P, S" },
-            { "name": "para", "content": "-2 < 0.333… < 0.5 < 3" }
+            { "name": "title", "content": "Answer: S → Q → P → R" },
+            { "name": "para", "content": "0.05 < 0.3 < 0.5 < 0.75" }
           ]
         }
       }
