@@ -1,5 +1,5 @@
 <script>
-// /home/bilal-tariq/00--TALEEM/taleem/src/lib/components/HomeLinks.svelte
+///home/bilal-tariq/00--TALEEM/taleem/src/lib/components/HomeLinks.svelte
 	import { config } from "$lib/config.js";
 
 	let { homeLinks = [] } = $props();
@@ -10,6 +10,8 @@
 				return `${config.basePath}/articles?article=${encodeURIComponent(card.slug)}`;
 			case "PLAYER":
 				return `${config.basePath}/player?lesson=${encodeURIComponent(card.slug)}`;
+					case "MCQ":
+	return `${config.basePath}/mcq?mcq=${encodeURIComponent(card.slug)}`;
 			default:
 				return "#";
 		}
@@ -41,6 +43,7 @@
 
 
 <style>
+.card.mcq { background: #5a3f6d; }
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

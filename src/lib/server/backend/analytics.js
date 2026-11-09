@@ -51,6 +51,39 @@ export async function trackEvent(data = {}, token) {
 
 	return { ok: true };
 }
+
+// Awaited — the student sees "Saved ✓" only if the row really exists.
+// Deliberately NOT in CLIENT_EVENTS: mcq.result can only arrive through here.
+// meta = the full report from buildReport() (what the student saw).
+export async function saveMcqResult(data = {}, token) {
+	const { slug, meta = null } = data;
+
+	if (meta && JSON.stringify(meta).length > 100_000) {
+		const err = new Error("MCQ result too large.");
+		err.status = 413;
+		throw err;
+	}
+
+	const actor = await resolveActor(token);
+	if (!actor.role) return { saved: false, reason: "login" }; // anonymous: show, don't save
+
+	const item = await kernel.library.get(slug, { includeUnpublished: true });
+	if (!item || item.type !== "MCQ") {
+		const err = new Error(`MCQ "${slug}" not found.`);
+		err.status = 404;
+		throw err;
+	}
+
+	const row = await kernel.analytics.record("mcq.result", {
+		...actor,
+		slug,
+		courseSlug: item.courseSlug,
+		meta
+	});
+
+	return { saved: true, id: row.id };
+}
+
 export async function getSummary(data = {}, token) {
 	await kernel.admin.authenticate(token); // admins only
 

@@ -5,25 +5,30 @@ export default class Analytics {
 
 	// ── Core writer ──────────────────────────────────────────
 	// The only method that touches db.analyticsEvent for writing.
-	// Never throws. Callers don't await it; tests can.
-	track(name, { userId = null, role = null, slug = null, courseSlug = null, meta = null } = {}) {
-		if (!name) return Promise.resolve(null);
+	// Awaited and throws — use when the caller must know it was saved (e.g. mcq.result).
+	async record(name, { userId = null, role = null, slug = null, courseSlug = null, meta = null } = {}) {
+		if (!name) throw new Error("Analytics.record(): name is required");
 
-		return this.kernel.db.analyticsEvent
-			.create({
-				data: {
-					name,
-					userId,
-					role,
-					slug,
-					courseSlug,
-					meta: meta ? JSON.stringify(meta) : null
-				}
-			})
-			.catch((err) => {
-				console.error(`Analytics.track(): '${name}' failed —`, err.message);
-				return null;
-			});
+		return this.kernel.db.analyticsEvent.create({
+			data: {
+				name,
+				userId,
+				role,
+				slug,
+				courseSlug,
+				meta: meta ? JSON.stringify(meta) : null
+			}
+		});
+	}
+
+	// ── Fire-and-forget ──────────────────────────────────────
+	// Wrapper over record(). Never throws. Callers don't await it; tests can.
+	track(name, opts = {}) {
+		if (!name) return Promise.resolve(null);
+		return this.record(name, opts).catch((err) => {
+			console.error(`Analytics.track(): '${name}' failed —`, err.message);
+			return null;
+		});
 	}
 
 	// ── Reader ───────────────────────────────────────────────
@@ -97,7 +102,6 @@ export default class Analytics {
 					.map((l) => ({ slug: l.slug, opens: l.opens, uniqueStudents: l.students.size }))
 					.sort((a, b) => b.opens.total - a.opens.total)
 			}))
-		}
+		};
 	}
-
 }

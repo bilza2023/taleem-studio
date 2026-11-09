@@ -29,6 +29,8 @@
 				return `${config.basePath}/admin/articles?article=${encodeURIComponent(card.slug)}`;
 			case "PLAYER":
 				return `${config.basePath}/admin/player?lesson=${encodeURIComponent(card.slug)}`;
+				case "MCQ":
+	return `${config.basePath}/mcq?mcq=${encodeURIComponent(card.slug)}`;
 			default:
 				return "#";
 		}
@@ -105,6 +107,7 @@
 </div>
 
 <style>
+.card.mcq { background: #5a3f6d; }
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
