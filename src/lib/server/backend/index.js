@@ -9,7 +9,7 @@ import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGro
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
 import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup,listLibraryByTag } from "./library.js";
 import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
-import { trackEvent, getSummary, saveMcqResult } from "./analytics.js";
+import { trackEvent, getSummary, saveMcqResult,listMyMcqResults } from "./analytics.js";
 
 ///////////////////////////////////////////////
 export const backend = {
@@ -102,7 +102,8 @@ export const backend = {
 	},
 	analytics: {
 		track: (data, token) => trackEvent(data, token),
-		saveMcqResult: (data, token) => saveMcqResult(data, token)
+		saveMcqResult: (data, token) => saveMcqResult(data, token),
+		myMcqResults: (data, token) => listMyMcqResults(data, token)
 	},
 	adminAnalytics: {
 		summary: (data, token) => getSummary(data, token)

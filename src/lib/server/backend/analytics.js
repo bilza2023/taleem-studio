@@ -114,3 +114,41 @@ export async function getSummary(data = {}, token) {
 
 	return { totals: report.totals, courses: rows };
 }
+
+// Student's own MCQ history — identity from the token, never from the body.
+// Each item carries the full saved report, so opening one needs no second call.
+export async function listMyMcqResults(data = {}, token) {
+	const actor = await resolveActor(token);
+	if (!actor.role) {
+		const err = new Error("Log in to see your results.");
+		err.status = 401;
+		throw err;
+	}
+
+	const result = await kernel.analytics.listPage(
+		{ name: "mcq.result", userId: actor.userId, role: actor.role },
+		{ page: data.page, pageSize: data.pageSize }
+	);
+
+	// titles for this page only
+	const slugs = [...new Set(result.items.map((r) => r.slug).filter(Boolean))];
+	const libs = await Promise.all(
+		slugs.map((s) => kernel.library.get(s, { includeUnpublished: true }).catch(() => null))
+	);
+	const titles = new Map(slugs.map((s, i) => [s, libs[i]?.title ?? s]));
+
+	const parse = (txt) => {
+		try { return txt ? JSON.parse(txt) : null; } catch { return null; }
+	};
+
+	return {
+		...result,
+		items: result.items.map((r) => ({
+			id: r.id,
+			slug: r.slug,
+			title: titles.get(r.slug) ?? r.slug,
+			createdAt: r.createdAt,
+			report: parse(r.meta)
+		}))
+	};
+}

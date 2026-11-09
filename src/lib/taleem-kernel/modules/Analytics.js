@@ -1,5 +1,17 @@
 // src/lib/taleem-kernel/modules/Analytics.js
 
+// Shared by list() and listPage() — one place that turns filters into a Prisma where.
+function buildWhere(filters = {}) {
+	const where = {};
+	if (filters.name) where.name = filters.name;
+	if (filters.userId !== undefined) where.userId = filters.userId;
+	if (filters.role) where.role = filters.role;
+	if (filters.slug) where.slug = filters.slug;
+	if (filters.courseSlug) where.courseSlug = filters.courseSlug;
+	if (filters.since) where.createdAt = { gte: filters.since };
+	return where;
+}
+
 export default class Analytics {
 	constructor(kernel) { this.kernel = kernel; }
 
@@ -31,20 +43,31 @@ export default class Analytics {
 		});
 	}
 
-	// ── Reader ───────────────────────────────────────────────
+	// ── Readers ──────────────────────────────────────────────
 	async list(filters = {}) {
-		const where = {};
-		if (filters.name) where.name = filters.name;
-		if (filters.userId !== undefined) where.userId = filters.userId;
-		if (filters.role) where.role = filters.role;
-		if (filters.slug) where.slug = filters.slug;
-		if (filters.courseSlug) where.courseSlug = filters.courseSlug;
-		if (filters.since) where.createdAt = { gte: filters.since };
-
 		return this.kernel.db.analyticsEvent.findMany({
-			where,
+			where: buildWhere(filters),
 			orderBy: { createdAt: "desc" }
 		});
+	}
+
+	// One page, newest first, plus totals for the pager.
+	async listPage(filters = {}, { page = 1, pageSize = 20 } = {}) {
+		const where = buildWhere(filters);
+		const size = Math.min(Math.max(Number(pageSize) || 20, 1), 100);
+		const p = Math.max(Number(page) || 1, 1);
+
+		const [items, total] = await Promise.all([
+			this.kernel.db.analyticsEvent.findMany({
+				where,
+				orderBy: { createdAt: "desc" },
+				skip: (p - 1) * size,
+				take: size
+			}),
+			this.kernel.db.analyticsEvent.count({ where })
+		]);
+
+		return { items, total, page: p, pageSize: size, pages: Math.max(1, Math.ceil(total / size)) };
 	}
 
 	// ── Reports ──────────────────────────────────────────────
