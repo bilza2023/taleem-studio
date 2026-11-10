@@ -1,258 +1,142 @@
-
 <script>
-///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/slides/Slides.svelte
-  import TitleAndSubtitle from "./templates/TitleAndSubtitle.svelte";
-  import TitleAndParaEditor from "./templates/TitleAndParaEditor.svelte";
-  import BulletListEditor from "./templates/BulletListEditor.svelte";
-  import TwoColumnTextEditor from "./templates/TwoColumnTextEditor.svelte";
-  import ImageSlideEditor from "./templates/ImageSlideEditor.svelte";
-  import FillImageEditor from "./templates/FillImageEditor.svelte";
-  import ImageWithTitleEditor from "./templates/ImageWithTitleEditor.svelte";
-  import ImageWithCaptionEditor from "./templates/ImageWithCaptionEditor.svelte";
-  import ImageLeftBulletsRightEditor from "./templates/ImageLeftBulletsRightEditor.svelte";
-  import ImageRightBulletsLeftEditor from "./templates/ImageRightBulletsLeftEditor.svelte";
-  import TableEditor from "./templates/TableEditor.svelte";
-  import BarChartEditor from "./templates/BarChartEditor.svelte";
-  import ProgressbarEditor from "./templates/ProgressbarEditor.svelte";
-  import QuoteEditor from "./templates/QuoteEditor.svelte";
-  import KeyIdeasEditor from "./templates/KeyIdeasEditor.svelte";
-  import EqEditor from "./templates/EqEditor.svelte";
+	// src/lib/editor/slides/Slides.svelte
+	// Slide list: select, collapse, move, delete. No timing logic.
+	import TitleAndSubtitle from "./templates/TitleAndSubtitle.svelte";
+	import TitleAndParaEditor from "./templates/TitleAndParaEditor.svelte";
+	import BulletListEditor from "./templates/BulletListEditor.svelte";
+	import TwoColumnTextEditor from "./templates/TwoColumnTextEditor.svelte";
+	import ImageSlideEditor from "./templates/ImageSlideEditor.svelte";
+	import FillImageEditor from "./templates/FillImageEditor.svelte";
+	import ImageWithTitleEditor from "./templates/ImageWithTitleEditor.svelte";
+	import ImageWithCaptionEditor from "./templates/ImageWithCaptionEditor.svelte";
+	import ImageLeftBulletsRightEditor from "./templates/ImageLeftBulletsRightEditor.svelte";
+	import ImageRightBulletsLeftEditor from "./templates/ImageRightBulletsLeftEditor.svelte";
+	import TableEditor from "./templates/TableEditor.svelte";
+	import BarChartEditor from "./templates/BarChartEditor.svelte";
+	import ProgressbarEditor from "./templates/ProgressbarEditor.svelte";
+	import QuoteEditor from "./templates/QuoteEditor.svelte";
+	import KeyIdeasEditor from "./templates/KeyIdeasEditor.svelte";
+	import EqEditor from "./templates/EqEditor.svelte";
+	import SlideHeader from "./components/SlideHeader.svelte";
 
-  import SlideHeader from "./components/SlideHeader.svelte";
-  export let deck;
+	export let deck;
+	export let collapsed = {};
+	export let currentSlideIndex;
 
-  $: slides = deck?.deck || [];
-  export let runningTime;
- export let collapsed = {};
+	$: slides = deck?.deck || [];
 
-export let currentSlideIndex;
-
-$: if (slides.length && (currentSlideIndex === undefined || currentSlideIndex === null || currentSlideIndex > slides.length - 1)) {
-  currentSlideIndex = slides.length - 1;
-}
-
-function selectSlide(i) {
-  currentSlideIndex = i;
-}
-
-function setStart(i) {
-
-	const rounded = Math.round(runningTime);
-
-	deck.deck[i].start = rounded;
-
-	if (i > 0) {
-
-		deck.deck[i - 1].end = rounded;
-
+	$: if (
+		slides.length &&
+		(currentSlideIndex === undefined ||
+			currentSlideIndex === null ||
+			currentSlideIndex > slides.length - 1)
+	) {
+		currentSlideIndex = slides.length - 1;
 	}
 
-	deck.deck = [...deck.deck];
+	const editors = {
+		titleAndSubtitle: TitleAndSubtitle,
+		titleAndPara: TitleAndParaEditor,
+		bulletList: BulletListEditor,
+		twoColumnText: TwoColumnTextEditor,
+		imageSlide: ImageSlideEditor,
+		fillImage: FillImageEditor,
+		imageWithTitle: ImageWithTitleEditor,
+		imageWithCaption: ImageWithCaptionEditor,
+		imageLeftBulletsRight: ImageLeftBulletsRightEditor,
+		imageRightBulletsLeft: ImageRightBulletsLeftEditor,
+		table: TableEditor,
+		barChart: BarChartEditor,
+		progressbar: ProgressbarEditor,
+		quoteSlide: QuoteEditor,
+		keyIdeasSlide: KeyIdeasEditor,
+		eq: EqEditor
+	};
 
-}
-function startChanged(i, value) {
-  deck.deck[i].start = Number(value);
+	function selectSlide(i) {
+		currentSlideIndex = i;
+	}
 
-  if (i > 0) {
-    deck.deck[i - 1].end = Number(value);
-  }
+	function toggleSlide(i) {
+		collapsed[i] = !collapsed[i];
+		collapsed = { ...collapsed };
+	}
 
-  deck.deck = [...deck.deck];
-}
-  function toggleSlide(i) {
+	function moveUp(i) {
+		if (i === 0) return;
+		const arr = deck.deck;
+		[arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+		deck.deck = [...arr];
+		if (currentSlideIndex === i) currentSlideIndex = i - 1;
+		else if (currentSlideIndex === i - 1) currentSlideIndex = i;
+	}
 
-    collapsed[i] = !collapsed[i];
-    collapsed = { ...collapsed };
+	function moveDown(i) {
+		const arr = deck.deck;
+		if (i === arr.length - 1) return;
+		[arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+		deck.deck = [...arr];
+		if (currentSlideIndex === i) currentSlideIndex = i + 1;
+		else if (currentSlideIndex === i + 1) currentSlideIndex = i;
+	}
 
-  }
+	function deleteSlide(i) {
+		const arr = deck.deck;
+		arr.splice(i, 1);
+		deck.deck = [...arr];
 
-  function moveUp(i) {
+		const map = {};
+		arr.forEach((_, idx) => {
+			map[idx] = collapsed[idx] || false;
+		});
+		collapsed = map;
 
-    if (i === 0) return;
+		if (currentSlideIndex > i) currentSlideIndex -= 1;
+		currentSlideIndex = Math.min(currentSlideIndex, Math.max(arr.length - 1, 0));
+	}
 
-    const arr = deck.deck;
+	const idMap = new WeakMap();
+	let idCounter = 0;
 
-    [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
-
-    deck.deck = [...arr];
-
-    if (currentSlideIndex === i) currentSlideIndex = i - 1;
-    else if (currentSlideIndex === i - 1) currentSlideIndex = i;
-
-  }
-
-   function moveDown(i) {
-
-    const arr = deck.deck;
-
-    if (i === arr.length - 1) return;
-
-    [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
-
-    deck.deck = [...arr];
-
-    if (currentSlideIndex === i) currentSlideIndex = i + 1;
-    else if (currentSlideIndex === i + 1) currentSlideIndex = i;
-
-  }
-
-  function deleteSlide(i) {
-
-    const arr = deck.deck;
-
-    arr.splice(i, 1);
-
-    deck.deck = [...arr];
-
-    const map = {};
-
-    arr.forEach((_, idx) => {
-
-      map[idx] = collapsed[idx] || false;
-
-    });
-
-    collapsed = map;
-
-    if (currentSlideIndex > i) currentSlideIndex -= 1;
-    currentSlideIndex = Math.min(currentSlideIndex, Math.max(arr.length - 1, 0));
-
-  }
-const idMap = new WeakMap();
-let idCounter = 0;
-
-function getSlideId(slide) {
-  if (!idMap.has(slide)) {
-    idMap.set(slide, `slide-${idCounter++}`);
-  }
-  return idMap.get(slide);
-}
-  
+	function getSlideId(slide) {
+		if (!idMap.has(slide)) idMap.set(slide, `slide-${idCounter++}`);
+		return idMap.get(slide);
+	}
 </script>
 
+{#if slides.length === 0}
+	<p class="empty">No slides</p>
+{/if}
 
+{#each slides as slide, i (getSlideId(slide))}
+	<div
+		class="slide"
+		class:selected={i === currentSlideIndex}
+		on:click|capture={() => selectSlide(i)}
+	>
+		<SlideHeader
+			{slide}
+			index={i}
+			collapsed={collapsed[i]}
+			onToggle={() => toggleSlide(i)}
+			onMoveUp={() => moveUp(i)}
+			onMoveDown={() => moveDown(i)}
+			onDelete={() => deleteSlide(i)}
+		/>
 
-  {#if slides.length === 0}
-    <p class="empty">No slides</p>
-  {/if}
-
-  {#each slides as slide, i (getSlideId(slide))}
-
-    <div
-      class="slide"
-      class:selected={i === currentSlideIndex}
-      on:click|capture={() => selectSlide(i)}
-    >
-
-      <!-- Header -->
-
-<SlideHeader
-
-	slide={slide}
-	index={i}
-	collapsed={collapsed[i]}
-
-	isLast={i === slides.length - 1}
-
-	onToggle={() => toggleSlide(i)}
-	onMoveUp={() => moveUp(i)}
-	onMoveDown={() => moveDown(i)}
-	onDelete={() => deleteSlide(i)}
-
-	onSetStart={() => setStart(i)}
-  onStartChange={(value) => startChanged(i, value)}
-	onSetEnd={() => slide.end = Math.round(runningTime)}
-
-/>
-
-      <!-- Body -->
-
-      {#if !collapsed[i]}
-
-        <div class="slide-body">
-          {#if slide.type === "titleAndSubtitle"}
-
-            <TitleAndSubtitle {slide} {runningTime} />
-
-          {:else if slide.type === "titleAndPara"}
-
-            <TitleAndParaEditor {slide} {runningTime} />
-
-          {:else if slide.type === "bulletList"}
-
-            <BulletListEditor {slide} {runningTime} />
-
-          {:else if slide.type === "twoColumnText"}
-
-            <TwoColumnTextEditor {slide} {runningTime} />
-
-          {:else if slide.type === "imageSlide"}
-
-            <ImageSlideEditor {slide} {runningTime} />
-
-          {:else if slide.type === "fillImage"}
-
-            <FillImageEditor {slide} {runningTime} />
-
-          {:else if slide.type === "imageWithTitle"}
-
-            <ImageWithTitleEditor {slide} {runningTime} />
-
-          {:else if slide.type === "imageWithCaption"}
-
-            <ImageWithCaptionEditor {slide} {runningTime} />
-
-          {:else if slide.type === "imageLeftBulletsRight"}
-
-            <ImageLeftBulletsRightEditor {slide} {runningTime} />
-
-          {:else if slide.type === "imageRightBulletsLeft"}
-
-            <ImageRightBulletsLeftEditor {slide} {runningTime} />
-
-          {:else if slide.type === "table"}
-
-            <TableEditor {slide} {runningTime} />
-
-          {:else if slide.type === "barChart"}
-
-            <BarChartEditor {slide} {runningTime} />
-
-          {:else if slide.type === "progressbar"}
-
-            <ProgressbarEditor {slide} {runningTime} />
-
-          {:else if slide.type === "quoteSlide"}
-
-            <QuoteEditor {slide} {runningTime} />
-
-          {:else if slide.type === "keyIdeasSlide"}
-
-            <KeyIdeasEditor {slide} {runningTime} />
-
-          {:else if slide.type === "eq"}
-
-            <EqEditor {slide} {runningTime} />
-
-          {:else}
-
-            <div class="fallback">
-              Editor not implemented yet: {slide.type}
-            </div>
-
-          {/if}
-
-
-        </div>
-
-      {/if}
-
-    </div>
-
-  {/each}
+		{#if !collapsed[i]}
+			<div class="slide-body">
+				{#if editors[slide.type]}
+					<svelte:component this={editors[slide.type]} {slide} />
+				{:else}
+					<div class="fallback">Editor not implemented yet: {slide.type}</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
+{/each}
 
 <style>
-
 	.empty {
 		color: var(--theme-text);
 		opacity: 0.5;
@@ -266,6 +150,11 @@ function getSlideId(slide) {
 		background: color-mix(in srgb, var(--theme-panel) 85%, black);
 	}
 
+	.slide.selected {
+		border-color: #ef4444;
+		border-width: 2px;
+	}
+
 	.slide-body {
 		padding: 12px;
 	}
@@ -274,9 +163,5 @@ function getSlideId(slide) {
 		color: var(--theme-text);
 		opacity: 0.5;
 		font-size: 13px;
-	}
-  	.slide.selected {
-		border-color: #ef4444;
-		border-width: 2px;
 	}
 </style>

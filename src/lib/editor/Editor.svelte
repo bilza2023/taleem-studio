@@ -1,163 +1,123 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem/src/lib/editor/Editor.svelte
-    import Nav from "./Nav.svelte";
-    import AudioPlayer from "./AudioPlayer.svelte";
+	// src/lib/editor/Editor.svelte
+	// Content only: add / edit / sort / delete slides, background, audio file name.
+	// No audio player, no timing controls — timings are the timings page's job.
+	import Nav from "./Nav.svelte";
 	import Slides from "./slides/Slides.svelte";
-    import { finalizeDeckV2 } from "./js/finalizeDeckV2.js";
-    import { slideFactory } from "./js/slideFactory.js";
-    import { assignMockTimings } from "./js/assignMockTimings.js";
 	import Settings from "./Settings.svelte";
+	import { slideFactory } from "./js/slideFactory.js";
+	import { patchDeckV2 } from "./js/patchDeckV2.js";
+	import { validateDeckV2 } from "$lib/taleem-specs/validation/validateDeckV2.js";
 
-    export let deck = { deck: [] };
-    export let onExport;
+	export let deck = { deck: [] };
+	export let onExport;
 
-    let runningTime = 0;
-    let showTools = true;
+	let collapsed = {};
+	let currentSlideIndex;
+	let allCollapsed = false;
 
-    let collapsed = {};
-    let currentSlideIndex;
-    let allCollapsed = false;
+	function toggleCollapseAll() {
+		allCollapsed = !allCollapsed;
+		collapsed = Object.fromEntries(deck.deck.map((_, i) => [i, allCollapsed]));
+	}
 
-function toggleCollapseAll() {
-	allCollapsed = !allCollapsed;
-	collapsed = Object.fromEntries(deck.deck.map((_, i) => [i, allCollapsed]));
-}
-    function addSlide(type) {
-        const fn = slideFactory[type];
-        if (!fn) return;
+	function addSlide(type) {
+		const fn = slideFactory[type];
+		if (!fn) return;
 
-        const insertAt = deck.deck.length ? currentSlideIndex + 1 : 0;
-        const prev = deck.deck[insertAt - 1];
+		const insertAt = deck.deck.length ? currentSlideIndex + 1 : 0;
+		const prev = deck.deck[insertAt - 1];
 
-        const newSlide = {
-            ...fn(),
-            start: prev ? prev.end : 0,
-            end: prev ? prev.end : 0
-        };
+		// Placeholder times — the timings page sets real ones
+		const newSlide = {
+			...fn(),
+			start: prev ? prev.end : 0,
+			end: prev ? prev.end : 0
+		};
 
-        const arr = [...deck.deck];
-        arr.splice(insertAt, 0, newSlide);
-        deck.deck = arr;
+		const arr = [...deck.deck];
+		arr.splice(insertAt, 0, newSlide);
+		deck.deck = arr;
 
-        const map = {};
-        arr.forEach((_, idx) => {
-            if (idx < insertAt) map[idx] = collapsed[idx] || false;
-            else if (idx === insertAt) map[idx] = false;
-            else map[idx] = collapsed[idx - 1] || false;
-        });
-        collapsed = map;
+		const map = {};
+		arr.forEach((_, idx) => {
+			if (idx < insertAt) map[idx] = collapsed[idx] || false;
+			else if (idx === insertAt) map[idx] = false;
+			else map[idx] = collapsed[idx - 1] || false;
+		});
+		collapsed = map;
 
-        currentSlideIndex = insertAt;
-    }
+		currentSlideIndex = insertAt;
+	}
 
-    function preparePresentation() {
-        const result = finalizeDeckV2(deck);
+	// Content check only (schema). Timings are not checked here.
+	function preparePresentation() {
+		const patched = patchDeckV2(deck);
+		const result = validateDeckV2(patched);
 
-        if (!result.ok) {
-            console.error(result);
+		if (!result.ok) {
+			console.error(result);
+			const error = result.errors?.[0];
+			alert(
+				"SCHEMA\n\n" +
+					(error?.path ? `${error.path}\n` : "") +
+					(error?.message ?? "Unknown error")
+			);
+			return null;
+		}
 
-            const error = result.errors?.[0];
+		return patched;
+	}
 
-            alert(
-                `${result.stage.toUpperCase()}\n\n` +
-                (error?.path ? `${error.path}\n` : "") +
-                (error?.message ?? "Unknown error")
-            );
+	function handleDownload() {
+		const presentation = preparePresentation();
+		if (!presentation) return;
 
-            return null;
-        }
+		const blob = new Blob([JSON.stringify(presentation, null, 2)], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
 
-        return result.presentation;
-    }
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = "deck.json";
+		a.click();
 
-    function handleDownload() {
-        const presentation = preparePresentation();
-        if (!presentation) return;
+		setTimeout(() => URL.revokeObjectURL(url), 1000);
+	}
 
-        const blob = new Blob(
-            [JSON.stringify(presentation, null, 2)],
-            { type: "application/json" }
-        );
+	async function handleSave() {
+		const presentation = preparePresentation();
+		if (!presentation) return;
 
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "deck.json";
-        a.click();
-
-        URL.revokeObjectURL(url);
-    }
-
-    async function handleSave() {
-        const presentation = preparePresentation();
-        if (!presentation) return;
-
-        try {
-            await onExport(presentation);
-            console.log("final presentation:", presentation);
-            alert("Presentation saved");
-        }
-        catch (err) {
-            console.error(err);
-            alert(err.message);
-        }
-    }
-
-    function handleMockTiming() {
-        try {
-            deck = assignMockTimings(deck);
-            alert("Mock timings applied");
-        }
-        catch (err) {
-            console.error(err);
-            alert("Failed to apply mock timings");
-        }
-    }
+		try {
+			await onExport(presentation);
+			alert("Presentation saved");
+		} catch (err) {
+			console.error(err);
+			alert(err.message);
+		}
+	}
 </script>
 
 <div class="editor">
+	<Nav
+		add={addSlide}
+		onDownload={handleDownload}
+		onSave={handleSave}
+		onCollapseAll={toggleCollapseAll}
+	/>
 
-    <!-- NAVIGATION -->
-    <Nav
-        add={addSlide}
-        onDownload={handleDownload}
-        onSave={handleSave}
-        onMockTiming={handleMockTiming}
-        onToggleTools={() => showTools = !showTools}
-       onCollapseAll={toggleCollapseAll}
-    />
-
-    {#if showTools}
-
-        <!-- SETTINGS -->
-        <div class="settings-bar">
-
-           <Settings
+	<!-- Background + audio file name -->
+	<div class="settings-bar">
+		<Settings
 			bind:background={deck.background}
 			audio={deck.audio}
-			onUse={(filename) => deck.audio = filename}
+			onUse={(filename) => (deck.audio = filename)}
 		/>
+	</div>
 
-        </div>
-
-        <!-- AUDIO PLAYBACK -->
-        <div class="audio-bar">
-
-            <AudioPlayer
-                audio={deck.audio}
-                bind:runningTime
-            />
-
-        </div>
-
-    {/if}
-
-    <!-- SLIDES -->
-  <!-- <Slides {deck} {runningTime} bind:collapsed /> -->
-    <Slides {deck} {runningTime} bind:collapsed bind:currentSlideIndex />
-
+	<Slides {deck} bind:collapsed bind:currentSlideIndex />
 </div>
+
 <style>
 	.editor {
 		--editor-danger: #ef4444;
@@ -182,15 +142,5 @@ function toggleCollapseAll() {
 		width: 100%;
 		gap: 10px;
 		flex-wrap: wrap;
-	}
-
-	.audio-bar {
-		width: 100%;
-	}
-
-	@media (max-width: 900px) {
-		.settings-bar {
-			flex-wrap: wrap;
-		}
 	}
 </style>

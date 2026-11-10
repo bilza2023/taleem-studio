@@ -114,7 +114,12 @@
 
 	<div class="hint" class:ok={saveStatus === "saved"} class:bad={saveStatus === "error"}>
 		{#if status === "recording"}
-			↓ / Enter = mark next · ↑ = undo{sync ? " (audio jumps back)" : ""} · click a marked row = go back
+						{#if marked >= total}
+				Last row marked — ↓ / Enter again = Stop
+			{:else}
+				↓ / Enter = mark next · ↑ = undo{sync ? " (audio jumps back)" : ""} · click a marked row = go back
+			{/if}
+			
 		{:else if status === "paused"}
 			Paused — keys off
 		{:else if note}

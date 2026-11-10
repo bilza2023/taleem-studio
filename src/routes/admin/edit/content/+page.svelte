@@ -185,10 +185,10 @@ async function downloadBundle() {
 {#if form.type === "PLAYER"}
 	<a
 		class="editor-link"
-		href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}
-	>
-		Slide Editor 🚧  
-	</a>
+		href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}>Slide Editor 🚧</a>
+		
+	<a class="editor-link" href={`${config.basePath}/admin/timings?slug=${encodeURIComponent(form.slug)}`} >Timings 🚦</a>
+
 	<a
 		class="editor-link"
 		href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(form.slug)}&role=PLAYER`}

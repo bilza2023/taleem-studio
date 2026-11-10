@@ -1,175 +1,74 @@
+
 <!-- src/lib/editor/slides/components/EditableField.svelte -->
-
+<!-- One text field. Shows its time read-only when it has one. -->
 <script>
-
 	export let label = "";
-
 	export let object;
 	export let property = "content";
-
 	export let multiline = true;
 
-	export let runningTime = 0;
-
-	function setShowAt() {
-		object.showAt = runningTime;
-	}
+	// Accepted but unused — templates still pass it; removed with the templates cleanup
+	export let runningTime = undefined;
 
 	function updateText(e) {
 		object[property] = e.target.value;
 	}
-
-	function updateShowAt(e) {
-		object.showAt = Number(e.target.value);
-	}
-
 </script>
 
 <div class="field-editor">
-
 	<div class="toolbar">
-
 		<strong>{label}</strong>
-
-		<div class="showat">
-
-			<span>Show</span>
-
-			<input
-				type="number"
-				step="0.5"
-				min="0"
-				value={object.showAt ?? 0}
-				on:input={updateShowAt}
-			/>
-
-			<button
-				type="button"
-				on:click={setShowAt}
-				title="Use Current Time"
-			>
-				⏱
-			</button>
-
-		</div>
-
+		{#if object.showAt > 0}
+			<span class="time">{Number(object.showAt).toFixed(1)}s</span>
+		{/if}
 	</div>
 
 	{#if multiline}
-
-		<textarea
-			rows="3"
-			value={object[property]}
-			on:input={updateText}
-		/>
-
+		<textarea rows="3" value={object[property]} on:input={updateText} />
 	{:else}
-
-		<input
-			type="text"
-			value={object[property]}
-			on:input={updateText}
-		/>
-
+		<input type="text" value={object[property]} on:input={updateText} />
 	{/if}
-
 </div>
+
 <style>
+	.field-editor {
+		margin-bottom: 14px;
+	}
 
-.field-editor{
+	.toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 6px;
+		color: var(--theme-text);
+	}
 
-	margin-bottom:14px;
+	.time {
+		font-family: ui-monospace, monospace;
+		font-size: 11px;
+		opacity: 0.5;
+	}
 
-}
+	textarea,
+	input[type="text"] {
+		width: 100%;
+		font: inherit;
+		padding: 8px 10px;
+		box-sizing: border-box;
+		background: color-mix(in srgb, var(--theme-panel) 90%, black);
+		border: 1px solid var(--theme-border);
+		border-radius: 5px;
+		color: var(--theme-text);
+	}
 
-.toolbar{
+	textarea:focus,
+	input[type="text"]:focus {
+		outline: none;
+		border-color: var(--theme-accent);
+	}
 
-	display:flex;
-	align-items:center;
-	justify-content:space-between;
-
-	margin-bottom:6px;
-	color: var(--theme-text);
-
-}
-
-.showat{
-
-	display:flex;
-	align-items:center;
-	gap:4px;
-
-	font-size:12px;
-	color: var(--theme-text);
-	opacity: 0.8;
-
-}
-
-.showat input{
-
-	width:100px;
-    text-align: center;
-	min-width:76px;
-
-	padding:2px 4px;
-
-	text-align:right;
-
-	background: var(--theme-panel);
-	border:1px solid var(--theme-border);
-	border-radius:3px;
-	color: var(--theme-text);
-
-}
-
-textarea,
-input[type="text"]{
-
-	width:100%;
-	font:inherit;
-
-	padding:8px 10px;
-	box-sizing:border-box;
-
-	background: color-mix(in srgb, var(--theme-panel) 90%, black);
-	border:1px solid var(--theme-border);
-	border-radius:5px;
-	color: var(--theme-text);
-
-}
-
-textarea:focus,
-input[type="text"]:focus,
-.showat input:focus{
-
-	outline:none;
-	border-color: var(--theme-accent);
-
-}
-
-textarea{
-
-	min-height:70px;
-	resize:vertical;
-
-}
-
-button{
-
-	padding:2px 6px;
-	cursor:pointer;
-
-	background: color-mix(in srgb, var(--theme-panel) 85%, white);
-	border:1px solid var(--theme-border);
-	border-radius:3px;
-	color: var(--theme-text);
-
-}
-
-button:hover{
-
-	background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
-
-}
-
+	textarea {
+		min-height: 70px;
+		resize: vertical;
+	}
 </style>

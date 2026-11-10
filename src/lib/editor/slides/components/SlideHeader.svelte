@@ -1,239 +1,100 @@
-<!--/home/bilal-tariq/00--TALEEM/taleem.help/src/lib/editor/slides/components/SlideHeader.svelte-->
-
+<!-- src/lib/editor/slides/components/SlideHeader.svelte -->
+<!-- Slide title row: collapse, number, type, read-only times, move/delete. -->
 <script>
-
 	export let slide;
 	export let index;
 	export let collapsed = false;
-
-	export let isLast = false;
 
 	export let onToggle = () => {};
 	export let onMoveUp = () => {};
 	export let onMoveDown = () => {};
 	export let onDelete = () => {};
 
-	export let onSetStart = () => {};
-	export let onStartChange = () => {};
-	export let onSetEnd = () => {};
+	// Show times only when the slide has real ones (end after start)
+	$: timed =
+		typeof slide.start === "number" &&
+		typeof slide.end === "number" &&
+		slide.end > slide.start;
 
+	const fmt = (t) => Number(t).toFixed(1);
 </script>
 
 <div class="slide-header">
-
 	<div class="left">
-
 		<button class="icon" on:click={onToggle}>
 			{collapsed ? "▶" : "▼"}
 		</button>
 
-		<strong>
-			#{index + 1}
-		</strong>
+		<strong>#{index + 1}</strong>
 
-		<span class="type">
-			{slide.type}
-		</span>
+		<span class="type">{slide.type}</span>
 
-		<!-- START -->
-
-		<label class="timing">
-
-			<span>Start</span>
-
-		<input
-	type="number"
-	step="1"
-	min="0"
-	value={Math.round(slide.start ?? 0)}
-	on:change={(e) => { slide.start = Math.round(e.target.value); onStartChange(slide.start); }}
-	disabled={index === 0}
-/>
-		</label>
-
-<button
-class="icon"
-on:click={onSetStart}
-disabled={index === 0}
-title="Set Start From Audio"
->
-⏱
-</button>
-
-		<!-- END -->
-
-		{#if isLast}
-
-			<label class="timing">
-
-				<span>End</span>
-
-			<input
-	type="number"
-	step="1"
-	min="0"
-	value={Math.round(slide.end ?? 0)}
-	on:change={(e) => { slide.end = Math.round(e.target.value); }}
-/>
-
-			</label>
-
-			<button
-				class="icon"
-				on:click={onSetEnd}
-				title="Set End From Audio"
-			>
-				⏱
-			</button>
-
-		{:else}
-
-			<div class="end">
-
-				End
-
-				<strong>
-					{Math.round(slide.end ?? 0)}
-				</strong>
-
-			</div>
-
+		{#if timed}
+			<span class="time">{fmt(slide.start)} – {fmt(slide.end)}</span>
 		{/if}
-
 	</div>
 
 	<div class="right">
-
-		<button class="icon" on:click={onMoveUp}>
-			⬆
-		</button>
-
-		<button class="icon" on:click={onMoveDown}>
-			⬇
-		</button>
-
-		<button class="icon" on:click={onDelete}>
-			🗑
-		</button>
-
+		<button class="icon" on:click={onMoveUp} title="Move up">⬆</button>
+		<button class="icon" on:click={onMoveDown} title="Move down">⬇</button>
+		<button class="icon" on:click={onDelete} title="Delete slide">🗑</button>
 	</div>
-
 </div>
+
 <style>
+	.slide-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 8px 10px;
+		background: color-mix(
+			in srgb,
+			var(--theme-panel) 80%,
+			color-mix(in srgb, #f59e0b 45%, #22c55e)
+		);
+		border-bottom: 1px solid var(--theme-border);
+		color: var(--theme-text);
+	}
 
-.slide-header{
+	.left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
 
-	display:flex;
-	align-items:center;
-	justify-content:space-between;
+	.right {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
 
-	padding:8px 10px;
+	.type {
+		min-width: 140px;
+		color: var(--theme-accent);
+	}
 
-	background: color-mix(in srgb, var(--theme-panel) 80%, color-mix(in srgb, #f59e0b 45%, #22c55e));
-	border-bottom:1px solid var(--theme-border);
-	color: var(--theme-text);
+	.time {
+		font-family: ui-monospace, monospace;
+		font-size: 11px;
+		opacity: 0.6;
+	}
 
-}
+	.icon {
+		width: 26px;
+		height: 26px;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		border: 1px solid var(--theme-border);
+		border-radius: 4px;
+		background: color-mix(in srgb, var(--theme-panel) 85%, white);
+		color: var(--theme-text);
+		cursor: pointer;
+	}
 
-.left{
-
-	display:flex;
-	align-items:center;
-	gap:8px;
-
-}
-
-.right{
-
-	display:flex;
-	align-items:center;
-	gap:4px;
-
-}
-
-.type{
-
-	min-width:140px;
-	color: var(--theme-accent);
-
-}
-
-.timing{
-
-	display:flex;
-	align-items:center;
-	gap:4px;
-
-	font-size:11px;
-	color: var(--theme-text);
-
-}
-
-.timing input{
-
-	width:64px;
-	height:24px;
-
-	padding:2px 4px;
-	margin:0;
-
-	font-size:12px;
-
-	background: var(--theme-panel);
-	border:1px solid var(--theme-border);
-	border-radius:3px;
-	color: var(--theme-text);
-
-}
-
-.end{
-
-	display:flex;
-	align-items:center;
-	gap:4px;
-
-	font-size:11px;
-	color: var(--theme-text);
-	opacity: 0.6;
-
-	min-width:80px;
-
-}
-
-.icon{
-
-	width:26px;
-	height:26px;
-
-	padding:0;
-
-	display:flex;
-	align-items:center;
-	justify-content:center;
-
-	font-size:12px;
-
-	border:1px solid var(--theme-border);
-	border-radius:4px;
-
-	background: color-mix(in srgb, var(--theme-panel) 85%, white);
-	color: var(--theme-text);
-
-	cursor:pointer;
-
-}
-
-.icon:hover:not(:disabled){
-
-	background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
-
-}
-
-.icon:disabled{
-
-	opacity:.35;
-	cursor:default;
-
-}
-
+	.icon:hover {
+		background: color-mix(in srgb, var(--theme-border) 75%, var(--theme-accent));
+	}
 </style>

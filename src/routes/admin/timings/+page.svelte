@@ -275,7 +275,10 @@
 	}
 
 	function mark() {
-		if (cursor >= last) return;
+		if (cursor >= last) {
+			stop(); // last row already marked → the next press ends the recording
+			return;
+		}
 		marks = [...marks, Math.round(clock.now() * 1000) / 1000];
 		cursor += 1;
 	}
