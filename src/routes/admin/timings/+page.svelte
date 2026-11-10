@@ -51,17 +51,17 @@
 	const list = $derived(deck ? buildTapList(deck) : []);
 	const last = $derived(list.length - 1);
 
-	/* ───────────── Layout: list scrolls inside its own box ───────────── */
+	/* ───────────── Layout: page scroll; bars pinned under the admin header ───────────── */
 
-	let innerHeight = $state(0);
-	let bodyEl = $state(null);
-	let bodyTop = $state(0);
+	let stickyTop = $state(0);
 
-	$effect(() => {
-		if (bodyEl) bodyTop = bodyEl.getBoundingClientRect().top + window.scrollY;
+	onMount(() => {
+		// If the admin header stays on screen (fixed/sticky), pin our bars just below it
+		const header = [...document.querySelectorAll("header, nav")].find((el) =>
+			["fixed", "sticky"].includes(getComputedStyle(el).position)
+		);
+		stickyTop = header ? Math.round(header.getBoundingClientRect().bottom) : 0;
 	});
-
-	const bodyHeight = $derived(Math.max(300, innerHeight - bodyTop - 8));
 
 	/* ───────────── Mode & source ───────────── */
 
@@ -91,7 +91,7 @@
 	let canDownload = $state(false);
 	let saveStatus = $state(null); // null | saving | saved | error
 	let blob = null;
-	let audioSaved = false; // recorded audio downloaded at least once
+	let audioSaved = false; // recorded audio downloaded or published
 	let raf = 0;
 
 	const lastMark = $derived(marks.length ? marks[marks.length - 1] : null);
@@ -174,7 +174,7 @@
 			canDownload = true;
 		}
 
-		// Add timings to the deck (in memory — Save writes it)
+		// Add timings to the deck (in memory — Save / Publish writes it)
 		const res = mergeTimings(original, $state.snapshot(marks).slice(1), out.duration);
 		if (res.ok) {
 			merged = res.deck;
@@ -222,7 +222,6 @@
 		if (merged) saveFile(JSON.stringify(merged, null, 2), `${slug}.json`, "application/json");
 	}
 
-	// Timings only: body-only update, audio left exactly as it was
 	// Timings only: body-only update. audio is left exactly as it is in the deck.
 	async function save() {
 		if (!merged) return;
@@ -261,6 +260,47 @@
 		status = "idle";
 		saveStatus = "saved";
 		note = `Saved ✓${blob && !audioSaved ? " · audio not downloaded yet (⬇ Audio)" : ""}`;
+	}
+
+	// Publish = audio to server (→ .opus + Audio row), then save the deck with audio = <slug>.opus
+	async function publish() {
+		if (!merged || !blob) return;
+
+		saveStatus = "saving";
+		note = "Publishing audio…";
+
+		const form = new FormData();
+		form.append("slug", slug);
+		form.append("audio", blob, `${slug}.webm`);
+
+		const token = localStorage.getItem("taleem-admin-token");
+		let out;
+		try {
+			const res = await fetch(`${config.basePath}/admin/timings/publish`, {
+				method: "POST",
+				headers: token ? { Authorization: `Bearer ${token}` } : {},
+				body: form
+			});
+			out = await res.json().catch(() => ({}));
+			if (!res.ok) throw new Error(out.error ?? `HTTP ${res.status}`);
+		} catch (err) {
+			console.error(err);
+			saveStatus = "error";
+			note = `Audio not published — ${err?.message ?? err}`;
+			return;
+		}
+
+		// Audio file now exists → safe to point the deck at it
+		audioSaved = true;
+		merged = { ...merged, audio: out.audio };
+
+		await save();
+
+		if (saveStatus === "saved") {
+			note = `Published ✓ — ${out.audio} (${out.sizeMb} MB${out.created ? ", new Audio row" : ""}) · deck saved`;
+		} else {
+			note = `Audio published (${out.audio}), but the deck was not saved — ${note}`;
+		}
 	}
 
 	/* ───────────── Marking ───────────── */
@@ -334,7 +374,7 @@
 		cursor = down ? Math.min(cursor + 1, last) : Math.max(cursor - 1, 0);
 	}
 
-	// Ask before leaving: running, unsaved timings, or audio not downloaded
+	// Ask before leaving: running, unsaved timings, or audio not downloaded / published
 	function onBeforeUnload(e) {
 		if (status === "recording" || status === "paused" || merged || (blob && !audioSaved)) {
 			e.preventDefault();
@@ -347,88 +387,95 @@
 	});
 </script>
 
-<svelte:window bind:innerHeight onkeydown={onKey} onbeforeunload={onBeforeUnload} />
+<svelte:window onkeydown={onKey} onbeforeunload={onBeforeUnload} />
 
 <div class="page">
 	{#if message}
 		<p class="message">{message}</p>
 	{:else}
-		<div class="identity">
-			<div><strong>Slug:</strong> {item.slug}</div>
-			<div><strong>Course:</strong> {item.courseSlug}</div>
-			<div><strong>Group:</strong> {item.groupSlug}</div>
-			<a
-				class="back"
-				href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
-			>
-				Editor
-			</a>
-			<a
-				class="back"
-				href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(item.slug)}`}
-			>
-				Play
-			</a>
-		</div>
+		<!-- Pinned: identity bar + record bar -->
+		<div class="head" style={`top:${stickyTop}px`}>
+			<div class="identity">
+				<div><strong>Slug:</strong> {item.slug}</div>
+				<div><strong>Course:</strong> {item.courseSlug}</div>
+				<div><strong>Group:</strong> {item.groupSlug}</div>
+				<a
+					class="back"
+					href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
+				>
+					Editor
+				</a>
+				<a
+					class="back"
+					href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(item.slug)}`}
+				>
+					Play
+				</a>
+				<button class="back" disabled={!merged} onclick={downloadDeck}>⬇ Deck</button>
+				<button class="back save" disabled={!merged || saveStatus === "saving"} onclick={save}>💾 Save</button>
+				<button
+					class="back publish"
+					disabled={!merged || !blob || saveStatus === "saving"}
+					onclick={publish}
+				>
+					🚀 Publish
+				</button>
+			</div>
 
-		<div class="body" bind:this={bodyEl} style={`height:${bodyHeight}px`}>
-			<RecordBar
-				{mode}
-				{status}
-				{source}
-				deckAudio={original?.audio ?? null}
-				fileName={syncFile?.name ?? null}
-				{canStart}
-				{elapsed}
-				marked={marks.length}
-				total={list.length}
-				{lastMark}
-				{note}
-				{canDownload}
-				deckReady={!!merged}
-				{saveStatus}
-				onMode={setMode}
-				onSource={(s) => (source = s)}
-				onPickFile={(f) => (syncFile = f)}
-				onStart={start}
-				onPause={pause}
-				onResume={resume}
-				onStop={stop}
-				onReset={reset}
-				onDownload={download}
-				onDownloadDeck={downloadDeck}
-				onSave={save}
-			/>
-
-			<div class="scroll">
-				<TimingsList {deck} {list} {cursor} {marks} {onPick} />
+			<div class="body">
+				<RecordBar
+					{mode}
+					{status}
+					{source}
+					deckAudio={original?.audio ?? null}
+					fileName={syncFile?.name ?? null}
+					{canStart}
+					{elapsed}
+					marked={marks.length}
+					total={list.length}
+					{lastMark}
+					{note}
+					{canDownload}
+					{saveStatus}
+					onMode={setMode}
+					onSource={(s) => (source = s)}
+					onPickFile={(f) => (syncFile = f)}
+					onStart={start}
+					onPause={pause}
+					onResume={resume}
+					onStop={stop}
+					onReset={reset}
+					onDownload={download}
+				/>
 			</div>
 		</div>
+
+		<!-- Scrolls with the page -->
+		<div class="body">
+			<TimingsList {deck} {list} {cursor} {marks} {onPick} />
+		</div>
 	{/if}
-				<button class="back" disabled={!merged} onclick={downloadDeck}>⬇ Deck</button>
-			<button class="back save" disabled={!merged} onclick={save}>💾 Save</button>
 </div>
 
 <style>
-	.body {
-		max-width: 1000px;
-		margin: 0 auto;
-		padding: 0 1rem;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
-	}
-
-	.scroll {
-		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
-	}
-
 	.page {
 		width: 100%;
 		color: aliceblue;
 		font-family: system-ui, sans-serif;
+	}
+
+	.head {
+		position: sticky;
+		z-index: 40;
+		background: #0f1a33; /* opaque, so the list scrolls underneath it */
+		padding-bottom: 2px;
+	}
+
+	.body {
+		max-width: 1000px;
+		margin: 0 auto;
+		padding: 0 1rem;
+		box-sizing: border-box;
 	}
 
 	.identity {
@@ -466,6 +513,36 @@
 	.identity a.back:hover {
 		background: #145229;
 		transform: translateY(-1px);
+	}
+
+	.identity button.back {
+		width: auto;
+		margin: 0;
+		display: inline-flex;
+		align-items: center;
+		padding: 6px 14px;
+		border-radius: 6px;
+		border: 1px solid #3a5a4a;
+		background: #0d3d1c;
+		color: #5fa8ff;
+		font-size: 0.85rem;
+		font-weight: 600;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.identity button.save {
+		color: #86efac;
+	}
+
+	.identity button.publish {
+		color: #fbbf24;
+		border-color: #b45309;
+	}
+
+	.identity button.back:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 
 	.message {
