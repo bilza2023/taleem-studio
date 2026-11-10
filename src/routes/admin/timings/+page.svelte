@@ -1,17 +1,19 @@
 <!-- src/routes/admin/timings/+page.svelte -->
+<!-- Coordinates: state, keys, recording/sync clock, merge. Everything else is in $lib/timings. -->
 <script>
 	import { onMount, onDestroy } from "svelte";
 	import { page } from "$app/state";
-	import { send } from "$lib/send";
-	import { config } from "$lib/config.js";
-	import { patchDeckV2 } from "$lib/editor/js/patchDeckV2.js";
-	import { finalizeDeckV2 } from "$lib/editor/js/finalizeDeckV2.js";
 	import { buildTapList } from "$lib/timings/buildTapList.js";
 	import { mergeTimings } from "$lib/timings/mergeTimings.js";
 	import { createRecorder } from "$lib/timings/recorder.js";
 	import { createAudioClock } from "$lib/timings/audioClock.js";
-	import TimingsList from "$lib/timings/TimingsList.svelte";
+	import { loadDeck } from "$lib/timings/loadDeck.js";
+	import { saveDeck } from "$lib/timings/saveDeck.js";
+	import { publishAudio } from "$lib/timings/publishAudio.js";
+	import { downloadFile } from "$lib/timings/downloadFile.js";
+	import TimingsHeader from "$lib/timings/TimingsHeader.svelte";
 	import RecordBar from "$lib/timings/RecordBar.svelte";
+	import TimingsList from "$lib/timings/TimingsList.svelte";
 
 	const AUDIO_BASE = "/content/audio/";
 	const slug = page.url.searchParams.get("slug");
@@ -26,20 +28,11 @@
 
 	onMount(async () => {
 		try {
-			if (!slug) throw new Error("No slug in URL (?slug=...)");
-
-			const data = await send("adminLibrary", "get", { slug });
-			if (!data) throw new Error(`"${slug}" not found`);
-			if (data.type !== "PLAYER") throw new Error(`"${slug}" is a ${data.type}, not a Player.`);
-			if (!data.body?.trim()) throw new Error(`"${slug}" has no deck yet — build it in the Editor first.`);
-
-			const patched = patchDeckV2(JSON.parse(data.body));
-			if (!patched.deck.length) throw new Error(`"${slug}" has no slides.`);
-
-			item = data;
-			original = patched;
-			deck = patched;
-			if (!patched.audio) source = "file";
+			const loaded = await loadDeck(slug);
+			item = loaded.item;
+			original = loaded.deck;
+			deck = loaded.deck;
+			if (!loaded.deck.audio) source = "file";
 			message = "";
 		} catch (error) {
 			console.error(error);
@@ -56,7 +49,6 @@
 	let stickyTop = $state(0);
 
 	onMount(() => {
-		// If the admin header stays on screen (fixed/sticky), pin our bars just below it
 		const header = [...document.querySelectorAll("header, nav")].find((el) =>
 			["fixed", "sticky"].includes(getComputedStyle(el).position)
 		);
@@ -90,11 +82,12 @@
 	let note = $state("");
 	let canDownload = $state(false);
 	let saveStatus = $state(null); // null | saving | saved | error
-	let blob = null;
+	let blob = $state.raw(null);
 	let audioSaved = false; // recorded audio downloaded or published
 	let raf = 0;
 
 	const lastMark = $derived(marks.length ? marks[marks.length - 1] : null);
+	const busy = $derived(saveStatus === "saving");
 
 	function tick() {
 		elapsed = clock?.now() ?? 0;
@@ -204,55 +197,36 @@
 
 	/* ───────────── Output (only on button click) ───────────── */
 
-	function saveFile(data, name, type) {
-		const a = document.createElement("a");
-		a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type }));
-		a.download = name;
-		a.click();
-		setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-	}
-
-	function download() {
+	function downloadAudio() {
 		if (!blob) return;
-		saveFile(blob, `${slug}.webm`);
+		downloadFile(blob, `${slug}.webm`);
 		audioSaved = true;
 	}
 
 	function downloadDeck() {
-		if (merged) saveFile(JSON.stringify(merged, null, 2), `${slug}.json`, "application/json");
+		if (merged) downloadFile(JSON.stringify(merged, null, 2), `${slug}.json`, "application/json");
 	}
 
-	// Timings only: body-only update. audio is left exactly as it is in the deck.
+	// Timings only. Returns true when saved.
 	async function save() {
-		if (!merged) return;
-
-		// Same gate as the Editor
-		const r = finalizeDeckV2(merged);
-		if (!r.ok) {
-			const err = r.errors?.[0];
-			saveStatus = "error";
-			note = `Not saved — ${r.stage}: ${err?.path ? `${err.path} — ` : ""}${err?.message ?? "invalid deck"}`;
-			return;
-		}
+		if (!merged) return false;
 
 		saveStatus = "saving";
 		note = "Saving…";
 
+		let saved;
 		try {
-			await send("adminLibrary", "update", {
-				slug,
-				data: { body: JSON.stringify(r.presentation) }
-			});
+			saved = await saveDeck(slug, merged);
 		} catch (err) {
 			console.error(err);
 			saveStatus = "error";
 			note = `Not saved — ${err?.message ?? err}`;
-			return;
+			return false;
 		}
 
 		// Reload: the saved deck becomes the new original (grey times = saved times)
-		original = r.presentation;
-		deck = r.presentation;
+		original = saved;
+		deck = saved;
 		merged = null;
 		marks = [];
 		cursor = 0;
@@ -260,29 +234,19 @@
 		status = "idle";
 		saveStatus = "saved";
 		note = `Saved ✓${blob && !audioSaved ? " · audio not downloaded yet (⬇ Audio)" : ""}`;
+		return true;
 	}
 
-	// Publish = audio to server (→ .opus + Audio row), then save the deck with audio = <slug>.opus
+	// Audio to server first; only then save the deck with audio = <slug>.opus
 	async function publish() {
 		if (!merged || !blob) return;
 
 		saveStatus = "saving";
 		note = "Publishing audio…";
 
-		const form = new FormData();
-		form.append("slug", slug);
-		form.append("audio", blob, `${slug}.webm`);
-
-		const token = localStorage.getItem("taleem-admin-token");
 		let out;
 		try {
-			const res = await fetch(`${config.basePath}/admin/timings/publish`, {
-				method: "POST",
-				headers: token ? { Authorization: `Bearer ${token}` } : {},
-				body: form
-			});
-			out = await res.json().catch(() => ({}));
-			if (!res.ok) throw new Error(out.error ?? `HTTP ${res.status}`);
+			out = await publishAudio(slug, blob);
 		} catch (err) {
 			console.error(err);
 			saveStatus = "error";
@@ -290,13 +254,10 @@
 			return;
 		}
 
-		// Audio file now exists → safe to point the deck at it
 		audioSaved = true;
 		merged = { ...merged, audio: out.audio };
 
-		await save();
-
-		if (saveStatus === "saved") {
+		if (await save()) {
 			note = `Published ✓ — ${out.audio} (${out.sizeMb} MB${out.created ? ", new Audio row" : ""}) · deck saved`;
 		} else {
 			note = `Audio published (${out.audio}), but the deck was not saved — ${note}`;
@@ -395,32 +356,15 @@
 	{:else}
 		<!-- Pinned: identity bar + record bar -->
 		<div class="head" style={`top:${stickyTop}px`}>
-			<div class="identity">
-				<div><strong>Slug:</strong> {item.slug}</div>
-				<div><strong>Course:</strong> {item.courseSlug}</div>
-				<div><strong>Group:</strong> {item.groupSlug}</div>
-				<a
-					class="back"
-					href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(item.courseSlug)}&group=${encodeURIComponent(item.groupSlug)}&slug=${encodeURIComponent(item.slug)}`}
-				>
-					Editor
-				</a>
-				<a
-					class="back"
-					href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(item.slug)}`}
-				>
-					Play
-				</a>
-				<button class="back" disabled={!merged} onclick={downloadDeck}>⬇ Deck</button>
-				<button class="back save" disabled={!merged || saveStatus === "saving"} onclick={save}>💾 Save</button>
-				<button
-					class="back publish"
-					disabled={!merged || !blob || saveStatus === "saving"}
-					onclick={publish}
-				>
-					🚀 Publish
-				</button>
-			</div>
+			<TimingsHeader
+				{item}
+				canDeck={!!merged}
+				canSave={!!merged && !busy}
+				canPublish={!!merged && !!blob && !busy}
+				onDownloadDeck={downloadDeck}
+				onSave={save}
+				onPublish={publish}
+			/>
 
 			<div class="body">
 				<RecordBar
@@ -445,7 +389,7 @@
 					onResume={resume}
 					onStop={stop}
 					onReset={reset}
-					onDownload={download}
+					onDownload={downloadAudio}
 				/>
 			</div>
 		</div>
@@ -476,73 +420,6 @@
 		margin: 0 auto;
 		padding: 0 1rem;
 		box-sizing: border-box;
-	}
-
-	.identity {
-		margin-bottom: 10px;
-		padding: 12px;
-		background: #01310d;
-		border: 1px solid #333;
-		border-radius: 6px;
-		display: flex;
-		align-items: center;
-		gap: 20px;
-		font-size: 0.9rem;
-	}
-
-	.identity a.back {
-		margin-left: 0;
-		display: inline-flex;
-		align-items: center;
-		padding: 6px 14px;
-		border-radius: 6px;
-		border: 1px solid #3a5a4a;
-		background: #0d3d1c;
-		color: #5fa8ff;
-		text-decoration: none;
-		font-size: 0.85rem;
-		font-weight: 600;
-		line-height: 1;
-		transition: background 0.15s ease, transform 0.1s ease;
-	}
-
-	.identity a.back:first-of-type {
-		margin-left: auto;
-	}
-
-	.identity a.back:hover {
-		background: #145229;
-		transform: translateY(-1px);
-	}
-
-	.identity button.back {
-		width: auto;
-		margin: 0;
-		display: inline-flex;
-		align-items: center;
-		padding: 6px 14px;
-		border-radius: 6px;
-		border: 1px solid #3a5a4a;
-		background: #0d3d1c;
-		color: #5fa8ff;
-		font-size: 0.85rem;
-		font-weight: 600;
-		line-height: 1;
-		cursor: pointer;
-	}
-
-	.identity button.save {
-		color: #86efac;
-	}
-
-	.identity button.publish {
-		color: #fbbf24;
-		border-color: #b45309;
-	}
-
-	.identity button.back:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
 	}
 
 	.message {
