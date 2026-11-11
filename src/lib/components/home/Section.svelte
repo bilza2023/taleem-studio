@@ -8,7 +8,7 @@
 		{#if title}
 			<header class="section-head">
 				<h2>{title}</h2>
-				{#if subtitle}<p>{subtitle}</p>{/if}
+				<!-- {#if subtitle}<p>{subtitle}</p>{/if} -->
 			</header>
 		{/if}
 

@@ -37,6 +37,8 @@
 		"@sveltejs/adapter-node": "^5.5.7",
 		"bcrypt": "^6.0.0",
 		"dotenv": "^17.4.2",
+		"embla-carousel-autoplay": "^8.6.0",
+		"embla-carousel-svelte": "^8.6.0",
 		"howler": "^2.2.4",
 		"jsonwebtoken": "^9.0.3",
 		"katex": "^0.16.47",
