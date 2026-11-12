@@ -8,7 +8,7 @@
 	import { send } from "$lib/send";
 	import DemosSection from "$lib/components/home/DemosSection.svelte";
 	import WhyTaleemSection from "$lib/components/home/WhyTaleemSection.svelte";
-
+    import ClassesSection from "$lib/components/home/ClassesSection.svelte";
 	import SiteFooter from "$lib/components/home/SiteFooter.svelte";
 import HeroCarousel from "$lib/components/home/HeroCarousel.svelte";
    const heroSlides = [
@@ -42,14 +42,14 @@ import HeroCarousel from "$lib/components/home/HeroCarousel.svelte";
 
 
 <HeroCarousel slides={heroSlides} />
-
+<!-- 
 <div class="hero-cta">
     <a href="#samples" class="btn primary">▶ Watch sample lessons</a>
     <a href="/admissions" class="btn secondary">Admissions</a>
-</div>
+</div> -->
 <!-- <Hero /> -->
+<ClassesSection />
 <DemosSection {samples} />
-<!-- <ClassesSection /> -->
 <WhyTaleemSection />
 <!-- <FeesSection /> -->
 <!-- <FaqSection /> -->
