@@ -1,27 +1,39 @@
-q.md
 
 
-thank you::
-Someone you hire can now explain the whole business in one sentence: “Rs 8,000 a year for every question in your board book, step by step, in Urdu and English.”
 
-before  -cleaning up the admin section
-i think remains  Navbarrrrr
+<nav class="navbar">
+	<div class="bar">
+		<!-- Brand -->
+		<a class="home" href={base || "/"}>
+			<span class="mark">
+				   <img class="mark" src={`${base}/logo-mark.png`} alt="" width="32" height="32" />
+			</span>
+			<span class="brand">taleem<span class="dot-help">.help</span></span>
+		</a>
 
-this look ugly -now is time to update the style make it look like some posh websit
+		<!-- Centre links (desktop) -->
+		<div class="links">
+			<div
 
 
-add some important items  for example 
-Blog link is missing --- that should be a front and center our main free for all course -- i think blog link should be on the nav as well as we shd have a seperate blog componenent (later) after samples and above What is Taleem.help? . which show latest blog entries in a horzontal scroll strip----later
+            and
+<!doctype html>
+<html lang="en" data-theme="dark">
+	<head>
+	<link rel="icon" type="image/png" href="%sveltekit.assets%/favicon-32.png" />
+   <link rel="apple-touch-icon" href="%sveltekit.assets%/logo-mark.png" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="text-scale" content="scale" />
+		%sveltekit.head%
 
-some main things are
-1: navbar style 
-2: if suitable add courses drop down (some modern drop down with same browse and subscribe options - image 1)--- we already have details in 
-/home/bilal-tariq/00--TALEEM/taleem/src/lib/components/home/ClassesSection.svelte
-3: image 2 --should we remove "beta" since we will upload only when admin section is also fully ready since afte rthat any thing wrong is a bug --and we are waiting for nothing --OR change Beta ot Alpha ?
+	</head>
+	<body data-sveltekit-preload-data="tap">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
 
-4: we need icon -- we have image3 logo.webp -- but may be we need an icon 
-so far we are using <span class="icon svelte-rfuq4y">📘</span>
-
- 
-
-do not fall into fixing the login code etc etc
+and i have
+/home/bilal-tariq/00--TALEEM/taleem/static/favicon-32.png
+and
+/home/bilal-tariq/00--TALEEM/taleem/static/logo-mark.png

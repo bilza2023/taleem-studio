@@ -66,7 +66,9 @@
 	<div class="bar">
 		<!-- Brand -->
 		<a class="home" href={base || "/"}>
-			<span class="mark">📘</span>
+			<span class="mark">
+				   <img class="mark" src={`${base}/logo-mark-teal.png`} alt="" width="32" height="32" />
+			</span>
 			<span class="brand">taleem<span class="dot-help">.help</span></span>
 		</a>
 
