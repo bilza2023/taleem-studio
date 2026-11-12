@@ -1,11 +1,11 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/admin/+layout.svelte
+	// src/routes/admin/+layout.svelte
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { config } from "$lib/config.js";
 	import { send } from "$lib/send";
 	import Navbar from "$lib/adminComponents/Navbar.svelte";
-	// import SubNav from "$lib/adminComponents/SubNav.svelte";
+	import AdminSidebar from "$lib/adminComponents/AdminSidebar.svelte";
 	import TaleemTheme from "$lib/taleem-themes/TaleemTheme.svelte";
 	import { blueTheme } from "$lib/taleem-themes/index.js";
 
@@ -20,8 +20,9 @@
 		page.url.pathname.startsWith(`${config.basePath}/edit/editor/`)
 	);
 	let isSignin = $derived(page.url.pathname === SIGNIN_PATH);
+	let bare = $derived(isPlayer || isSignin || isEditor);
 
-		let active = $derived.by(() => {
+	let active = $derived.by(() => {
 		const path = page.url.pathname;
 
 		if (path.startsWith(`${config.basePath}/admin/assets`)) return "assets";
@@ -35,10 +36,22 @@
 
 		return "";
 	});
+
 	let { children } = $props();
 
 	let checking = $state(true);
 	let authed = $state(false);
+	let admin = $state(null);
+	let courses = $state([]);
+	let coursesLoaded = false;
+	let collapsed = $state(false);
+
+	// ⚠ CHECK THIS: which field on the authenticate() result marks a super admin?
+	// Log it once with console.log(admin) and keep only the matching line.
+	function checkSuper(a) {
+		return a?.role === "super" || a?.role === "superadmin" || a?.isSuper === true || a?.superAdmin === true;
+	}
+	let isSuper = $derived(checkSuper(admin));
 
 	$effect(() => {
 		const path = page.url.pathname;
@@ -53,30 +66,54 @@
 
 		(async () => {
 			try {
-				const admin = await send("admin", "authenticate", {});
+				admin = await send("admin", "authenticate", {});
 				authed = !!admin;
 			} catch {
+				admin = null;
 				authed = false;
 			}
 
 			checking = false;
 
-			if (!authed) goto(SIGNIN_PATH);
+			if (!authed) {
+				goto(SIGNIN_PATH);
+				return;
+			}
+
+			if (!coursesLoaded) {
+				coursesLoaded = true;
+				try {
+					courses = (await send("course", "list", {})) ?? [];
+				} catch (err) {
+					console.error(err);
+				}
+			}
 		})();
 	});
 </script>
 
 <TaleemTheme theme={blueTheme}>
-	{#if !isPlayer && !isSignin && !isEditor}
+	{#if bare}
+		<main>
+			{#if isSignin || (!checking && authed)}
+				{@render children()}
+			{/if}
+		</main>
+	{:else}
 		<Navbar active={active} />
-		<!-- <SubNav active={active} /> -->
-	{/if}
 
-	<main>
-		{#if isSignin || (!checking && authed)}
-			{@render children()}
-		{/if}
-	</main>
+		<div class="shell" class:collapsed>
+			{#if !checking && authed}
+				<AdminSidebar {courses} {isSuper} bind:collapsed />
+			{/if}
+
+			<main>
+				{#if !checking && authed}
+					{@render children()}
+				{/if}
+			</main>
+		</div>
+	{/if}
 </TaleemTheme>
 
 <style>
@@ -92,7 +129,24 @@
 	main {
 		margin: 0;
 		padding: 0;
+		min-width: 0;
 		min-height: 100vh;
 		background: var(--theme-panel);
+	}
+
+	.shell {
+		display: grid;
+		grid-template-columns: 240px 1fr;
+		align-items: start;
+	}
+
+	.shell.collapsed {
+		grid-template-columns: 1fr;
+	}
+
+	@media (max-width: 800px) {
+		.shell {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

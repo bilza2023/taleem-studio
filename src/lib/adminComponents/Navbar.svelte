@@ -35,8 +35,8 @@
 		<span class="icon">📘</span>
 		<span style="color:orange">Taleem.Admin</span>
 	</a>
-
 	<div class="pills">
+		<!-- 
 		<a class="pill {active === 'home' ? 'active' : ''}" href={`${basePath}/admin`} data-sveltekit-preload-data>
 			Home
 		</a>
@@ -60,7 +60,7 @@
 		</a>
 		<a class="pill {active === 'add-audio' ? 'active' : ''}" href={`${basePath}/admin/create/audio`} data-sveltekit-preload-data>
 			＋ Audio
-		</a>
+		</a> -->
 		<a class="pill {active === 'summary' ? 'active' : ''}" href={`${basePath}/admin/summary`} data-sveltekit-preload-data>
 			Summary
 		</a>
