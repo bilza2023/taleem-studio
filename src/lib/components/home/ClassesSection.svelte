@@ -1,42 +1,9 @@
 <!-- src/lib/components/home/ClassesSection.svelte -->
 <script>
 	import CourseLinks from "$lib/components/home/CourseLinks.svelte";
+	import { courses } from "$lib/components/home/courses.js";
 
-	// Prices are per course so one can differ later.
-	// tag / highlights are display-only placeholders — edit freely.
-	const courses = [
-		{
-			slug: "fbise8math",
-			title: "Class 8 Math",
-			subject: "Mathematics · FBISE",
-			description: "Build strong foundations before the board years.",
-			image: "fbise8math.svg",
-			access: "open",
-			price: { year: 8000, half: 5000 },
-			highlights: ["Every exercise question solved", "Narrated slide lessons", "MCQs & notes"]
-		},
-		{
-			slug: "fbise9math",
-			title: "Class 9 Math",
-			subject: "Mathematics · FBISE · SSC-I",
-			description: "First board year — master every concept and question.",
-			image: "fbise9math.svg",
-			access: "open",
-			tag: "Most popular",
-			price: { year: 8000, half: 5000 },
-			highlights: ["Every exercise question solved", "Narrated slide lessons", "Board exam prep"]
-		},
-		{
-			slug: "fbise10math",
-			title: "Class 10 Math",
-			subject: "Mathematics · FBISE · SSC-II",
-			description: "Strengthen concepts and walk into the board exam ready.",
-			image: "fbise10math.svg",
-			access: "open",
-			price: { year: 8000, half: 5000 },
-			highlights: ["Every exercise question solved", "Narrated slide lessons", "Board exam prep"]
-		}
-	];
+	
 </script>
 
 <section id="classes" class="classes">
