@@ -1,5 +1,9 @@
 <!-- src/routes/admin/timings/+page.svelte -->
 <!-- Coordinates: state, keys, recording/sync clock, merge. Everything else is in $lib/timings. -->
+<!-- Audio rule: deck.audio is the truth. This page only ever writes <slug>.opus (the deck's own audio). -->
+<!-- src/routes/admin/timings/+page.svelte -->
+<!-- Coordinates: state, keys, recording/sync clock, merge, check. Everything else is in $lib/timings. -->
+<!-- Audio rule: deck.audio is the truth. This page only ever writes <slug>.opus (the deck's own audio). -->
 <script>
 	import { onMount, onDestroy } from "svelte";
 	import { page } from "$app/state";
@@ -32,7 +36,7 @@
 			item = loaded.item;
 			original = loaded.deck;
 			deck = loaded.deck;
-			if (!loaded.deck.audio) source = "file";
+			mode = loaded.deck.audio ? "sync" : "record";
 			message = "";
 		} catch (error) {
 			console.error(error);
@@ -43,6 +47,14 @@
 	// One row per timed item
 	const list = $derived(deck ? buildTapList(deck) : []);
 	const last = $derived(list.length - 1);
+
+	// The time of each row in the deck being shown (used by Check)
+	const times = $derived(
+		list.map((t) => {
+			const s = deck.deck[t.slide];
+			return t.item === null ? s.start : s.data[t.item]?.showAt;
+		})
+	);
 
 	/* ───────────── Layout: page scroll; bars pinned under the admin header ───────────── */
 
@@ -55,18 +67,17 @@
 		stickyTop = header ? Math.round(header.getBoundingClientRect().bottom) : 0;
 	});
 
-	/* ───────────── Mode & source ───────────── */
+	/* ───────────── Mode & audio ───────────── */
 
-	let mode = $state("record"); // record | sync
-	let source = $state("deck"); // sync source: deck | file
-	let syncFile = $state.raw(null);
+	let mode = $state("record"); // record | sync — set on load: sync when the deck has audio
 
-	const canStart = $derived(
-		mode === "record" || (source === "deck" ? !!original?.audio : !!syncFile)
-	);
+	const ownAudio = `${slug}.opus`; // the only audio file this page ever writes
+	const deckAudio = $derived(original?.audio ?? null);
+	const hasOwn = $derived(deckAudio === ownAudio); // false = no audio, or a shared file
+	const canStart = $derived(mode === "record" || !!deckAudio);
 
 	function setMode(m) {
-		if (status !== "idle") return;
+		if (status !== "idle" || checking) return;
 		mode = m;
 		note = "";
 	}
@@ -101,6 +112,7 @@
 	}
 
 	async function start() {
+		stopCheck();
 		note = "";
 		status = "starting";
 		dropClock();
@@ -109,8 +121,7 @@
 			if (mode === "record") {
 				clock = createRecorder();
 			} else {
-				const src = source === "deck" ? AUDIO_BASE + original.audio : syncFile;
-				clock = createAudioClock(src);
+				clock = createAudioClock(AUDIO_BASE + original.audio);
 				clock.onEnded(() => {
 					if (status === "recording") stop();
 				});
@@ -172,7 +183,7 @@
 		if (res.ok) {
 			merged = res.deck;
 			deck = res.deck;
-			note = "Timings added — not saved yet";
+			note = "Timings added — not saved yet · ▶ Check to play them";
 		} else {
 			merged = null;
 			note = `Can't add timings: ${res.error} — mark every row before Stop`;
@@ -180,6 +191,7 @@
 	}
 
 	function reset() {
+		stopCheck();
 		cancelAnimationFrame(raf);
 		dropClock();
 		status = "idle";
@@ -193,6 +205,67 @@
 		note = "";
 		deck = original;
 		cursor = 0;
+	}
+
+	/* ───────────── Check: play the audio, the highlight follows the timings ───────────── */
+
+	let checking = $state(false);
+	let checkClock = null;
+	let checkRaf = 0;
+
+	// A fresh recording (not on the server yet) is checked from memory; otherwise the deck's audio
+	const checkSrc = $derived(
+		mode === "record" && blob ? blob : deckAudio ? AUDIO_BASE + deckAudio : null
+	);
+	const canCheck = $derived(!!checkSrc && (status === "idle" || status === "stopped"));
+
+	function checkTick() {
+		if (!checking) return;
+		const t = checkClock.now();
+		elapsed = t;
+
+		// the last row whose time has been reached
+		let k = 0;
+		for (let i = 0; i < times.length; i++) {
+			if (typeof times[i] === "number" && times[i] <= t) k = i;
+		}
+		if (k !== cursor) cursor = k;
+
+		checkRaf = requestAnimationFrame(checkTick);
+	}
+
+	async function startCheck() {
+		if (checking || !canCheck) return;
+
+		const from = times[cursor] ?? 0; // start at the highlighted row
+		checkClock = createAudioClock(checkSrc);
+		checkClock.onEnded(stopCheck);
+
+		try {
+			await checkClock.start();
+		} catch (err) {
+			checkClock.destroy();
+			checkClock = null;
+			note = `${err?.message ?? err}`;
+			return;
+		}
+
+		checkClock.seek(from);
+		checking = true;
+		checkTick();
+	}
+
+	function stopCheck() {
+		cancelAnimationFrame(checkRaf);
+		checkClock?.reset();
+		checkClock?.destroy();
+		checkClock = null;
+		checking = false;
+	}
+
+	function jumpTo(k) {
+		cursor = k;
+		checkClock?.seek(times[k] ?? 0);
 	}
 
 	/* ───────────── Output (only on button click) ───────────── */
@@ -211,6 +284,7 @@
 	async function save() {
 		if (!merged) return false;
 
+		stopCheck();
 		saveStatus = "saving";
 		note = "Saving…";
 
@@ -241,6 +315,15 @@
 	async function publish() {
 		if (!merged || !blob) return;
 
+		// Replacing the deck's own audio is deliberate (the server archives the old file first)
+		if (
+			hasOwn &&
+			!confirm(`Replace this deck's audio (${ownAudio})?\nThe old file is copied to the archive first.`)
+		) {
+			return;
+		}
+
+		stopCheck();
 		saveStatus = "saving";
 		note = "Publishing audio…";
 
@@ -258,7 +341,8 @@
 		merged = { ...merged, audio: out.audio };
 
 		if (await save()) {
-			note = `Published ✓ — ${out.audio} (${out.sizeMb} MB${out.created ? ", new Audio row" : ""}) · deck saved`;
+			mode = "sync"; // the deck has its own audio now: the next job is fixing timings
+			note = `Published ✓ — ${out.audio} (${out.sizeMb} MB${out.created ? ", new Audio row" : ""}${out.replaced ? ", old audio archived" : ""}) · deck saved`;
 		} else {
 			note = `Audio published (${out.audio}), but the deck was not saved — ${note}`;
 		}
@@ -299,6 +383,10 @@
 	}
 
 	function onPick(k) {
+		if (checking) {
+			jumpTo(k);
+			return;
+		}
 		if (status === "recording") {
 			if (k === cursor + 1) mark();
 			else goBack(k);
@@ -317,6 +405,15 @@
 		const down = e.key === "ArrowDown";
 		const up = e.key === "ArrowUp";
 		const enter = e.key === "Enter";
+
+		// Check: ↑ ↓ jump the audio to the previous / next row
+		if (checking) {
+			if (!down && !up) return;
+			e.preventDefault();
+			if (e.repeat) return;
+			jumpTo(down ? Math.min(cursor + 1, last) : Math.max(cursor - 1, 0));
+			return;
+		}
 
 		if (status === "recording") {
 			if (!down && !up && !enter) return;
@@ -346,6 +443,7 @@
 	}
 
 	onDestroy(() => {
+		stopCheck();
 		cancelAnimationFrame(raf);
 		dropClock();
 	});
@@ -373,10 +471,11 @@
 				<RecordBar
 					{mode}
 					{status}
-					{source}
-					deckAudio={original?.audio ?? null}
-					fileName={syncFile?.name ?? null}
+					{deckAudio}
+					{hasOwn}
 					{canStart}
+					{canCheck}
+					{checking}
 					{elapsed}
 					marked={marks.length}
 					total={list.length}
@@ -385,14 +484,14 @@
 					{canDownload}
 					{saveStatus}
 					onMode={setMode}
-					onSource={(s) => (source = s)}
-					onPickFile={(f) => (syncFile = f)}
 					onStart={start}
 					onPause={pause}
 					onResume={resume}
 					onStop={stop}
 					onReset={reset}
 					onDownload={downloadAudio}
+					onCheck={startCheck}
+					onStopCheck={stopCheck}
 				/>
 			</div>
 		</div>

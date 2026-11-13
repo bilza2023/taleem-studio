@@ -4,10 +4,11 @@
 	let {
 		mode = "record", // record | sync
 		status = "idle", // idle | starting | recording | paused | stopped
-		source = "deck", // sync source: deck | file
-		deckAudio = null,
-		fileName = null,
+		deckAudio = null, // deck.audio
+		hasOwn = false, // deck.audio is this deck's own <slug>.opus
 		canStart = true,
+		canCheck = false, // audio available and not marking
+		checking = false, // Check is playing
 		elapsed = 0,
 		marked = 0,
 		total = 0,
@@ -16,14 +17,14 @@
 		canDownload = false, // recorded audio available
 		saveStatus = null, // null | saving | saved | error
 		onMode,
-		onSource,
-		onPickFile,
 		onStart,
 		onPause,
 		onResume,
 		onStop,
 		onReset,
 		onDownload,
+		onCheck,
+		onStopCheck,
 	} = $props();
 
 	function fmt(t) {
@@ -42,43 +43,34 @@
 </script>
 
 <div class="bar">
-	{#if status === "idle"}
+	{#if status === "idle" && !checking}
 		<div class="mode">
 			<button class:active={!sync} onclick={click(() => onMode?.("record"))}>🎙 Record new</button>
-			<button class:active={sync} onclick={click(() => onMode?.("sync"))}>🎧 Sync to audio</button>
+			<button class:active={sync} disabled={!deckAudio} onclick={click(() => onMode?.("sync"))}>
+				🎧 Sync to audio
+			</button>
 		</div>
 
-		{#if sync}
-			<div class="source">
-				<select
-					value={source}
-					onchange={(e) => {
-						onSource?.(e.currentTarget.value);
-						e.currentTarget.blur();
-					}}
-				>
-					<option value="deck" disabled={!deckAudio}>
-						Deck audio{deckAudio ? `: ${deckAudio}` : " (none)"}
-					</option>
-					<option value="file">{fileName ? `File: ${fileName}` : "File from computer…"}</option>
-				</select>
-
-				{#if source === "file"}
-					<input
-						type="file"
-						accept="audio/*,.opus,.webm"
-						onchange={(e) => {
-							onPickFile?.(e.currentTarget.files?.[0] ?? null);
-							e.currentTarget.blur();
-						}}
-					/>
-				{/if}
-			</div>
-		{/if}
+		<div class="source" class:warn={!sync && hasOwn}>
+			{#if sync}
+				🎧 {deckAudio}{hasOwn ? "" : " · shared file — sync only"}
+			{:else if hasOwn}
+				⚠ This deck already has audio — Publish replaces {deckAudio} (old file archived)
+			{:else if deckAudio}
+				A new recording becomes this deck's own audio — {deckAudio} is not changed
+			{:else}
+				No audio yet
+			{/if}
+		</div>
 	{/if}
 
 	<div class="clock">
-		<span class="dot" class:on={status === "recording"} class:sync class:paused={status === "paused"}></span>
+		<span
+			class="dot"
+			class:on={status === "recording" || checking}
+			class:sync={sync || checking}
+			class:paused={status === "paused"}
+		></span>
 		<span class="time">{fmt(elapsed)}</span>
 	</div>
 
@@ -88,44 +80,52 @@
 	</div>
 
 	<div class="buttons">
-		{#if status === "idle"}
-			<button class="start" disabled={!canStart} onclick={click(onStart)}>
-				{sync ? "▶ Play & mark" : "● Record"}
-			</button>
-		{:else if status === "starting"}
-			<button disabled>Starting…</button>
-		{:else if status === "recording"}
-			<button onclick={click(onPause)}>❚❚ Pause</button>
-			<button onclick={click(onStop)}>■ Stop</button>
-		{:else if status === "paused"}
-			<button onclick={click(onResume)}>▶ Resume</button>
-			<button onclick={click(onStop)}>■ Stop</button>
-		{/if}
+		{#if checking}
+			<button onclick={click(onStopCheck)}>■ Stop</button>
+		{:else}
+			{#if canCheck}
+				<button onclick={click(onCheck)}>▶ Play</button>
+			{/if}
 
-		{#if canDownload}
-			<button onclick={click(onDownload)}>⬇ Audio</button>
-		{/if}
+			{#if status === "idle"}
+				<button class="start" disabled={!canStart} onclick={click(onStart)}>
+					{sync ? "▶ Play & mark" : "● Record"}
+				</button>
+			{:else if status === "starting"}
+				<button disabled>Starting…</button>
+			{:else if status === "recording"}
+				<button onclick={click(onPause)}>❚❚ Pause</button>
+				<button onclick={click(onStop)}>■ Stop</button>
+			{:else if status === "paused"}
+				<button onclick={click(onResume)}>▶ Resume</button>
+				<button onclick={click(onStop)}>■ Stop</button>
+			{/if}
 
+			{#if canDownload}
+				<button onclick={click(onDownload)}>⬇ Audio</button>
+			{/if}
 
-		{#if status !== "idle" && status !== "starting"}
-			<button class="reset" onclick={click(onReset)}>Reset</button>
+			{#if status !== "idle" && status !== "starting"}
+				<button class="reset" onclick={click(onReset)}>Reset</button>
+			{/if}
 		{/if}
 	</div>
 
 	<div class="hint" class:ok={saveStatus === "saved"} class:bad={saveStatus === "error"}>
-		{#if status === "recording"}
-						{#if marked >= total}
+		{#if checking}
+			Playing — the highlight follows the audio · ↑ ↓ or click a row = jump there
+		{:else if status === "recording"}
+			{#if marked >= total}
 				Last row marked — ↓ / Enter again = Stop
 			{:else}
 				↓ / Enter = mark next · ↑ = undo{sync ? " (audio jumps back)" : ""} · click a marked row = go back
 			{/if}
-			
 		{:else if status === "paused"}
 			Paused — keys off
 		{:else if note}
 			{note}
 		{:else if status === "idle"}
-			↑ ↓ browse · {sync ? "Play starts the audio from 0 at row 1" : "Record starts at row 1"}
+			↑ ↓ browse · {sync ? "Play & mark starts the audio from 0 at row 1" : "Record starts at row 1"}
 		{/if}
 	</div>
 </div>
@@ -169,16 +169,18 @@
 		background: #4f8cff22;
 	}
 
-	select,
-	input[type="file"] {
-		width: auto;
-		margin: 0;
-		padding: 0.3rem 0.5rem;
+	.source {
 		font-size: 0.8rem;
-		background: #1f2937;
-		color: #e5e7eb;
-		border: 1px solid #4b5563;
-		border-radius: 6px;
+		color: #9ca3af;
+	}
+
+	.source.warn {
+		color: #fbbf24;
+	}
+
+	.mode button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	.clock {

@@ -1,5 +1,7 @@
+
 // src/routes/admin/timings/publish/+server.js
 // POST (multipart): slug + audio (webm)  →  content/audio/<slug>.opus + Audio row (if missing)
+// If <slug>.opus already exists, a copy goes to the archive before it is replaced.
 // Admin only. Does NOT touch the deck — the page saves the deck after this succeeds.
 
 import { json } from "@sveltejs/kit";
@@ -8,7 +10,7 @@ import { join } from "path";
 import { tmpdir } from "os";
 import kernel from "$lib/taleem-kernel";
 import { authenticateAdmin } from "$lib/server/backend/admin.js";
-import { AUDIO_DIR, encodeOpus, archiveRaw, fileSizeMb } from "$lib/server/audioFiles.js";
+import { AUDIO_DIR, encodeOpus, archiveRaw, archiveCopy, fileSizeMb } from "$lib/server/audioFiles.js";
 
 const SLUG_RX = /^[a-zA-Z0-9._-]+$/;
 
@@ -51,7 +53,12 @@ export async function POST({ request }) {
 
 	try {
 		writeFileSync(tmp, Buffer.from(await file.arrayBuffer()));
-		encodeOpus(tmp, out); // content/audio/<slug>.opus (replaced if present)
+
+		// Old version kept (copied) before it is replaced
+		const replaced = existsSync(out);
+		if (replaced) archiveCopy(out, slug);
+
+		encodeOpus(tmp, out); // content/audio/<slug>.opus
 		archiveRaw(tmp, slug); // raw .webm kept in the archive folder
 
 		// 5. Audio row only if missing
@@ -62,7 +69,8 @@ export async function POST({ request }) {
 			ok: true,
 			audio: name,
 			sizeMb: fileSizeMb(out),
-			created: !existing
+			created: !existing,
+			replaced
 		});
 	} catch (err) {
 		console.error(err);

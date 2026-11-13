@@ -68,3 +68,11 @@ export function archiveRaw(file, slug, ext = "webm") {
 export function fileSizeMb(file) {
 	return Number((statSync(file).size / 1024 / 1024).toFixed(2));
 }
+// Keep a copy of a file before it is replaced: ARCHIVE_DIR/<slug>_<stamp>.<ext>
+export function archiveCopy(file, slug, ext = "opus") {
+	mkdirSync(ARCHIVE_DIR, { recursive: true });
+	const stamp = new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 15);
+	const dest = join(ARCHIVE_DIR, `${slug}_${stamp}.${ext}`);
+	copyFileSync(file, dest);
+	return dest;
+}

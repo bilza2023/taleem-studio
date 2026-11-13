@@ -3,7 +3,9 @@ import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, cr
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
 import { createCommunication, listForUser, listForLibrary, listUnanswered, respondToCommunication, deleteCommunication , listPublicForLibrary,listForCourse } from "./communication.js";
+
 import { createAudio, getAudio, listAudio, updateAudio, deleteAudio } from "./audio.js";
+
 import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse } from "./course.js";
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGroups } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
