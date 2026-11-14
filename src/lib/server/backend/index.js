@@ -1,5 +1,11 @@
 ///home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/index.js
 
+import { getHub } from "./hub.js";
+
+import { saveRating, getMyRating, getRatingOptions, ratingSummary, ratingSummaryByCourse, listRatings } from "./rating.js";
+import { createInquiry, myInquiries, markMyRepliesRead, listInquiries, getInquiry, replyInquiry, setInquiryStatus, setInquiryTags } from "./inquiry.js";
+import { listNotifications, createNotification, deleteNotification } from "./notification.js";
+
 import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
@@ -17,6 +23,37 @@ import { trackEvent, getSummary, saveMcqResult,listMyMcqResults } from "./analyt
 
 ///////////////////////////////////////////////
 export const backend = {
+	
+	hub: {
+		get: (data, token) => getHub(token)
+	},
+		rating: {
+		save: (data, token) => saveRating(data, token),
+		mine: (data, token) => getMyRating(data, token),
+		options: () => getRatingOptions()
+	},
+	adminRating: {
+		summary: (data, token) => ratingSummary(data, token),
+		byCourse: (data, token) => ratingSummaryByCourse(data, token),
+		list: (data, token) => listRatings(data, token)
+	},
+	inquiry: {
+		create: (data, token) => createInquiry(data, token),
+		mine: (data, token) => myInquiries(data, token),
+		markRead: (data, token) => markMyRepliesRead(data, token)
+	},
+	adminInquiry: {
+		list: (data, token) => listInquiries(data, token),
+		get: (data, token) => getInquiry(data, token),
+		reply: (data, token) => replyInquiry(data, token),
+		setStatus: (data, token) => setInquiryStatus(data, token),
+		setTags: (data, token) => setInquiryTags(data, token)
+	},
+	adminNotification: {
+		list: (data, token) => listNotifications(data, token),
+		create: (data, token) => createNotification(data, token),
+		delete: (data, token) => deleteNotification(data, token)
+	},
 	admin: {
 		login: (data) => loginAdmin(data.email, data.password),
 		authenticate: (data, token) => authenticateAdmin(token),

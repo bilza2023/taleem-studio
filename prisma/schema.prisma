@@ -35,6 +35,22 @@ enum AdminRole {
   SUPER_ADMIN
 }
 
+enum InquiryStatus {
+  OPEN
+  ANSWERED
+  CLOSED
+}
+
+enum NotificationAudience {
+  APP      // everyone
+  COURSE   // students of one course
+  USER     // one student
+}
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 model Course {
   slug        String       @id
   title       String
@@ -85,7 +101,8 @@ model Library {
   group Group @relation(fields: [courseSlug, groupSlug], references: [courseSlug, slug], onDelete: Restrict)
 
   communications Communication[]
-
+  ratings Rating[]
+  
   @@index([courseSlug])
   @@index([groupSlug])
 }
@@ -100,6 +117,8 @@ model User {
   createdAt      DateTime        @default(now())
   subscriptions  Subscription[]
   communications Communication[]
+  ratings   Rating[]
+  inquiries Inquiry[]
 }
 
 model Admin {
@@ -201,4 +220,66 @@ model AnalyticsEvent {
   @@index([userId, role, createdAt])
   @@index([slug])
   @@index([courseSlug, createdAt])
+}
+
+
+// one rating per student per deck — re-rating updates the row
+model Rating {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  librarySlug String
+  courseSlug  String   // copied in for per-course queries
+  stars       Int      // 1–5
+  options     String   @default("[]") // JSON array of option keys
+  comment     String?  // "What would you like us to improve?"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  library Library @relation(fields: [librarySlug], references: [slug], onDelete: Cascade)
+
+  @@unique([userId, librarySlug])
+  @@index([librarySlug])
+  @@index([courseSlug, createdAt])
+}
+
+// student → app; each inquiry holds its own reply
+model Inquiry {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  courseSlug  String?       // optional context, not required
+  message     String
+  reply       String?
+  repliedBy   String?       // admin email
+  repliedAt   DateTime?
+  replyReadAt DateTime?     // drives the "1 reply" badge
+  status      InquiryStatus @default(OPEN)
+  tags        String        @default("[]") // team triage only
+  isPublic    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+// app → students; stored once, filtered by audience
+model Notification {
+  id         Int                  @id @default(autoincrement())
+  audience   NotificationAudience
+  courseSlug String?              // when audience = COURSE
+  userId     Int?                 // when audience = USER
+  title      String
+  body       String?
+  link       String?              // optional "open this" target
+  createdBy  String?              // admin email
+  publishAt  DateTime             @default(now())
+  expiresAt  DateTime?
+  createdAt  DateTime             @default(now())
+
+  @@index([audience, publishAt])
+  @@index([courseSlug, publishAt])
+  @@index([userId, publishAt])
 }

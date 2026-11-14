@@ -15,6 +15,10 @@ import Image from "./modules/Image.js";
 import Audio from "./modules/Audio.js";
 import Svg from "./modules/Svg.js";
 import Analytics from "./modules/Analytics.js";
+import Rating from "./modules/Rating.js";
+import Inquiry from "./modules/Inquiry.js";
+import Notification from "./modules/Notification.js";
+
 
 class ServerKernel {
 	constructor() {
@@ -33,6 +37,11 @@ class ServerKernel {
 		this.communication = new Communication(this);
 		this.subscription = new Subscription(this);
 		this.analytics = new Analytics(this);
+
+		this.rating = new Rating(this);
+		this.inquiry = new Inquiry(this);
+		this.notification = new Notification(this);
+
 	}
 
 	async shutdown() {

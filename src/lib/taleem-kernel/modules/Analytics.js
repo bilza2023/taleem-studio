@@ -127,4 +127,42 @@ export default class Analytics {
 			}))
 		};
 	}
+		// Last distinct lessons a student opened, newest first.
+	// One row per slug (re-opening moves it to the top, no duplicates).
+	async recentLessons(userId, { limit = 10 } = {}) {
+		const rows = await this.kernel.db.analyticsEvent.groupBy({
+			by: ["slug", "courseSlug"],
+			where: { name: "lesson.open", role: "student", userId, slug: { not: null } },
+			_max: { createdAt: true },
+			orderBy: { _max: { createdAt: "desc" } },
+			take: limit
+		});
+
+		return rows.map((r) => ({
+			slug: r.slug,
+			courseSlug: r.courseSlug,
+			lastOpenedAt: r._max.createdAt
+		}));
+	}
+		// most recent event of a kind for one person — e.g. last hub.open
+	async lastEvent(name, userId, role = "student") {
+		return this.kernel.db.analyticsEvent.findFirst({
+			where: { name, userId, role },
+			orderBy: { createdAt: "desc" }
+		});
+	}
+
+	// recent events of a kind across a set of courses — e.g. lesson.publish
+	async recentInCourses(name, courseSlugs = [], { since = null, limit = 20 } = {}) {
+		if (!courseSlugs.length) return [];
+		return this.kernel.db.analyticsEvent.findMany({
+			where: {
+				name,
+				courseSlug: { in: courseSlugs },
+				...(since ? { createdAt: { gt: since } } : {})
+			},
+			orderBy: { createdAt: "desc" },
+			take: limit
+		});
+	}
 }

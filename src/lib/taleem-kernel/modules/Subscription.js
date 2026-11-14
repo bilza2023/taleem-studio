@@ -1,3 +1,13 @@
+
+// one definition of "active", used everywhere
+function activeWhere(now = new Date()) {
+	return {
+		startsAt: { lte: now },
+		cancelledAt: null,
+		OR: [{ endsAt: null }, { endsAt: { gte: now } }]
+	};
+}
+
 export default class Subscription {
 	constructor(kernel) { this.kernel = kernel; }
 
@@ -29,12 +39,7 @@ export default class Subscription {
 		const now = new Date();
 
 		const subscription = await this.kernel.db.subscription.findFirst({
-			where: {
-				userId,
-				courseSlug,
-				startsAt: { lte: now },
-				endsAt: { gte: now }
-			}
+						where: { userId, courseSlug, ...activeWhere(now) }
 		});
 
 		if (!subscription) {
@@ -44,5 +49,13 @@ export default class Subscription {
 		}
 
 		return subscription;
+	}
+		// course slugs this student can currently use
+	async activeCourses(userId) {
+		const rows = await this.kernel.db.subscription.findMany({
+			where: { userId, ...activeWhere() },
+			select: { courseSlug: true }
+		});
+		return [...new Set(rows.map((r) => r.courseSlug))];
 	}
 }

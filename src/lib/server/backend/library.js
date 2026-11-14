@@ -65,7 +65,18 @@ export async function updateLibrary(slug, data) {
 		throw err;
 	}
 
-	return kernel.library.update(slug, data);
+	const updated = await kernel.library.update(slug, data);
+
+	// went live → feeds "New in your courses" on the student hub
+	if (data.status === "PUBLISHED" && existing.status !== "PUBLISHED") {
+		kernel.analytics.track("lesson.publish", {
+			slug,
+			courseSlug: existing.courseSlug,
+			role: "admin"
+		});
+	}
+
+	return updated;
 }
 
 export async function deleteLibrary(slug) {
