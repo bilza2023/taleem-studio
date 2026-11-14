@@ -28,9 +28,15 @@
 			: items
 	);
 
+		let publishedItems = $derived(items.filter(item => item.status === "PUBLISHED"));
+
+	let readyCount = $derived(
+		visibleItems.filter(item => item.status === "PUBLISHED").length
+	);
+
 	let counts = $derived.by(() => {
 		const c = {};
-		for (const item of items) {
+		for (const item of publishedItems) {
 			c[item.groupSlug] = (c[item.groupSlug] ?? 0) + 1;
 		}
 		return c;
@@ -50,7 +56,7 @@
 			const [courseData, groups, list] = await Promise.all([
 				send("course", "get", { slug }),
 				send("group", "list", { courseSlug: slug }),
-				send("library", "list", { courseSlug: slug })
+				send("library", "studentList", { courseSlug: slug })
 			]);
 
 			if (!courseData) {
@@ -144,7 +150,7 @@
 					<GroupSidebar
 						groups={groupings}
 						{counts}
-						total={items.length}
+						total={publishedItems.length}
 						value={selectedGroup}
 						onSelect={selectGroup}
 					/>
@@ -155,7 +161,7 @@
 				<h2 class="group-heading">
 					{selectedTitle}
 					{#if visibleItems.length > 0}
-						<span>· {visibleItems.length} lessons</span>
+						<span>· {readyCount} of {visibleItems.length} ready</span>
 					{/if}
 				</h2>
 
@@ -194,8 +200,8 @@
 					onclick={() => (showInfo = false)}
 					aria-label="Close"
 				>✕</button>
-
-				<CourseHero {course} lessonCount={items.length} />
+				<CourseHero {course} lessonCount={publishedItems.length} />
+				<!-- <CourseHero {course} lessonCount={items.length} /> -->
 			</div>
 		</div>
 	{/if}

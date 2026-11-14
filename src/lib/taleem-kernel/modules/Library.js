@@ -1,5 +1,7 @@
 ///home/bilal-tariq/00--TALEEM/taleem-kernel/src/modules/Library.js
 const PUBLIC_STATUS = "PUBLISHED";
+const STUDENT_VISIBLE = ["PUBLISHED", "DRAFT"]; // drafts shown as "coming soon"
+
 
 export default class Library {
 	constructor(kernel) { this.kernel = kernel; }
@@ -15,7 +17,11 @@ export default class Library {
 		if (filters.tag) where.tags = { contains: JSON.stringify(filters.tag) };
 
 		if (!includeUnpublished) where.status = PUBLIC_STATUS;
-		else if (filters.status) where.status = filters.status;
+		else if (filters.status) {
+			where.status = Array.isArray(filters.status)
+				? { in: filters.status }
+				: filters.status;
+		}
 
 		return this.kernel.db.library.findMany({
 			where,
@@ -86,6 +92,14 @@ export default class Library {
 			type,
 			title: slug
 		});
+	}
+	// what a student sees: published + draft, never archived.
+	// card fields only — never body/narration
+	async studentList(filters = {}) {
+		return this.list(
+			{ ...filters, status: STUDENT_VISIBLE },
+			{ includeUnpublished: true, includeContent: false }
+		);
 	}
 	
 }

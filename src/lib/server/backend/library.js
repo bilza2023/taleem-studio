@@ -1,8 +1,10 @@
 // /home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/library.js
 
-import kernel from "../../taleem-kernel";
 
+import kernel from "../../taleem-kernel";
 const VALID_TYPES = ["ARTICLE", "PLAYER"];
+const PLACEHOLDER_AUDIO = ["music.mp3", "music.opus"];
+
 
 export async function createLibrary(data) {
 	if (!VALID_TYPES.includes(data.type)) {
@@ -19,8 +21,6 @@ export async function getLibrary(slug, options = {}) {
 
 	return kernel.library.get(slug, { includeUnpublished });
 }
-
-const PLACEHOLDER_AUDIO = ["music.mp3", "music.opus"];
 
 function withFlags(item) {
 	const { body, narration, ...rest } = item;
@@ -90,4 +90,11 @@ export async function listLibraryByTag(tag, filters = {}, options = {}) {
 	const { includeUnpublished = false } = options;
 
 	return kernel.library.list({ ...filters, tag }, { includeUnpublished });
+}
+
+export async function studentListLibrary(filters = {}) {
+	return kernel.library.studentList({
+		courseSlug: filters.courseSlug,
+		groupSlug: filters.groupSlug
+	});
 }

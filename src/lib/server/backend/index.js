@@ -1,4 +1,5 @@
 ///home/bilal-tariq/00--TALEEM/taleem/src/lib/server/backend/index.js
+
 import { loginAdmin, authenticateAdmin, authorizeAdmin, listAdmins, getAdmin, createAdmin, updateAdmin, deleteAdmin, assignCourseToAdmin, unassignCourseFromAdmin } from "./admin.js";
 import { registerUser, loginUser, authenticateUser } from "./user.js";
 import { listAssets, getAsset } from "./assets.js";
@@ -9,7 +10,8 @@ import { createAudio, getAudio, listAudio, updateAudio, deleteAudio } from "./au
 import { listCourses, getCourse, createCourse, updateCourse, deleteCourse, authorizeCourse } from "./course.js";
 import { listGroups, getGroup, createGroup, updateGroup, deleteGroup, reorderGroups } from "./group.js";
 import { createImage, getImage, listImages, updateImage, deleteImage } from "./image.js";
-import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup,listLibraryByTag } from "./library.js";
+import { createLibrary, getLibrary, listLibrary, updateLibrary, deleteLibrary, listLibraryByGroup,listLibraryByTag,studentListLibrary } from "./library.js";
+
 import { createSvg, getSvg, listSvg, updateSvg, deleteSvg ,bulkCreateSvgs,listSvgPaginated} from "./svg.js";
 import { trackEvent, getSummary, saveMcqResult,listMyMcqResults } from "./analytics.js";
 
@@ -83,7 +85,8 @@ export const backend = {
 		get: (data) => getLibrary(data.slug),
 		list: (data) => listLibrary(data),
 		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug),
-		listByTag: (data) => listLibraryByTag(data.tag, { courseSlug: data.courseSlug })
+		listByTag: (data) => listLibraryByTag(data.tag, { courseSlug: data.courseSlug }),
+		studentList: (data) => studentListLibrary(data),
 	},
 	adminLibrary: {
 		get: (data, token) => getLibrary(data.slug, { includeUnpublished: true }, token),
