@@ -119,7 +119,7 @@ export const backend = {
 		delete: (data, token) => deleteImage(data.slug, token)
 	},
 	library: {
-		get: (data) => getLibrary(data.slug),
+		get: (data,token) => getLibrary(data.slug,token),
 		list: (data) => listLibrary(data),
 		listByGroup: (data) => listLibraryByGroup(data.courseSlug, data.groupSlug),
 		listByTag: (data) => listLibraryByTag(data.tag, { courseSlug: data.courseSlug }),

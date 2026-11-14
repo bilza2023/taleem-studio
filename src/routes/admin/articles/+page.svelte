@@ -1,4 +1,5 @@
 <script>
+///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/articles/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/state";
 	import Communication from "$lib/components/Communication.svelte";
