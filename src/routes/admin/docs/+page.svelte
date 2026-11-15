@@ -1,4 +1,4 @@
-<!-- /src/routes/admin/docs/+page.svelte -->
+<!--/home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/docs/+page.svelte -->
 <script>
 	import { page } from "$app/state";
 	import { marked } from "marked";

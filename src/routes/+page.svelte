@@ -22,8 +22,8 @@ import HeroCarousel from "$lib/components/home/HeroCarousel.svelte";
 
 	onMount(async () => {
 		try {
-			const items = await send("library", "listByTag", { tag: "pinned", courseSlug: "blog" });
-
+		const items = await send("library", "list", { tag: "pinned", courseSlug: "blog" });
+        
 			samples = items.map((item) => ({
 				type: item.type,
 				slug: item.slug,
