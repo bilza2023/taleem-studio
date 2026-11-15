@@ -1,10 +1,9 @@
-
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/content/[...path]/+server.js
+// src/routes/content/[...path]/+server.js
 import { error } from "@sveltejs/kit";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { config } from "$lib/config.js";
-import { getSvg } from "$lib/server/backend/svg.js";
+import { db } from "$lib/server/db.js";
 
 const CONTENT_DIR = config.contentDir;
 
@@ -30,14 +29,14 @@ export async function GET({ params }) {
 
 	const ext = path.extname(relativePath).toLowerCase();
 
-		if (ext === ".svg") {
+	if (ext === ".svg") {
 		const filename = path.basename(relativePath);
 		const bareSlug = path.basename(relativePath, ".svg");
 
-		let svg = await getSvg(filename);
+		let svg = await db.svg.findUnique({ where: { slug: filename } });
 
 		if (!svg) {
-			svg = await getSvg(bareSlug);
+			svg = await db.svg.findUnique({ where: { slug: bareSlug } });
 		}
 
 		if (!svg) {

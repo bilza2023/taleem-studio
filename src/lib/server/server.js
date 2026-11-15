@@ -1,23 +1,15 @@
-// /home/bilal-tariq/00--TALEEM/taleem.studio/src/lib/server/server.js
+// src/routes/api/server/+server.js
 
-import { backend } from "./backend";
+import { json } from "@sveltejs/kit";
+import { request as dispatch } from "$lib/server/dispatcher.js";
+import { tokensFrom, errorResponse } from "$lib/server/http.js";
 
-export async function request({ method, module, data, token }) {
-	// console.log("server.request():", { module, method, data, token });
-
-	if (!backend[module]) {
-		const err = new Error(`Unknown module: ${module}`);
-		err.status = 404;
-		throw err;
+export async function POST({ request }) {
+	try {
+		const { module, method, data } = await request.json();
+		const result = await dispatch({ module, method, data, ...tokensFrom(request) });
+		return json(result ?? null);
+	} catch (err) {
+		return errorResponse(err);
 	}
-
-	const handler = backend[module][method];
-
-	if (!handler) {
-		const err = new Error(`Method not implemented: ${module}.${method}`);
-		err.status = 404;
-		throw err;
-	}
-
-	return await handler(data, token);
 }

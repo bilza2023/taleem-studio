@@ -4,22 +4,28 @@ import { config } from "$lib/config.js";
 
 const ENDPOINT = `${config.basePath}/api/server`;
 
-function getToken(tokenType) {
-	if (tokenType === "user") {
-		return localStorage.getItem("taleem-token");
-	}
-
-	return localStorage.getItem("taleem-admin-token");
+function readToken(key) {
+	if (typeof localStorage === "undefined") return null; // SSR safety
+	return localStorage.getItem(key);
 }
 
-export async function send(module, method, data = {}, tokenType = "admin") {
-	const token = getToken(tokenType);
+function getTokens() {
+	return {
+		user: readToken("taleem-token"),
+		admin: readToken("taleem-admin-token")
+	};
+}
+
+// 4th argument (old tokenType) is accepted but ignored: both tokens are always sent.
+export async function send(module, method, data = {}, _tokenType) {
+	const { user, admin } = getTokens();
 
 	const options = {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			...(token ? { Authorization: `Bearer ${token}` } : {})
+			...(user ? { "X-User-Token": user } : {}),
+			...(admin ? { "X-Admin-Token": admin } : {})
 		},
 		body: JSON.stringify({ module, method, data })
 	};
@@ -38,7 +44,9 @@ export async function send(module, method, data = {}, tokenType = "admin") {
 		: await response.text();
 
 	if (!response.ok) {
-		throw new Error(result?.error || result?.message || `HTTP ${response.status}`);
+		const err = new Error(result?.error || result?.message || `HTTP ${response.status}`);
+		err.status = response.status; // pages can branch on 401 / 403 / 404
+		throw err;
 	}
 
 	return result;
