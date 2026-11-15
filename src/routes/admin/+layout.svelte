@@ -16,8 +16,8 @@
 		page.url.pathname.startsWith(`${config.basePath}/player/`)
 	);
 	let isEditor = $derived(
-		page.url.pathname === `${config.basePath}/edit/editor` ||
-		page.url.pathname.startsWith(`${config.basePath}/edit/editor/`)
+		page.url.pathname === `${config.basePath}/admin/edit/editor` ||
+		page.url.pathname.startsWith(`${config.basePath}/admin/edit/editor/`)
 	);
 	let isSignin = $derived(page.url.pathname === SIGNIN_PATH);
 	let bare = $derived(isPlayer || isSignin || isEditor);
@@ -46,12 +46,8 @@
 	let coursesLoaded = false;
 	let collapsed = $state(false);
 
-	// ⚠ CHECK THIS: which field on the authenticate() result marks a super admin?
-	// Log it once with console.log(admin) and keep only the matching line.
-	function checkSuper(a) {
-		return a?.role === "super" || a?.role === "superadmin" || a?.isSuper === true || a?.superAdmin === true;
-	}
-	let isSuper = $derived(checkSuper(admin));
+	// admin.me returns isSuper (true / false) — decided by role SUPER_ADMIN on the server
+	let isSuper = $derived(admin?.isSuper === true);
 
 	$effect(() => {
 		const path = page.url.pathname;
@@ -66,7 +62,7 @@
 
 		(async () => {
 			try {
-				admin = await send("admin", "authenticate", {});
+				admin = await send("admin", "me", {});
 				authed = !!admin;
 			} catch {
 				admin = null;

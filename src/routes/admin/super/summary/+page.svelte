@@ -1,5 +1,5 @@
 <script>
-	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/summary/+page.svelte
+	///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/super/summary/+page.svelte
 	import { onMount } from "svelte";
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
@@ -125,10 +125,10 @@
 
 	async function loadCourse(course) {
 		try {
-			const [groups, items, unanswered] = await Promise.all([
+			const [groups, items, open] = await Promise.all([
 				send("group", "list", { courseSlug: course.slug }),
-				send("adminLibrary", "list", { courseSlug: course.slug }),
-				send("adminCommunication", "listUnanswered", { courseSlug: course.slug })
+				send("library", "list", { courseSlug: course.slug }),
+				send("inquiry", "list", { courseSlug: course.slug, status: "OPEN", pageSize: 1 })
 					.catch(() => null)
 			]);
 
@@ -136,7 +136,7 @@
 				course,
 				groups ?? [],
 				items ?? [],
-				Array.isArray(unanswered) ? unanswered.length : null
+				open ? open.total : null
 			);
 		} catch (err) {
 			return {

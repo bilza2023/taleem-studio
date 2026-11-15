@@ -1,10 +1,13 @@
 <script>
+	// src/lib/adminComponents/Navbar.svelte
 	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
 	import { config } from "$lib/config.js";
 
+	// layout still passes `active`; not used any more (links live in the sidebar)
 	let { active = "" } = $props();
 
-	const basePath = config.basePath;
+	const base = config.basePath || "";
 
 	let email = $state("");
 
@@ -17,206 +20,134 @@
 		localStorage.removeItem("taleem-admin-email");
 		email = "";
 		window.dispatchEvent(new Event("authChanged"));
+		goto(`${base}/admin/signin`);
 	}
 
 	onMount(() => {
 		refresh();
-
 		window.addEventListener("authChanged", refresh);
-
-		return () => {
-			window.removeEventListener("authChanged", refresh);
-		};
+		return () => window.removeEventListener("authChanged", refresh);
 	});
 </script>
 
 <nav class="navbar">
-	<a class="home" href={config.basePath || "/admin"}>
-		<span class="icon">📘</span>
-		<span style="color:orange">Taleem.Admin</span>
+	<a class="brand" href={`${base}/admin`}>
+				<img class="logo" src={`${base}/logo-mark-teal.png`} alt="" />
+		<span class="name">Taleem<span class="dot">.</span>Admin</span>
 	</a>
-	<div class="pills">
-		<!-- 
-		<a class="pill {active === 'home' ? 'active' : ''}" href={`${basePath}/admin`} data-sveltekit-preload-data>
-			Home
-		</a>
-		<a class="pill {active === 'courses' ? 'active' : ''}"  href={`${basePath}/admin/courses`} data-sveltekit-preload-data>
-			Courses
-		</a>
-		<a class="pill {active === 'svgs' ? 'active' : ''}" href={`${basePath}/admin/svgs`} data-sveltekit-preload-data>
-			Svgs
-		</a>
-		<a class="pill {active === 'assets' ? 'active' : ''}" href={`${basePath}/admin/assets`} data-sveltekit-preload-data>
-			Assets
-		</a>
-		<a class="pill {active === 'add-svg' ? 'active' : ''}" href={`${basePath}/admin/create/svg`} data-sveltekit-preload-data>
-			＋ SVG
-		</a>
-		<a class="pill {active === 'add-svg-bulk' ? 'active' : ''}" href={`${basePath}/admin/edit/svgBulk`} data-sveltekit-preload-data>
-			＋ SVG Bulk
-		</a>
-		<a class="pill {active === 'add-image' ? 'active' : ''}" href={`${basePath}/admin/create/image`} data-sveltekit-preload-data>
-			＋ Image
-		</a>
-		<a class="pill {active === 'add-audio' ? 'active' : ''}" href={`${basePath}/admin/create/audio`} data-sveltekit-preload-data>
-			＋ Audio
-		</a> -->
-		<a class="pill {active === 'summary' ? 'active' : ''}" href={`${basePath}/admin/summary`} data-sveltekit-preload-data>
-			Summary
-		</a>
-		<a class="pill {active === 'analytics' ? 'active' : ''}" href={`${basePath}/admin/analytics`} data-sveltekit-preload-data>
-			Analytics
-		</a>
-	</div>
 
 	<div class="right">
+		<a class="site" href={`${base}/`} target="_blank" rel="noopener">View site ↗</a>
 
 		{#if email}
-			<span class="email">👤 {email}</span>
-
-			<button
-				class="auth-button"
-				title="Logout"
-				onclick={logout}
-			>
-				🚪
-			</button>
+			<span class="user" title={email}>👤 {email}</span>
+			<button class="logout" title="Log out" onclick={logout}>Log out</button>
 		{:else}
-			<a
-				class="auth-button"
-				title="Sign in"
-				href={`${config.basePath}/admin/signin`}
-			>
-				🔑
-			</a>
+			<a class="logout" href={`${base}/admin/signin`}>Sign in</a>
 		{/if}
-
 	</div>
 </nav>
 
 <style>
 	.navbar {
-		margin: 0;
-		padding: .6rem 1rem;
+		--gold: #f5b932;
+		--line: rgba(255, 255, 255, 0.14);
 		position: sticky;
 		top: 0;
 		z-index: 100;
 		display: flex;
 		align-items: center;
-		gap: 1.25rem;
-		background: var(--theme-panel);
+		gap: 1rem;
+		margin: 0;
+		padding: 0.55rem 1rem;
+		background: color-mix(in srgb, var(--theme-panel) 75%, black);
+		border-bottom: 1px solid var(--line);
 		color: var(--theme-text);
-		backdrop-filter: blur(10px);
-		border-bottom: 1px solid var(--theme-border);
 	}
 
-	.home {
+	/* ── brand ── */
+	.brand {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.55rem;
-		flex-shrink: 0;
-		text-decoration: none;
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: var(--theme-text);
-		transition: color 0.2s ease;
-	}
-
-	.home:hover {
-		color: var(--theme-accent);
-	}
-
-	.icon {
-		font-size: 1.15rem;
-		line-height: 1;
-	}
-
-	.pills {
-		display: flex;
-		align-items: center;
-		gap: .55rem;
-		overflow-x: auto;
-		scrollbar-width: none;
-		white-space: nowrap;
-	}
-
-	.pills::-webkit-scrollbar { display: none; }
-
-	.pill {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: .4rem .8rem;
+		padding: 0.3rem 0.7rem 0.3rem 0.35rem;
+		border: 1px solid var(--line);
 		border-radius: 10px;
-		font-size: .85rem;
-		font-weight: 500;
-		border: 1px solid var(--theme-border);
-		cursor: pointer;
-		background: var(--theme-panel);
-		color: var(--theme-text);
 		text-decoration: none;
-		transition: background-color .15s, transform .15s;
-	}
-
-	.pill:hover {
-		background: var(--theme-accent);
 		color: var(--theme-text);
-		transform: translateY(-1px);
+		transition: border-color 0.15s ease;
 	}
 
-	.pill:visited { color: var(--theme-text); }
+	.brand:hover {
+		border-color: var(--gold);
+	}
 
-	.pill.active {
-		background: var(--theme-accent);
+	.logo {
+		width: 28px;
+		height: 28px;
+		border-radius: 6px;
+		object-fit: contain;
+	}
+
+	.name {
+		font-size: 1.15rem;
+		font-weight: 700;
+		color: var(--gold);
+	}
+
+	.dot {
 		color: var(--theme-text);
 	}
 
-	.pill.active::after {
-		content: "";
-		position: absolute;
-		left: 8px;
-		right: 8px;
-		bottom: -6px;
-		height: 3px;
-		border-radius: 3px;
-		background: var(--theme-accent);
-	}
-
-	.pill:focus,
-	.pill:focus-visible {
-		outline: none;
-		box-shadow: none;
-	}
-
+	/* ── right side ── */
 	.right {
 		margin-left: auto;
-		flex-shrink: 0;
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.6rem;
 	}
 
-	.email {
-		font-size: 0.9rem;
-		opacity: .9;
-	}
-
-	.auth-button {
+	.site,
+	.user,
+	.logout {
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
-		padding: 4px 6px;
-		border: 0;
-		background: transparent;
-		color: inherit;
-		font-size: 1.15rem;
-		line-height: 1;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid var(--line);
+		border-radius: 8px;
+		font-size: 0.85rem;
+		color: var(--theme-text);
 		text-decoration: none;
-		cursor: pointer;
+		background: transparent;
 	}
 
-	.auth-button:hover {
-		opacity: .7;
+	.site:hover {
+		border-color: var(--gold);
+		color: var(--gold);
+	}
+
+	.user {
+		max-width: 260px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		opacity: 0.85;
+	}
+
+	.logout {
+		cursor: pointer;
+		font: inherit;
+		font-size: 0.85rem;
+	}
+
+	.logout:hover {
+		border-color: #e5534b;
+		color: #e5534b;
+	}
+
+	@media (max-width: 640px) {
+		.user {
+			display: none;
+		}
 	}
 </style>

@@ -13,6 +13,8 @@
 	let loading = $state(true);
 	let error = $state("");
 
+	const tagText = (asset) => (Array.isArray(asset.tags) ? asset.tags.join(" ") : asset.tags || "");
+
 	// all matches (used by the manifest too)
 	let filtered = $derived.by(() => {
 		const words = search.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -21,8 +23,7 @@
 			.filter(asset => {
 				if (type !== "ALL" && asset.type !== type) return false;
 
-				const tags = Array.isArray(asset.tags) ? asset.tags.join(" ") : asset.tags || "";
-				const hay = `${asset.slug} ${asset.title || ""} ${tags}`.toLowerCase();
+				const hay = `${asset.slug} ${asset.title || ""} ${tagText(asset)}`.toLowerCase();
 
 				return words.every(w => hay.includes(w));
 			})
@@ -40,7 +41,9 @@
 
 	onMount(async () => {
 		try {
-			assets = await send("assets", "list", {});
+			// server sends "image" / "svg" / "audio" — this page uses upper case
+			const list = (await send("assets", "list", {})) ?? [];
+			assets = list.map(a => ({ ...a, type: String(a.type).toUpperCase() }));
 		} catch (e) {
 			error = e.message;
 		} finally {
@@ -93,7 +96,7 @@
 			slug: asset.slug,
 			title: asset.title || "",
 			description: asset.description || "",
-			tags: asset.tags || ""
+			tags: asset.tags || []
 		}));
 
 		const blob = new Blob([JSON.stringify(manifest, null, 2)], {
@@ -178,8 +181,8 @@
 
 						<small>{asset.type}</small>
 
-						{#if asset.tags}
-							<small>{asset.tags}</small>
+						{#if tagText(asset)}
+							<small>{tagText(asset)}</small>
 						{/if}
 					</div>
 

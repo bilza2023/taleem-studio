@@ -1,5 +1,5 @@
 <script>
-	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/analytics/+page.svelte
+	///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/super/analytics/+page.svelte
 	import { onMount } from "svelte";
 	import { send } from "$lib/send";
 	import { config } from "$lib/config.js";
@@ -29,7 +29,7 @@
 		loading = true;
 		error = "";
 		try {
-			report = await send("adminAnalytics", "summary", { days });
+				report = await send("analytics", "summary", { days });
 		} catch (err) {
 			error = err.message;
 		} finally {

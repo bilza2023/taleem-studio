@@ -5,6 +5,7 @@
 	import { send } from "$lib/send";
 
 	const PAGE_SIZE = 50;
+	const MAX_PAGE = 200; // server's largest page
 
 	let items = $state([]);
 	let page = $state(1);
@@ -12,7 +13,6 @@
 	let total = $state(0);
 	let loading = $state(true);
 	let error = $state("");
-	let active = $state("svgs");
 
 	// ── quick edit: one card open at a time ──
 	let quickSlug = $state(null);
@@ -28,27 +28,35 @@
 
 	let isSearch = $derived(query.trim().length > 0);
 
+	const tagText = (svg) => (Array.isArray(svg.tags) ? svg.tags.join(" ") : (svg.tags ?? ""));
+
 	let results = $derived.by(() => {
 		if (!isSearch || !allItems) return [];
 		const words = query.toLowerCase().trim().split(/\s+/);
 		return allItems.filter((svg) => {
-			const hay = `${svg.slug} ${svg.title ?? ""} ${svg.tags ?? ""}`.toLowerCase();
+			const hay = `${svg.slug} ${svg.title ?? ""} ${tagText(svg)}`.toLowerCase();
 			return words.every((w) => hay.includes(w));
 		});
 	});
 
 	let shown = $derived(isSearch ? results : items);
 
+	// load every svg (with body, for previews) in pages of 200
 	async function ensureAll() {
 		if (allItems || searching) return;
 		searching = true;
 
 		try {
-			const data = await send("svg", "listPaginated", {
-				page: 1,
-				pageSize: Math.max(total, 10000)
-			});
-			allItems = data.items;
+			const all = [];
+			let p = 1;
+			let pages = 1;
+			do {
+				const data = await send("svg", "list", { page: p, pageSize: MAX_PAGE, full: true });
+				all.push(...data.items);
+				pages = data.pages;
+				p += 1;
+			} while (p <= pages);
+			allItems = all;
 
 		} catch (e) {
 			error = e.message;
@@ -74,14 +82,15 @@
 		quickSlug = null;
 
 		try {
-			const data = await send("svg", "listPaginated", {
+			const data = await send("svg", "list", {
 				page,
-				pageSize: PAGE_SIZE
+				pageSize: PAGE_SIZE,
+				full: true // previews need the svg body
 			});
 
 			items = data.items;
 			page = data.page;
-			totalPages = data.totalPages;
+			totalPages = data.pages;
 			total = data.total;
 
 		} catch (e) {
@@ -94,6 +103,10 @@
 
 	function editUrl(slug) {
 		return `${config.basePath}/admin/edit/svg?slug=${encodeURIComponent(slug)}`;
+	}
+
+	function viewUrl(slug) {
+		return `${config.basePath}/content/images/${encodeURIComponent(slug)}`;
 	}
 
 	async function deleteSvg(slug) {
@@ -137,7 +150,7 @@
 		quickMsg = "";
 
 		try {
-			await send("svg", "update", { slug: svg.slug, data: { body } });
+			await send("svg", "update", { slug: svg.slug, changes: { body } });
 			svg.body = body; // card preview re-renders = visual check
 
 			// keep the other list (paged / search cache) in sync
@@ -176,9 +189,6 @@
 	$effect(() => {
 		load();
 	});
-		function viewUrl(slug) {
-		return `${config.basePath}/content/images/${encodeURIComponent(slug)}`;
-	}
 </script>
 
 <div class="page">
@@ -237,7 +247,7 @@
 							{#key svg.body}
 								<object
 									type="image/svg+xml"
-									data={`data:image/svg+xml;utf8,${encodeURIComponent(svg.body)}`}
+									data={`data:image/svg+xml;utf8,${encodeURIComponent(svg.body ?? "")}`}
 									aria-label={svg.title || svg.slug}
 								></object>
 							{/key}
@@ -251,8 +261,8 @@
 							<span>{svg.title}</span>
 						{/if}
 
-						{#if svg.tags}
-							<small>{svg.tags}</small>
+						{#if tagText(svg)}
+							<small>{tagText(svg)}</small>
 						{/if}
 					</div>
 

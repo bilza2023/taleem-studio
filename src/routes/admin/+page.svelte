@@ -6,22 +6,37 @@
 
 	const base = config.basePath || "";
 
+	let me = $state(null);
 	let courses = $state([]);
+	let stats = $state({}); // slug → { pub, draft, questions }
 	let loading = $state(true);
 	let error = $state("");
 
 	const href = (path, slug) => `${base}${path}?course=${encodeURIComponent(slug)}`;
 
-	const quick = [
-		{ label: "Upload image", path: "/admin/create/image", icon: "🖼" },
-		{ label: "Upload SVG", path: "/admin/create/svg", icon: "✏️" },
-		{ label: "Upload audio", path: "/admin/create/audio", icon: "🎙" },
-		{ label: "Docs", path: "/admin/docs", icon: "📖" }
-	];
+	async function loadStats(slug) {
+		try {
+			const [items, open] = await Promise.all([
+				send("library", "list", { courseSlug: slug }),
+				send("inquiry", "list", { courseSlug: slug, status: "OPEN", pageSize: 1 }).catch(() => null)
+			]);
+			stats[slug] = {
+				pub: items.filter((i) => i.status === "PUBLISHED").length,
+				draft: items.filter((i) => i.status === "DRAFT").length,
+				questions: open?.total ?? 0
+			};
+		} catch {
+			stats[slug] = null;
+		}
+	}
 
 	onMount(async () => {
 		try {
-			courses = (await send("course", "list", {})) ?? [];
+			const [admin, list] = await Promise.all([send("admin", "me", {}), send("course", "list", {})]);
+			me = admin;
+			// teachers see their own courses; super sees all
+			courses = (list ?? []).filter((c) => admin.isSuper || admin.courseSlugs.includes(c.slug));
+			courses.forEach((c) => loadStats(c.slug)); // cards appear now, numbers fill in
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -33,21 +48,22 @@
 <div class="dash">
 	<header class="hero">
 		<h1>Assalam o Alaikum 👋</h1>
-		<p>Pick a course to start working, or use a quick link below.</p>
+		<p>{me?.email ?? ""}</p>
 	</header>
 
 	<section>
-		<h2>Your courses</h2>
+		<h2>{me?.isSuper ? "All courses" : "Your courses"}</h2>
 
 		{#if loading}
 			<p class="muted">Loading…</p>
 		{:else if error}
 			<p class="err">{error}</p>
 		{:else if !courses.length}
-			<div class="empty">No courses yet.</div>
+			<div class="empty">No courses assigned to you yet.</div>
 		{:else}
 			<div class="grid">
 				{#each courses as c (c.slug)}
+					{@const s = stats[c.slug]}
 					<article class="card" class:inactive={c.isActive === false}>
 						<div class="top">
 							<a class="title" href={href("/admin/course", c.slug)}>{c.title ?? c.slug}</a>
@@ -58,6 +74,18 @@
 						</div>
 						<code>{c.slug}</code>
 
+						<div class="nums">
+							{#if s === undefined}
+								<span class="muted">…</span>
+							{:else if s === null}
+								<span class="muted">–</span>
+							{:else}
+								<span><b class="good">{s.pub}</b> published</span>
+								<span><b class:warn={s.draft > 0}>{s.draft}</b> drafts</span>
+								<span><b class:alert={s.questions > 0}>{s.questions}</b> {s.questions === 1 ? "question" : "questions"}</span>
+							{/if}
+						</div>
+
 						<div class="actions">
 							<a class="btn ghost" href={href("/admin/course", c.slug)}>Open</a>
 							<a class="btn gold" href={href("/admin/create/content", c.slug)}>+ New deck</a>
@@ -66,18 +94,6 @@
 				{/each}
 			</div>
 		{/if}
-	</section>
-
-	<section>
-		<h2>Quick links</h2>
-		<div class="quick">
-			{#each quick as q (q.path)}
-				<a class="q" href={base + q.path}>
-					<span class="q-icon">{q.icon}</span>
-					{q.label}
-				</a>
-			{/each}
-		</div>
 	</section>
 
 	<section class="loop">
@@ -112,7 +128,8 @@
 
 	.hero p {
 		margin: 0;
-		opacity: 0.7;
+		opacity: 0.6;
+		font-size: 0.9rem;
 	}
 
 	section {
@@ -202,6 +219,22 @@
 		opacity: 0.55;
 	}
 
+	/* ---------- per-course numbers ---------- */
+	.nums {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem 0.9rem;
+		margin-top: 0.5rem;
+		padding-top: 0.55rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		font-size: 0.82rem;
+		opacity: 0.9;
+	}
+
+	.nums b {
+		font-variant-numeric: tabular-nums;
+	}
+
 	.actions {
 		display: grid;
 		grid-template-columns: 1fr 1.4fr;
@@ -236,36 +269,6 @@
 
 	.btn.gold:hover {
 		box-shadow: 0 4px 16px rgba(245, 185, 50, 0.4);
-	}
-
-	/* ---------- quick links ---------- */
-	.quick {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-	}
-
-	.q {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.55rem;
-		padding: 0.7rem 1.1rem;
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		border-radius: 12px;
-		background: rgba(255, 255, 255, 0.03);
-		color: var(--theme-text);
-		font-weight: 600;
-		text-decoration: none;
-		transition: border-color 0.2s ease, background 0.2s ease;
-	}
-
-	.q:hover {
-		border-color: var(--gold);
-		background: rgba(245, 185, 50, 0.06);
-	}
-
-	.q-icon {
-		font-size: 1.15rem;
 	}
 
 	/* ---------- lesson loop ---------- */
@@ -307,6 +310,9 @@
 		color: var(--gold);
 	}
 
+	.good  { color: #57ab5a; }
+	.warn  { color: #d4a72c; }
+	.alert { color: #e5534b; }
 	.muted { opacity: 0.6; }
 	.err   { color: #e5534b; }
 
