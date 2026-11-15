@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum CommunicationInitiator {
-  STUDENT
-  TEACHER
-}
-
 enum ContentType {
   ARTICLE
   PLAYER
@@ -100,7 +95,6 @@ model Library {
 
   group Group @relation(fields: [courseSlug, groupSlug], references: [courseSlug, slug], onDelete: Restrict)
 
-  communications Communication[]
   ratings Rating[]
   
   @@index([courseSlug])
@@ -112,11 +106,8 @@ model User {
   email          String          @unique
   password       String
   name           String?
-  role           String          @default("student")
-  resource       String?
   createdAt      DateTime        @default(now())
   subscriptions  Subscription[]
-  communications Communication[]
   ratings   Rating[]
   inquiries Inquiry[]
 }
@@ -148,25 +139,6 @@ model Subscription {
   @@index([courseSlug])
 }
 
-model Communication {
-  id             Int                    @id @default(autoincrement())
-  userId         Int
-  librarySlug    String
-  type           String
-  initiator      CommunicationInitiator @default(STUDENT)
-  meta           String?
-  message        String
-  authorResponse String?
-  isPublic       Boolean                @default(false)
-  readAt         DateTime?
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
-  user           User                   @relation(fields: [userId], references: [id])
-  library        Library                @relation(fields: [librarySlug], references: [slug], onDelete: Restrict)
-
-  @@index([userId])
-  @@index([librarySlug])
-}
 
 model Svg {
   slug String @id
