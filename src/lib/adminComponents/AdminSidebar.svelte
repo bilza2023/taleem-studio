@@ -53,7 +53,9 @@
 				{ label: "Assets", path: "/admin/assets" },
 				{ label: "SVG bulk", path: "/admin/super/edit/svgBulk" },
 				{ label: "Summary", path: "/admin/super/summary" },
-				{ label: "Analytics", path: "/admin/super/analytics" }
+				{ label: "Analytics", path: "/admin/super/analytics" },
+				{ label: "Ratings", path: "/admin/super/rating" },
+				{ label: "Notifications", path: "/admin/super/notifications" }
 			]
 		}
 	];
