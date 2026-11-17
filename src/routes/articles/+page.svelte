@@ -1,24 +1,24 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/articles/+page.svelte
+	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/articles/+page.svelte
 	import { onMount } from "svelte";
 	import { page } from "$app/state";
-	import Communication from "$lib/components/Communication.svelte";
-	import Discussion from "$lib/components/Discussion.svelte";
 	import { send } from "$lib/send";
+	import Locked from "$lib/components/Locked.svelte";
+	import Rating from "$lib/components/Rating.svelte";
 
 	let librarySlug = $state("");
 	let libraryItem = $state(null);
 	let error = $state("");
 	let loading = $state(true);
+	let locked = $state(false);
 
 	let articleBody = $derived.by(() => {
 		if (!libraryItem?.body) return "";
-
-		return libraryItem.body.replaceAll(
-			'src="',
-			`src="/content/images/`
-		);
+		return libraryItem.body.replaceAll('src="', `src="/content/images/`);
 	});
+
+	// paid course, no active subscription
+	const isLocked = (e) => e?.status === 403 || /subscription/i.test(e?.message ?? "");
 
 	onMount(async () => {
 		librarySlug = page.url.searchParams.get("article");
@@ -31,55 +31,31 @@
 
 		try {
 			libraryItem = await send("library", "get", { slug: librarySlug });
-			if (!libraryItem) {
-				error = "Article not found.";
-			}
+			if (!libraryItem) error = "Article not found.";
 		} catch (err) {
-			error = err.message;
+			if (isLocked(err)) locked = true;
+			else error = err.message;
 		} finally {
 			loading = false;
 		}
 	});
 </script>
+
 {#if loading}
-
-<main class="container">
-	<p>Loading article…</p>
-</main>
-
+	<main class="container">
+		<p>Loading article…</p>
+	</main>
+{:else if locked}
+	<Locked />
 {:else if error}
-
-<main class="container">
-	<h2>{error}</h2>
-</main>
-
+	<main class="container">
+		<h2>{error}</h2>
+	</main>
 {:else}
-
-<main class="container">
-	<!-- {@html libraryItem.body} -->
-{@html articleBody}
-	<!-- <Communication librarySlug={libraryItem.slug} type="user-comment" />
-	<Discussion librarySlug={libraryItem.slug} /> -->
-<!-- {#if libraryItem.allowCommunication}
-
-	<Communication
-		librarySlug={libraryItem.slug}
-		type="user-comment"
-	/>
-
-{:else}
-
-	<article class="secondary">
-		🔒 Questions and comments are disabled for this lesson.
-	</article>
-
-{/if} -->
-
-<Discussion
-	librarySlug={libraryItem.slug}
-/>
-</main>
-
+	<main class="container">
+		{@html articleBody}
+	</main>
+	<Rating librarySlug={libraryItem.slug} allowed={libraryItem.allowCommunication !== false} />
 {/if}
 <style>
 	.container {

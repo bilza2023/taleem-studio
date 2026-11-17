@@ -8,15 +8,22 @@
 	import PlayerShell from "$lib/components/playerShell/PlayerShell.svelte";
 	import LoadingScreen from "$lib/components/playerShell/LoadingScreen.svelte";
 	import Rating from "$lib/components/Rating.svelte";
+	import Locked from "$lib/components/Locked.svelte";
 
 	let lesson = null;
 	let progress = null;
 	let error = null;
+	let locked = false;
 
 	const lessonSlug = get(page).url.searchParams.get("lesson");
+
 	function trackEvent(name) {
 		send("analytics", "track", { name, slug: lessonSlug }, "user").catch(() => {});
 	}
+
+	// paid course, no active subscription
+	const isLocked = (e) => e?.status === 403 || /subscription/i.test(e?.message ?? "");
+
 	onMount(() => {
 		const controller = new AbortController();
 		let loaded = null;
@@ -36,6 +43,10 @@
 				trackEvent("lesson.open");
 			} catch (e) {
 				if (e?.name === "AbortError") return;
+				if (isLocked(e)) {
+					locked = true;
+					return;
+				}
 				console.error(e);
 				error = e?.message ?? String(e);
 			}
@@ -48,17 +59,16 @@
 	});
 </script>
 
-{#if lesson}
+{#if locked}
+	<Locked />
+{:else if lesson}
 	<PlayerShell deck={lesson.deck} timer={lesson.timer} />
+	<Rating librarySlug={lessonSlug} />
 {:else}
 	<LoadingScreen {progress} {error} />
 {/if}
 
-
-{#if lesson}
-	<Rating librarySlug={lessonSlug} />
-{/if}
-
+<!-- <style> block: unchanged, keep yours -->
 <style>
 	:global(html),
 	:global(body) {
