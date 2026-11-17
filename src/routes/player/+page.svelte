@@ -7,8 +7,7 @@
 	import { loadLesson } from "$lib/utils/player-utils";
 	import PlayerShell from "$lib/components/playerShell/PlayerShell.svelte";
 	import LoadingScreen from "$lib/components/playerShell/LoadingScreen.svelte";
-	// import Communication from "$lib/components/Communication.svelte";
-	// import Discussion from "$lib/components/Discussion.svelte";
+	import Rating from "$lib/components/Rating.svelte";
 
 	let lesson = null;
 	let progress = null;
@@ -55,14 +54,10 @@
 	<LoadingScreen {progress} {error} />
 {/if}
 
-<!--
+
 {#if lesson}
-<div class="lesson-interaction">
-	<Communication librarySlug={lessonSlug} type="user-comment" />
-	<Discussion librarySlug={lessonSlug} />
-</div>
+	<Rating librarySlug={lessonSlug} />
 {/if}
--->
 
 <style>
 	:global(html),
