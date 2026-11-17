@@ -9,6 +9,7 @@
 		{ key: "CLOSED", label: "Closed" },
 		{ key: "", label: "All" }
 	];
+	const PAGE_SIZE = 20;
 
 	let status = $state("OPEN");
 	let pageNo = $state(1);
@@ -18,16 +19,28 @@
 	let drafts = $state({});      // id → reply text
 	let savingId = $state(null);
 
+	// accept either a plain array or { items, total, pages }
+	function normalize(res) {
+		if (Array.isArray(res)) {
+			return { items: res, total: res.length, pages: 1 };
+		}
+		const items = res?.items ?? [];
+		const total = res?.total ?? items.length;
+		const pages = res?.pages ?? Math.max(1, Math.ceil(total / PAGE_SIZE));
+		return { items, total, pages };
+	}
+
 	async function load() {
 		loading = true;
 		error = "";
 		try {
-			data = await send("adminInquiry", "list", {
+			const res = await send("inquiry", "list", {
 				courseSlug: courseSlug || undefined,
 				status: status || undefined,
 				page: pageNo,
-				pageSize: 20
+				pageSize: PAGE_SIZE
 			});
+			data = normalize(res);
 			drafts = Object.fromEntries(data.items.map((i) => [i.id, i.reply ?? ""]));
 		} catch (err) {
 			error = err.message;
@@ -51,7 +64,7 @@
 		if (!text) return alert("Write a reply first.");
 		savingId = item.id;
 		try {
-			const updated = await send("adminInquiry", "reply", { id: item.id, reply: text });
+		const updated = await send("inquiry", "reply", { id: item.id, reply: text });
 			data.items = data.items.map((i) => (i.id === item.id ? { ...i, ...updated } : i));
 		} catch (err) {
 			alert(err.message);
@@ -63,7 +76,7 @@
 	async function setItemStatus(item, newStatus) {
 		savingId = item.id;
 		try {
-			const updated = await send("adminInquiry", "setStatus", { id: item.id, status: newStatus });
+			const updated = await send("inquiry", "setStatus", { id: item.id, status: newStatus });
 			data.items = data.items.map((i) => (i.id === item.id ? { ...i, ...updated } : i));
 		} catch (err) {
 			alert(err.message);

@@ -80,16 +80,18 @@
 			error = "";
 			loaded = false;
 
-			const [courseData, groups, list] = await Promise.all([
+			const [courseData, groups, res] = await Promise.all([
 				send("course", "get", { slug }),
 				send("group", "list", { courseSlug: slug }),
-				send("adminLibrary", "list", { courseSlug: slug })
+				send("library", "list", { courseSlug: slug })
 			]);
-console.log(Object.keys(list[0]));
+
 			if (!courseData) {
 				error = `Course "${slug}" not found.`;
 				return;
 			}
+
+			const list = Array.isArray(res) ? res : (res?.items ?? []);
 
 			course = courseData;
 			groupings = groups;
