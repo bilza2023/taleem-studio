@@ -1,326 +1,164 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/create/bulk-content/+page.svelte
+	// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/create/content/+page.svelte
+	// Create ONE library item (as DRAFT). Everything else is edited afterwards.
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
-	import { config } from "$lib/config.js";
-	import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 
 	const courseSlug = page.url.searchParams.get("course");
 
-	let groupings = $state([]);
-	let message = $state(courseSlug ? "" : "Error: course is required");
+	const TYPES = [
+		{ key: "PLAYER", label: "Deck (player)" },
+		{ key: "ARTICLE", label: "Article" },
+		{ key: "MCQ", label: "MCQ (beta)" }
+	];
+
+	let groups = $state([]);
 	let loading = $state(true);
 	let saving = $state(false);
-	let results = $state([]);
+	let error = $state(courseSlug ? "" : "No course selected. Pick one in “Working on”.");
 
-	let form = $state({
-		slugsRaw: "",
-		title: "",
-		type: "ARTICLE",
-		groupSlug: "",
-		description: "",
-		thumbnail: "",
-		body: "",
-		allowCommunication: true,
-		meta: ""
-	});
+	let title = $state("");
+	let slug = $state("");
+	let slugTouched = $state(false); // stop auto-filling once edited by hand
+	let type = $state("PLAYER");
+	let groupSlug = $state(page.url.searchParams.get("group") ?? "");
+
+	const slugify = (s) =>
+		s.toLowerCase().trim()
+			.replace(/[^a-z0-9.\s-]/g, "")
+			.replace(/[\s_]+/g, "-")
+			.replace(/-+/g, "-")
+			.replace(/^-|-$/g, "");
+
+	function onTitle() {
+		if (!slugTouched) slug = slugify(title);
+	}
 
 	async function loadGroups() {
 		try {
-			groupings = await send("group", "list", { courseSlug });
-
-			if (groupings.length) {
-				form.groupSlug = groupings[0].slug;
-			}
-		} catch (error) {
-			console.error(error);
-			message = `Error: ${error.message}`;
+			groups = await send("group", "list", { courseSlug });
+			if (!groups.some((g) => g.slug === groupSlug)) groupSlug = groups[0]?.slug ?? "";
+		} catch (err) {
+			error = err.message;
 		} finally {
 			loading = false;
 		}
 	}
 
-	function useThumbnail(slug) {
-		form.thumbnail = slug;
-	}
+	$effect(() => {
+		if (courseSlug) loadGroups();
+		else loading = false;
+	});
 
-	function parseSlugs() {
-		return form.slugsRaw
-			.split(",")
-			.map((s) => s.trim())
-			.filter(Boolean);
-	}
+	async function create(e) {
+		e.preventDefault();
+		error = "";
 
-	async function submit() {
-		const slugs = parseSlugs();
-
-		if (!slugs.length) {
-			message = "Error: at least one slug is required";
+		const s = slugify(slug);
+		if (!title.trim() || !s || !groupSlug) {
+			error = "Title, slug and chapter are required.";
 			return;
 		}
 
-		message = "";
-		results = [];
 		saving = true;
-
-		// NOTE: assumes send("adminLibrary", "list", { groupSlug }) returns
-		// the existing items in this group — confirm this signature against
-		// the real library.js before relying on it (the library/adminLibrary
-		// split hasn't been fully verified yet). Falls back to sortOrder 0
-		// if the fetch fails, so bulk create still works, just without the
-		// max+1 offset.
-		let nextSortOrder = 0;
-
 		try {
-			const existing = await send("adminLibrary", "list", { groupSlug: form.groupSlug });
-
-			if (existing?.length) {
-				nextSortOrder = Math.max(...existing.map((i) => i.sortOrder ?? 0)) + 1;
-			}
-		} catch (error) {
-			console.error("Could not fetch existing sortOrder, defaulting to 0", error);
+			await send("library", "create", {
+				slug: s,
+				courseSlug,
+				groupSlug,
+				type,
+				title: title.trim(),
+				status: "DRAFT"
+			});
+			goto(`/admin/course?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(groupSlug)}`);
+		} catch (err) {
+			error = err.message; // 409 = slug already exists
+		} finally {
+			saving = false;
 		}
-
-		for (const slug of slugs) {
-			try {
-				await send("adminLibrary", "create", {
-					slug,
-					courseSlug,
-					groupSlug: form.groupSlug,
-					type: form.type,
-					title: form.title,
-					description: form.description,
-					thumbnail: form.thumbnail,
-					body: form.body,
-					sortOrder: nextSortOrder,
-					allowCommunication: form.allowCommunication,
-					meta: form.meta
-				});
-
-				results = [...results, { slug, ok: true }];
-				nextSortOrder++;
-			} catch (error) {
-				console.error(error);
-				results = [...results, { slug, ok: false, error: error.message }];
-			}
-		}
-
-		saving = false;
-
-		const failed = results.filter((r) => !r.ok).length;
-		message = failed
-			? `Done — ${results.length - failed} created, ${failed} failed.`
-			: `Done — all ${results.length} items created.`;
 	}
-
-	function goToLessons() {
-		goto(`${config.basePath}/admin/lessons?course=${encodeURIComponent(courseSlug)}`);
-	}
-
-	$effect(() => {
-		if (courseSlug) loadGroups();
-	});
 </script>
 
-<div class="page">
+<main class="page">
+	<h1>➕ New lesson</h1>
+	{#if courseSlug}<p class="subtitle">Course: <strong>{courseSlug}</strong> · created as a Draft</p>{/if}
+
 	{#if loading}
-
-		<p>{message}</p>
-
+		<p>Loading…</p>
+	{:else if !courseSlug}
+		<p class="error">{error}</p>
 	{:else}
-
-		<h1>Bulk Create Content</h1>
-
-		<div class="identity">
-			<div><strong>Course:</strong> {courseSlug}</div>
-		</div>
-
-		<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
-
+		<form class="card" onsubmit={create}>
 			<label>
-				Type
-				<select bind:value={form.type}>
-					<option value="ARTICLE">Article</option>
-					<option value="PLAYER">Player</option>
-				</select>
+				Title
+				<input bind:value={title} oninput={onTitle} placeholder="Exercise 4.6 — Question 1" required />
 			</label>
 
 			<label>
-				Group
-				<select bind:value={form.groupSlug} required>
-					{#each groupings as group}
-						<option value={group.slug}>{group.title}</option>
+				Slug
+				<input
+					bind:value={slug}
+					oninput={() => (slugTouched = true)}
+					placeholder="fbise9math-ex4.6-q01"
+					class="mono"
+					required
+				/>
+				<small>Permanent ID used in links. Lowercase, numbers, dots and dashes.</small>
+			</label>
+
+			<fieldset>
+				<legend>Type</legend>
+				<div class="seg">
+					{#each TYPES as t (t.key)}
+						<button type="button" class="seg-btn" class:on={type === t.key} aria-pressed={type === t.key} onclick={() => (type = t.key)}>
+							{t.label}
+						</button>
+					{/each}
+				</div>
+			</fieldset>
+
+			<label>
+				Chapter
+				<select bind:value={groupSlug} required>
+					{#each groups as g (g.slug)}
+						<option value={g.slug}>{g.title ?? g.slug}</option>
 					{/each}
 				</select>
 			</label>
 
-			<label>
-				Slugs (comma separated)
-				<textarea
-					class="body"
-					bind:value={form.slugsRaw}
-					placeholder="fbise9math-ex4.6-q01, fbise9math-ex4.6-q02, fbise9math-ex4.6-q03"
-					required
-				></textarea>
-			</label>
-
-			<label>
-				Title
-				<input bind:value={form.title} placeholder="Applied to every item — edit individually after" required>
-			</label>
-
-			<label>
-				Description
-				<textarea bind:value={form.description}></textarea>
-			</label>
-
-			<label>
-				Thumbnail
-				<ImagePicker
-					value={form.thumbnail}
-					onUse={useThumbnail}
-				/>
-			</label>
-
-			<label class="check">
-				<input
-					type="checkbox"
-					bind:checked={form.allowCommunication}
-				>
-				Allow Communication
-			</label>
-
-			<label>
-				Meta
-				<textarea bind:value={form.meta}></textarea>
-			</label>
-
-			<button type="submit" disabled={saving}>
-				{saving ? "Creating..." : "Bulk Create"}
-			</button>
-
+			<div class="actions">
+				{#if error}<span class="error">{error}</span>{/if}
+				<button type="submit" disabled={saving}>{saving ? "Creating…" : "Create draft"}</button>
+			</div>
 		</form>
-
-		{#if message}
-			<p class="message">{message}</p>
-		{/if}
-
-		{#if results.length}
-			<ul class="results">
-				{#each results as r}
-					<li class={r.ok ? "ok" : "fail"}>
-						{r.ok ? "✅" : "❌"} {r.slug}
-						{#if !r.ok}<span class="err"> — {r.error}</span>{/if}
-					</li>
-				{/each}
-			</ul>
-
-			<button type="button" onclick={goToLessons}>
-				Done — go to Lessons
-			</button>
-		{/if}
-
 	{/if}
-</div>
+</main>
 
 <style>
-	.page {
-		max-width: 800px;
-		color: aliceblue;
-		margin: 40px auto;
-		padding: 0 24px;
-		font-family: system-ui, sans-serif;
+	.page { width: min(95vw, 720px); margin: 0 auto; padding: 2rem 1rem; box-sizing: border-box; color: var(--theme-text); }
+	h1 { margin: 0 0 .25rem; }
+	.subtitle { opacity: .7; margin: 0 0 1.25rem; }
+	.error { color: #f87171; font-size: .9rem; }
+	small { font-size: .78rem; font-weight: 400; opacity: .6; }
+
+	.card { padding: 1.25rem 1.5rem; border: 1px solid var(--theme-border); border-radius: 14px; background: var(--theme-panel); }
+	label, fieldset { display: grid; gap: .4rem; margin: 0 0 1.1rem; font-size: .9rem; font-weight: 600; }
+	fieldset { border: 0; padding: 0; }
+	legend { padding: 0; margin-bottom: .4rem; }
+
+	input, select {
+		box-sizing: border-box; width: 100%; margin: 0; padding: .6rem .75rem;
+		border: 1px solid var(--theme-border); border-radius: 8px;
+		background: var(--theme-panel); color: var(--theme-text); font: inherit; font-weight: 400;
 	}
+	.mono { font-family: monospace; }
 
-	h1 { margin-bottom: 20px; }
+	.seg { display: flex; gap: .4rem; flex-wrap: wrap; }
+	.seg-btn { all: unset; cursor: pointer; padding: .45rem 1rem; border-radius: 999px; border: 1px solid var(--theme-border); font-size: .85rem; font-weight: 500; }
+	.seg-btn.on { background: var(--theme-accent); border-color: var(--theme-accent); color: #fff; }
 
-	.identity {
-		margin-bottom: 30px;
-		padding: 12px;
-		background: #171717;
-		border: 1px solid #333;
-		border-radius: 6px;
-		display: grid;
-		gap: 5px;
-		font-size: .9rem;
-	}
-
-	form {
-		display: grid;
-		gap: 18px;
-	}
-
-	label {
-		display: grid;
-		gap: 6px;
-		font-weight: 600;
-	}
-
-	input, textarea, select {
-		box-sizing: border-box;
-		width: 100%;
-		padding: 10px 12px;
-		border: 1px solid #bbb;
-		border-radius: 5px;
-		font: inherit;
-		font-weight: 400;
-		background: white;
-	}
-
-	textarea {
-		min-height: 90px;
-		resize: vertical;
-	}
-
-	textarea.body {
-		min-height: 120px;
-		font-family: monospace;
-	}
-
-	.check {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-weight: 400;
-	}
-
-	.check input { width: auto; }
-
-	button {
-		width: fit-content;
-		padding: 10px 20px;
-		border: 0;
-		border-radius: 5px;
-		background: #222;
-		color: white;
-		font: inherit;
-		cursor: pointer;
-	}
-
-	button:hover { background: #444; }
+	.actions { display: flex; justify-content: flex-end; align-items: center; gap: .75rem; flex-wrap: wrap; }
+	button[type="submit"] { width: auto; margin: 0; padding: .55rem 1.2rem; border: 0; border-radius: 6px; background: var(--theme-accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
 	button:disabled { opacity: .5; cursor: default; }
-
-	.message {
-		margin-top: 20px;
-		padding: 12px;
-		background: #eee;
-		color: #222;
-		border-radius: 5px;
-	}
-
-	.results {
-		margin-top: 20px;
-		padding: 12px;
-		background: #171717;
-		border: 1px solid #333;
-		border-radius: 6px;
-		list-style: none;
-		display: grid;
-		gap: 4px;
-		font-size: .9rem;
-	}
-
-	.results .fail { color: #ff8080; }
-	.results .err { opacity: .7; }
 </style>

@@ -1,10 +1,9 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/create/bulk-content/+page.svelte
+// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/super/create/bulk-content/+page.svelte
 
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { send } from "$lib/send";
-	import { config } from "$lib/config.js";
 	import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 
 	const courseSlug = page.url.searchParams.get("course");
@@ -25,10 +24,7 @@
 	async function loadGroups() {
 		try {
 			groupings = await send("group", "list", { courseSlug });
-
-			if (groupings.length) {
-				form.groupSlug = groupings[0].slug;
-			}
+			if (groupings.length) form.groupSlug = groupings[0].slug;
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
@@ -54,6 +50,19 @@
 			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
+	// TODO (backend plan): library.create should append to the end of the group itself.
+	// Until then the page works out the next sortOrder so bulk items keep their order.
+	async function nextSortOrderFor(groupSlug) {
+		try {
+			const res = await send("library", "list", { courseSlug, groupSlug });
+			const items = Array.isArray(res) ? res : (res?.items ?? []);
+			return items.length ? Math.max(...items.map((i) => i.sortOrder ?? 0)) + 1 : 0;
+		} catch (error) {
+			console.error("Could not fetch existing sortOrder, defaulting to 0", error);
+			return 0;
+		}
+	}
+
 	async function submit() {
 		const slugs = parseSlugs();
 
@@ -66,39 +75,24 @@
 		results = [];
 		saving = true;
 
-		// NOTE: assumes send("adminLibrary", "list", { groupSlug }) returns
-		// the existing items in this group — confirm this signature against
-		// the real library.js before relying on it (the library/adminLibrary
-		// split hasn't been fully verified yet). Falls back to sortOrder 0
-		// if the fetch fails, so bulk create still works, just without the
-		// max+1 offset.
-		let nextSortOrder = 0;
-
-		try {
-			const existing = await send("adminLibrary", "list", { groupSlug: form.groupSlug });
-
-			if (existing?.length) {
-				nextSortOrder = Math.max(...existing.map((i) => i.sortOrder ?? 0)) + 1;
-			}
-		} catch (error) {
-			console.error("Could not fetch existing sortOrder, defaulting to 0", error);
-		}
+		let nextSortOrder = await nextSortOrderFor(form.groupSlug);
 
 		for (const slug of slugs) {
 			try {
-				await send("adminLibrary", "create", {
+				// 1. create with contract fields only
+				await send("library", "create", {
 					slug,
 					courseSlug,
 					groupSlug: form.groupSlug,
 					type: form.type,
 					title: titleFromSlug(slug),
-					description: "",
-					thumbnail: form.thumbnail,
-					body: "",
-					sortOrder: nextSortOrder,
-					allowCommunication: true,
-					meta: ""
+					status: "DRAFT"
 				});
+
+				// 2. extras through update
+				const changes = { sortOrder: nextSortOrder };
+				if (form.thumbnail) changes.thumbnail = form.thumbnail;
+				await send("library", "update", { slug, changes });
 
 				results = [...results, { slug, ok: true }];
 				nextSortOrder++;
@@ -117,14 +111,13 @@
 	}
 
 	function goToLessons() {
-		goto(`${config.basePath}/admin/lessons?course=${encodeURIComponent(courseSlug)}`);
+		goto(`/admin/course?course=${encodeURIComponent(courseSlug)}&group=${encodeURIComponent(form.groupSlug)}`);
 	}
 
 	$effect(() => {
 		if (courseSlug) loadGroups();
 	});
 </script>
-
 <div class="page">
 	{#if loading}
 

@@ -1,5 +1,5 @@
 <script>
-///home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/+page.svelte
+// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/+page.svelte
 import { bundleDeck, downloadJSON } from "./js/bundleDeck.js";
 import { page } from "$app/state";
 import { goto } from "$app/navigation";
@@ -10,10 +10,8 @@ import ImagePicker from "$lib/editor/slides/components/ImagePicker.svelte";
 import tagsList from "$lib/utils/tags-list.json";
 
 	let deleting = $state(false);
-
-	function useThumbnail(slug) {
-	form.thumbnail = slug;
-}
+	let archiving = $state(false);
+	let bundling = $state(false);
 
 	let form = $state({
 		slug: "",
@@ -32,7 +30,20 @@ import tagsList from "$lib/utils/tags-list.json";
 		tags: []
 	});
 
-function parseTags(raw) {
+	let message = $state("Loading...");
+	let loading = $state(true);
+	let saving = $state(false);
+
+	const enc = encodeURIComponent;
+	const coursePageUrl = () =>
+		`${config.basePath}/admin/course?course=${enc(form.courseSlug)}&group=${enc(form.groupSlug)}`;
+
+	function useThumbnail(slug) {
+		form.thumbnail = slug;
+	}
+
+	function parseTags(raw) {
+		if (Array.isArray(raw)) return raw;
 		try {
 			const value = JSON.parse(raw ?? "[]");
 			return Array.isArray(value) ? value : [];
@@ -41,25 +52,16 @@ function parseTags(raw) {
 		}
 	}
 
-	let message = $state("Loading...");
-	let loading = $state(true);
-	let saving = $state(false);
-
 	async function load() {
 		try {
 			const course = page.url.searchParams.get("course");
 			const group = page.url.searchParams.get("group");
 			const slug = page.url.searchParams.get("slug");
 
-			if (!course || !group || !slug) {
-				throw new Error("Course, group and slug are required");
-			}
+			if (!slug) throw new Error("slug is required");
 
-						const data = await send("adminLibrary", "get", { slug });
-
-			if (!data) {
-				throw new Error(`"${slug}" not found`);
-			}
+			const data = await send("library", "get", { slug });
+			if (!data) throw new Error(`"${slug}" not found`);
 
 			form = {
 				slug: data.slug,
@@ -68,8 +70,8 @@ function parseTags(raw) {
 				thumbnail: data.thumbnail ?? "",
 				body: data.body ?? "",
 				narration: data.narration ?? "",
-				courseSlug: data.courseSlug ?? course,
-				groupSlug: data.groupSlug ?? group,
+				courseSlug: data.courseSlug ?? course ?? "",
+				groupSlug: data.groupSlug ?? group ?? "",
 				type: data.type ?? "ARTICLE",
 				status: data.status ?? "DRAFT",
 				sortOrder: data.sortOrder ?? 0,
@@ -92,9 +94,9 @@ function parseTags(raw) {
 		saving = true;
 
 		try {
-		const data = await send("adminLibrary", "update", {
+			const data = await send("library", "update", {
 				slug: form.slug,
-				data: {
+				changes: {
 					title: form.title,
 					description: form.description,
 					thumbnail: form.thumbnail,
@@ -102,14 +104,15 @@ function parseTags(raw) {
 					narration: form.narration,
 					type: form.type,
 					status: form.status,
-					sortOrder: form.sortOrder,
+					sortOrder: Number(form.sortOrder) || 0,
 					allowCommunication: form.allowCommunication,
 					meta: form.meta,
-					tags: JSON.stringify(form.tags)
+										tags: form.tags
 				}
 			});
 
-			message = `Saved: ${data.slug}`;
+			if (data?.status) form.status = data.status;
+			message = `Saved: ${data?.slug ?? form.slug}`;
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
@@ -118,54 +121,65 @@ function parseTags(raw) {
 		}
 	}
 
-	async function deleteContent() {
-		if (!confirm(`Delete "${form.slug}"?`)) return;
+	// teacher-safe: hides the item, keeps the row
+	async function archiveContent() {
+		if (!confirm(`Archive "${form.slug}"? Students will no longer see it.`)) return;
 
-		deleting = true;
-		message = "Deleting...";
-
+		archiving = true;
+		message = "Archiving...";
 		try {
-			const course = page.url.searchParams.get("course");
-
-			// in deleteContent()
-await send("adminLibrary", "delete", { slug: form.slug });
-
-			goto(`${config.basePath}/lessons?course=${encodeURIComponent(course)}`);
+			const data = await send("library", "archive", { slug: form.slug });
+			form.status = data?.status ?? "ARCHIVED";
+			message = "Archived.";
 		} catch (error) {
 			console.error(error);
 			message = `Error: ${error.message}`;
+		} finally {
+			archiving = false;
+		}
+	}
+
+	// super only: removes the row (ratings cascade)
+	async function deleteContent() {
+		if (!confirm(`Delete "${form.slug}" permanently?\nThis cannot be undone.`)) return;
+
+		deleting = true;
+		message = "Deleting...";
+		try {
+			await send("library", "delete", { slug: form.slug });
+			goto(coursePageUrl());
+		} catch (error) {
+			console.error(error);
+			message = `Error: ${error.message}`; // 403 for non-super admins
 			deleting = false;
+		}
+	}
+
+	async function downloadBundle() {
+		let deck;
+		try {
+			deck = JSON.parse(form.body);
+		} catch {
+			alert("Deck JSON is invalid — fix it before bundling.");
+			return;
+		}
+
+		bundling = true;
+		try {
+			const bundle = await bundleDeck(deck);
+			if (bundle.missing.length) alert(`Missing SVGs:\n${bundle.missing.join("\n")}`);
+			downloadJSON(bundle, `${form.slug}.bundle.json`);
+		} catch (error) {
+			console.error(error);
+			alert(`Bundle failed: ${error.message}`);
+		} finally {
+			bundling = false;
 		}
 	}
 
 	$effect(() => {
 		load();
 	});
-	let bundling = $state(false);
-
-async function downloadBundle() {
-	let deck;
-	try {
-		deck = JSON.parse(form.body);
-	} catch {
-		alert("Deck JSON is invalid — fix it before bundling.");
-		return;
-	}
-
-	bundling = true;
-	try {
-		const bundle = await bundleDeck(deck);
-		if (bundle.missing.length) {
-			alert(`Missing SVGs:\n${bundle.missing.join("\n")}`);
-		}
-		downloadJSON(bundle, `${form.slug}.bundle.json`);
-	} catch (error) {
-		console.error(error);
-		alert(`Bundle failed: ${error.message}`);
-	} finally {
-		bundling = false;
-	}
-}
 </script>
 
 <div class="page">
@@ -181,55 +195,48 @@ async function downloadBundle() {
 			<div><strong>Slug:</strong> {form.slug}</div>
 			<div><strong>Course:</strong> {form.courseSlug}</div>
 			<div><strong>Group:</strong> {form.groupSlug}</div>
+			<div><strong>Status:</strong> {form.status}</div>
 		</div>
-{#if form.type === "PLAYER"}
-	<a
-		class="editor-link"
-		href={`${config.basePath}/admin/edit/editor?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}&role=PLAYER`}>Slide Editor 🚧</a>
-		
-	<a class="editor-link" href={`${config.basePath}/admin/timings?slug=${encodeURIComponent(form.slug)}`} >Timings 🚦</a>
 
-	<a
-		class="editor-link"
-		href={`${config.basePath}/admin/player?lesson=${encodeURIComponent(form.slug)}&role=PLAYER`}
-	>
-		Play ▶  
-	</a>
-<button
-		type="button"
-		class="editor-link"
-		onclick={downloadBundle}
-		disabled={bundling}
-	>
-		{bundling ? "Bundling…" : "Bundle 🎒"}
-	</button>
-{/if}
-	<a
-		class="editor-link"
-		href={`${config.basePath}/admin/edit/move?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
-	>
-		Move 🚜 
-	</a>
-	<a
-		class="editor-link"
-		href={`${config.basePath}/admin/edit/copy?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
-	>
-		Copy 🏗️ 
-	</a>
-	<a
-		class="editor-link"
-		href={`${config.basePath}/admin/narration?course=${encodeURIComponent(form.courseSlug)}&group=${encodeURIComponent(form.groupSlug)}&slug=${encodeURIComponent(form.slug)}`}
-	>
-		Narration 📢 
-	</a>
+		<a class="editor-link" href={coursePageUrl()}>← Back to chapter</a>
 
-	<Tags
-		available={tagsList}
-		tags={form.tags}
-		onChange={(next) => (form.tags = next)}
-	/>
+		{#if form.type === "PLAYER"}
+			<a
+				class="editor-link"
+				href={`${config.basePath}/admin/edit/editor?course=${enc(form.courseSlug)}&group=${enc(form.groupSlug)}&slug=${enc(form.slug)}&role=PLAYER`}
+			>Slide Editor 🚧</a>
 
-<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
+			<a class="editor-link" href={`${config.basePath}/admin/timings?slug=${enc(form.slug)}`}>Timings 🚦</a>
+
+			<a class="editor-link" href={`${config.basePath}/player?lesson=${enc(form.slug)}`} target="_blank">Play ▶</a>
+
+			<button type="button" class="editor-link" onclick={downloadBundle} disabled={bundling}>
+				{bundling ? "Bundling…" : "Bundle 🎒"}
+			</button>
+		{:else if form.type === "ARTICLE"}
+			<a class="editor-link" href={`${config.basePath}/articles?article=${enc(form.slug)}`} target="_blank">View ▶</a>
+		{/if}
+
+		<a
+			class="editor-link"
+			href={`${config.basePath}/admin/edit/move?course=${enc(form.courseSlug)}&group=${enc(form.groupSlug)}&slug=${enc(form.slug)}`}
+		>Move 🚜</a>
+		<a
+			class="editor-link"
+			href={`${config.basePath}/admin/edit/copy?course=${enc(form.courseSlug)}&group=${enc(form.groupSlug)}&slug=${enc(form.slug)}`}
+		>Copy 🏗️</a>
+		<a
+			class="editor-link"
+			href={`${config.basePath}/admin/narration?course=${enc(form.courseSlug)}&group=${enc(form.groupSlug)}&slug=${enc(form.slug)}`}
+		>Narration 📢</a>
+
+		<Tags
+			available={tagsList}
+			tags={form.tags}
+			onChange={(next) => (form.tags = next)}
+		/>
+
+		<form onsubmit={(e) => { e.preventDefault(); submit(); }}>
 
 			<label>
 				Type
@@ -259,20 +266,14 @@ async function downloadBundle() {
 				<textarea bind:value={form.description}></textarea>
 			</label>
 
-		<label>
-	Thumbnail
-	<ImagePicker
-		value={form.thumbnail}
-		onUse={useThumbnail}
-	/>
-</label>
+			<label>
+				Thumbnail
+				<ImagePicker value={form.thumbnail} onUse={useThumbnail} />
+			</label>
 
 			<label>
 				{form.type === "PLAYER" ? "Deck JSON" : "Body"}
-				<textarea
-					class="body"
-					bind:value={form.body}
-				></textarea>
+				<textarea class="body" bind:value={form.body}></textarea>
 			</label>
 
 			{#if form.type === "PLAYER"}
@@ -292,11 +293,8 @@ async function downloadBundle() {
 			</label>
 
 			<label class="check">
-				<input
-					type="checkbox"
-					bind:checked={form.allowCommunication}
-				>
-				Allow Communication
+				<input type="checkbox" bind:checked={form.allowCommunication}>
+				Allow rating
 			</label>
 
 			<label>
@@ -314,20 +312,29 @@ async function downloadBundle() {
 			<p class="message">{message}</p>
 		{/if}
 
+		<div class="danger-zone">
+			<button
+				class="delete"
+				type="button"
+				onclick={archiveContent}
+				disabled={saving || archiving || deleting || form.status === "ARCHIVED"}
+			>
+				{archiving ? "Archiving..." : form.status === "ARCHIVED" ? "Archived" : "Archive"}
+			</button>
+
+			<button
+				class="delete"
+				type="button"
+				onclick={deleteContent}
+				disabled={saving || archiving || deleting}
+				title="Super admin only"
+			>
+				{deleting ? "Deleting..." : "Delete permanently"}
+			</button>
+		</div>
+
 	{/if}
-
-	<div class="danger-zone">
-		<button
-			class="delete"
-			type="button"
-			onclick={deleteContent}
-			disabled={saving || deleting}
-		>
-			{deleting ? "Deleting..." : "Delete Content"}
-		</button>
-	</div>
 </div>
-
 <style>
 .editor-link {
 	display: inline-flex;

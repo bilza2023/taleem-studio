@@ -16,18 +16,37 @@
 
 	onMount(load);
 
+		let loadError = "";
+
+	// accept: [..] | { items } | { images, svgs } | { image, svg } — type in any case
+	function normalize(res) {
+		if (Array.isArray(res)) return res;
+		if (Array.isArray(res?.items)) return res.items;
+
+		const out = [];
+		for (const [key, list] of Object.entries(res ?? {})) {
+			if (!Array.isArray(list)) continue;
+			const k = key.toLowerCase();
+			const type = k.startsWith("svg") ? "SVG" : k.startsWith("image") ? "IMAGE" : k.toUpperCase();
+			for (const a of list) out.push({ type, ...a });
+		}
+		return out;
+	}
+
 	async function load() {
 		try {
-			const assets = await send("assets", "list", {});
+			const res = await send("assets", "list", {});
+			const all = normalize(res).map((a) => ({ ...a, type: String(a.type ?? "").toUpperCase() }));
 
-			files = assets.filter(a => a.type === "IMAGE" || a.type === "SVG");
+			files = all.filter((a) => a.type === "IMAGE" || a.type === "SVG");
 
-			if (!value && files.length) {
-				selected = files[0].slug;
+			if (!files.length) {
+				console.warn("ImagePicker: no IMAGE/SVG assets in assets.list response", res);
 			}
-		}
-		catch (err) {
+			if (!value && files.length) selected = files[0].slug;
+		} catch (err) {
 			console.error(err);
+			loadError = err.message;
 		}
 	}
 

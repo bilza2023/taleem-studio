@@ -1,4 +1,4 @@
-// src/routes/admin/edit/content/js/bundleDeck.js
+// /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/edit/content/js/bundleDeck.js
 
 import { config } from "$lib/config.js";
 
