@@ -1,16 +1,23 @@
-
-<!-- /home/bilal-tariq/00--TALEEM/taleem.studio/src/routes/super/course/+page.svelte -->
-
+<!-- /home/bilal-tariq/00--TALEEM/taleem/src/routes/admin/super/course/+page.svelte -->
 <script>
+	// Super admin: create / edit / open-close / delete courses.
 	import { onMount } from "svelte";
 	import { send } from "$lib/send/index.js";
 
-	let courses = $state([]);
-	let selected = $state(null);
-	let authorized = $state(null);
-	let error = $state("");
-	let loading = $state(true);
+	const ACCESS = [
+		{ key: "OPEN", label: "Open", hint: "Anyone can watch every lesson." },
+		{ key: "MEMBERS", label: "Members", hint: "Logged-in students only." },
+		{ key: "SUBSCRIPTION", label: "Subscription", hint: "Paid: only students with an active subscription (samples stay open)." }
+	];
 
+	let courses = $state([]);
+	let selected = $state(null); // course being edited, null = new
+	let loading = $state(true);
+	let saving = $state(false);
+	let error = $state("");
+	let msg = $state("");
+
+	// form
 	let slug = $state("");
 	let title = $state("");
 	let description = $state("");
@@ -18,12 +25,13 @@
 	let isActive = $state(true);
 	let thumbnail = $state("");
 
+	const accessHint = $derived(ACCESS.find((a) => a.key === access)?.hint ?? "");
+
 	async function loadAll() {
+		loading = true;
 		try {
 			courses = await send("course", "list", {});
-			authorized = true;
 		} catch (err) {
-			authorized = false;
 			error = err.message;
 		} finally {
 			loading = false;
@@ -32,261 +40,248 @@
 
 	onMount(loadAll);
 
-	function selectCourse(course) {
-		selected = course;
-		slug = course.slug;
-		title = course.title;
-		description = course.description || "";
-		access = course.access;
-		isActive = course.isActive;
-		thumbnail = course.thumbnail || "";
+	function fill(c) {
+		slug = c?.slug ?? "";
+		title = c?.title ?? "";
+		description = c?.description ?? "";
+		access = c?.access ?? "OPEN";
+		isActive = c?.isActive ?? true;
+		thumbnail = c?.thumbnail ?? "";
+	}
+
+	function selectCourse(c) {
+		selected = c;
+		fill(c);
+		error = "";
+		msg = "";
 	}
 
 	function newCourse() {
 		selected = null;
-		slug = "";
-		title = "";
-		description = "";
-		access = "OPEN";
-		isActive = true;
-		thumbnail = "";
+		fill(null);
+		error = "";
+		msg = "";
 	}
 
-	async function saveCourse() {
+	async function saveCourse(e) {
+		e.preventDefault();
 		error = "";
+		msg = "";
 
+		if (!selected && (!slug.trim() || !title.trim())) {
+			error = "Slug and title are required.";
+			return;
+		}
+
+		saving = true;
 		try {
-			if (selected) {
-				const data = { title, description, access, isActive, thumbnail };
-				await send("course", "update", { slug: selected.slug, data });
-			} else {
-				if (!slug || !title) {
-					error = "Slug and title are required.";
-					return;
-				}
+			const fields = {
+				title: title.trim(),
+				description: description.trim(),
+				access,
+				isActive,
+				thumbnail: thumbnail.trim()
+			};
 
-				await send("course", "create", { slug, title, description, access, isActive, thumbnail });
+			let saved;
+			if (selected) {
+				saved = await send("course", "update", { slug: selected.slug, changes: fields });
+				msg = "Saved.";
+			} else {
+				saved = await send("course", "create", { slug: slug.trim(), ...fields });
+				msg = "Course created.";
 			}
 
 			await loadAll();
-			newCourse();
+			const fresh = courses.find((c) => c.slug === (saved?.slug ?? selected?.slug ?? slug.trim()));
+			if (fresh) selectCourse(fresh);
+			msg = msg; // keep message after reselect
 		} catch (err) {
 			error = err.message;
+		} finally {
+			saving = false;
 		}
 	}
 
 	async function deleteCourse() {
 		if (!selected) return;
-		if (!confirm(`Delete course ${selected.slug}?`)) return;
-
+		if (!confirm(`Delete course "${selected.title}" (${selected.slug})?\nThis cannot be undone.`)) return;
 		try {
 			await send("course", "delete", { slug: selected.slug });
 			await loadAll();
 			newCourse();
+			msg = "Course deleted.";
 		} catch (err) {
-			error = err.message;
+			error = err.message; // 409/Restrict if it still has groups, lessons or subscriptions
 		}
 	}
 </script>
 
-{#if loading}
-	<main class="container">
-		<p>Loading…</p>
-	</main>
-{:else if authorized === false}
-	<main class="container">
-		<h2>Access denied</h2>
-		<p>{error}</p>
-	</main>
-{:else}
-	<main class="container">
-		<h2>Super admin — courses</h2>
+<main class="page">
+	<header class="top">
+		<h1>📚 Courses</h1>
+		<button type="button" onclick={newCourse}>+ New course</button>
+	</header>
 
-		{#if error}<p style="color:red">{error}</p>{/if}
+	<div class="layout">
+		<!-- list -->
+		<section class="list">
+			{#if loading}
+				<p class="muted">Loading…</p>
+			{:else if courses.length === 0}
+				<p class="muted">No courses yet.</p>
+			{:else}
+				{#each courses as c (c.slug)}
+					<button
+						type="button"
+						class="course"
+						class:active={selected?.slug === c.slug}
+						class:inactive={!c.isActive}
+						onclick={() => selectCourse(c)}
+					>
+						<span class="title">{c.title}</span>
+						<span class="slug">{c.slug}</span>
+						<span class="badges">
+							<span class="badge {String(c.access).toLowerCase()}">{c.access}</span>
+							{#if !c.isActive}<span class="badge off">HIDDEN</span>{/if}
+						</span>
+					</button>
+				{/each}
+			{/if}
+		</section>
 
-		<div class="grid">
-			<section>
-				<h3>Courses</h3>
-				<button onclick={newCourse}>+ New course</button>
-				<ul>
-					{#each courses as course}
-						<li>
-							<button class="link" onclick={() => selectCourse(course)}>
-								{course.title} ({course.slug}){course.isActive ? "" : " — inactive"}
-							</button>
-						</li>
+		<!-- form -->
+		<form class="card form" onsubmit={saveCourse}>
+			<h2>{selected ? `Edit: ${selected.title}` : "New course"}</h2>
+
+			<label>
+				Slug
+				<input type="text" bind:value={slug} disabled={!!selected} placeholder="fbise9math" />
+				{#if selected}<small>Slug can't change; lessons, groups and subscriptions point to it.</small>{/if}
+			</label>
+
+			<label>
+				Title
+				<input type="text" bind:value={title} placeholder="Class 9th Math Federal Board" />
+			</label>
+
+			<label>
+				Description
+				<textarea bind:value={description} rows="3"></textarea>
+			</label>
+
+			<fieldset>
+				<legend>Access</legend>
+				<div class="seg">
+					{#each ACCESS as a (a.key)}
+						<button
+							type="button"
+							class="seg-btn"
+							class:on={access === a.key}
+							aria-pressed={access === a.key}
+							onclick={() => (access = a.key)}
+						>{a.label}</button>
 					{/each}
-				</ul>
-			</section>
+				</div>
+				<small>{accessHint}</small>
+			</fieldset>
 
-			<section>
-				<h3>{selected ? "Edit course" : "New course"}</h3>
+			<label class="toggle">
+				<input type="checkbox" bind:checked={isActive} />
+				<span>
+					<strong>{isActive ? "Visible" : "Hidden"}</strong>
+					<small>{isActive ? "Listed on the site." : "Not listed for students."}</small>
+				</span>
+			</label>
 
-				<label>
-					Slug
-					<input type="text" bind:value={slug} disabled={!!selected} />
-				</label>
+			<label>
+				Thumbnail
+				<input type="text" bind:value={thumbnail} placeholder="taleem.webp" />
+			</label>
 
-				<label>
-					Title
-					<input type="text" bind:value={title} />
-				</label>
-
-				<label>
-					Description
-					<textarea bind:value={description} rows="3"></textarea>
-				</label>
-
-				<label>
-					Access
-					<select bind:value={access}>
-						<option value="OPEN">Open</option>
-						<option value="MEMBERS">Members</option>
-						<option value="SUBSCRIPTION">Subscription</option>
-					</select>
-				</label>
-
-				<label>
-					Thumbnail
-					<input type="text" bind:value={thumbnail} placeholder="taleem.webp" />
-				</label>
-
-				<label>
-					<input type="checkbox" bind:checked={isActive} />
-					Active
-				</label>
-
-				<button onclick={saveCourse}>{selected ? "Save" : "Create"}</button>
+			<div class="actions">
+				{#if error}<span class="error">{error}</span>{/if}
+				{#if msg}<span class="ok">{msg}</span>{/if}
 				{#if selected}
-					<button onclick={deleteCourse} class="secondary">Delete</button>
+					<button type="button" class="danger" onclick={deleteCourse}>Delete</button>
 				{/if}
-			</section>
-		</div>
-	</main>
-{/if}
+				<button type="submit" disabled={saving}>
+					{saving ? "Saving…" : selected ? "Save changes" : "Create course"}
+				</button>
+			</div>
+		</form>
+	</div>
+</main>
 
 <style>
-	.container {
-		max-width: 1500px;
-		margin: 0 auto;
-		padding: 2rem 3rem;
-		color: var(--theme-text);
-		font-size: 1.15rem;
-	}
+	.page { width: min(95vw, 1200px); margin: 0 auto; padding: 2rem 1rem; box-sizing: border-box; color: var(--theme-text); }
+	.top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+	h1 { margin: 0; }
+	h2 { margin: 0 0 1.25rem; font-size: 1.15rem; }
+	.muted { opacity: .65; }
+	.error { color: #f87171; font-size: .9rem; }
+	.ok { color: #6ee7b7; font-size: .9rem; }
+	small { font-size: .78rem; font-weight: 400; opacity: .6; }
 
-	h2 {
-		font-size: 2rem;
-	}
+	.layout { display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; align-items: start; }
 
-	h3 {
-		font-size: 1.4rem;
-	}
-
-	.grid {
-		display: grid;
-		grid-template-columns: 380px 1fr;
-		gap: 3rem;
-		margin-top: 2rem;
-	}
-
-	section {
-		background: var(--theme-panel);
-		border: 1px solid var(--theme-border);
-		border-radius: 10px;
-		padding: 1.75rem 2rem;
-	}
-
-	section h3 {
-		margin-top: 0;
-		font-weight: 700;
-	}
-
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 1rem 0 0;
-	}
-
-	li {
-		padding: 0.75rem 0;
-		border-bottom: 1px solid var(--theme-border);
-		font-size: 1.15rem;
-	}
-
-	li:last-child {
-		border-bottom: none;
-	}
-
-	button.link {
-		background: none;
-		border: none;
-		color: var(--theme-text);
-		text-decoration: none;
-		display: block;
-		font-weight: 600;
-		font-size: inherit;
-		padding: 0;
-		text-align: left;
-		cursor: pointer;
-		width: 100%;
-	}
-
-	button.link:hover {
-		color: var(--theme-accent);
-	}
-
-	label {
-		display: block;
-		margin-bottom: 1.4rem;
-		font-size: 1.05rem;
-		font-weight: 600;
-	}
-
-	input[type="text"],
-	select,
-	textarea {
-		width: 100%;
-		margin-top: 0.4rem;
-		background: var(--theme-panel);
-		color: var(--theme-text);
-		border: 2px solid var(--theme-border);
-		border-radius: 6px;
-		padding: 0.9rem 1rem;
-		font-size: 1.1rem;
+	/* list */
+	.list { display: grid; gap: .5rem; }
+	.course {
+		all: unset;
 		box-sizing: border-box;
-		font-family: inherit;
+		cursor: pointer;
+		display: grid;
+		gap: .2rem;
+		padding: .8rem 1rem;
+		border: 1px solid var(--theme-border);
+		border-radius: 12px;
+		background: var(--theme-panel);
 	}
+	.course:hover { border-color: var(--theme-accent); }
+	.course.active { border-color: var(--theme-accent); box-shadow: 0 0 0 1px var(--theme-accent); }
+	.course.inactive .title { opacity: .55; }
+	.title { font-weight: 600; }
+	.slug { font-size: .78rem; opacity: .55; font-family: monospace; }
+	.badges { display: flex; gap: .35rem; margin-top: .25rem; }
 
-	label:has(input[type="checkbox"]) {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		font-weight: 500;
+	.badge { font-size: .65rem; font-weight: 700; padding: .12rem .5rem; border-radius: 999px; letter-spacing: .04em; }
+	.badge.open { background: #064e3b; color: #6ee7b7; }
+	.badge.members { background: #1e3a5f; color: #93c5fd; }
+	.badge.subscription { background: #3a2c0a; color: #fcd34d; }
+	.badge.off { background: #334155; color: #cbd5e1; }
+
+	/* form */
+	.card { padding: 1.25rem 1.5rem; border: 1px solid var(--theme-border); border-radius: 14px; background: var(--theme-panel); }
+	label, fieldset { display: grid; gap: .4rem; margin: 0 0 1.1rem; font-size: .9rem; font-weight: 600; }
+	fieldset { border: 0; padding: 0; }
+	legend { padding: 0; margin-bottom: .4rem; }
+
+	input[type="text"], textarea {
+		box-sizing: border-box; width: 100%; margin: 0; padding: .6rem .75rem;
+		border: 1px solid var(--theme-border); border-radius: 8px;
+		background: var(--theme-panel); color: var(--theme-text); font: inherit; font-weight: 400;
 	}
+	input:disabled { opacity: .55; }
+	textarea { resize: vertical; }
 
-	label:has(input[type="checkbox"]) input {
-		width: auto;
-		transform: scale(1.3);
+	.seg { display: flex; gap: .4rem; flex-wrap: wrap; }
+	.seg-btn {
+		all: unset; cursor: pointer; padding: .45rem 1rem; border-radius: 999px;
+		border: 1px solid var(--theme-border); font-size: .85rem; font-weight: 500;
 	}
+	.seg-btn.on { background: var(--theme-accent); border-color: var(--theme-accent); color: #fff; }
 
-	button {
-		margin-top: 0.75rem;
-		margin-right: 0.75rem;
-		font-size: 1.1rem;
-		font-weight: 700;
-		padding: 0.75rem 1.5rem;
-		border-radius: 6px;
-	}
+	.toggle { display: flex; align-items: center; gap: .75rem; }
+	.toggle input { width: 1.15rem; height: 1.15rem; margin: 0; }
+	.toggle span { display: grid; gap: .1rem; }
 
-	button.secondary {
-		background: transparent;
-		border: 2px solid var(--theme-border);
-		color: var(--theme-text);
-	}
+	.actions { display: flex; justify-content: flex-end; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .5rem; }
+	button { width: auto; margin: 0; padding: .55rem 1.1rem; border: 0; border-radius: 6px; background: var(--theme-accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+	button:disabled { opacity: .5; cursor: default; }
+	button.danger { background: transparent; border: 1px solid #7f1d1d; color: #f87171; }
 
-	@media (max-width: 900px) {
-		.grid {
-			grid-template-columns: 1fr;
-		}
+	@media (max-width: 860px) {
+		.layout { grid-template-columns: 1fr; }
 	}
 </style>

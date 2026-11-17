@@ -55,7 +55,9 @@
 				{ label: "Summary", path: "/admin/super/summary" },
 				{ label: "Analytics", path: "/admin/super/analytics" },
 				{ label: "Ratings", path: "/admin/super/rating" },
-				{ label: "Notifications", path: "/admin/super/notifications" }
+				{ label: "Notifications", path: "/admin/super/notifications" },
+				{ label: "Subscription", path: "/admin/super/subscription" },
+				{ label: "Notifications", path: "/admin/super/inquiries" }
 			]
 		}
 	];
